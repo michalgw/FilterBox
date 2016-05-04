@@ -30,9 +30,12 @@ uses
   Variants,
   {$ENDIF}
 
-  activex,
-  registry,
-  windows,
+  LCLIntf,
+  //registry,
+  //windows,
+  FileUtil,
+  LCLProc,
+  LCLType,
   typinfo,
   forms,
   actnlist,
@@ -42,7 +45,7 @@ uses
   controls,
   dialogs,
   dbgrids,
-  mask,
+  MaskEdit,
   dbctrls,
   buttons,
   stdctrls,
@@ -161,7 +164,7 @@ type
 
   TPSCImage=TImage;
 
-  THandle=LongWord;
+  //THandle=LongWord;
 
   TPSCMethod=TMethod;
 
@@ -200,7 +203,7 @@ type
   TPSCCanvas=graphics.TCanvas;
   TPSCControlCanvas=TControlCanvas;
   TPSCFont=TFont;
-  TPSCMetaFile=TMetaFile;
+  //TPSCMetaFile=TMetaFile;
   TPSCDBEdit=TDBEdit;
   TPSCDBGrid=TDBGrid;
   TPSCSplitter=TSplitter;
@@ -210,7 +213,7 @@ type
   TPSCAction=TAction;
   TPSCActionList=TActionList;
 
-function PSCAllocPatternBitmap(BkColor, FgColor: TPSCColor): TPSCBitmap;
+//function PSCAllocPatternBitmap(BkColor, FgColor: TPSCColor): TPSCBitmap;
 function PSCColorToRGB(AColor:TPSCColor):LongInt;
 procedure PSCUpdateCanvasState(ACanvas:TPSCCanvas);
 function PSCGetDecimalSeparator:Char;
@@ -221,12 +224,12 @@ function PSCShortTimeFormat:String;
 function PSCLongTimeFormat:String;
 function PSCShortDateFormat:String;
 function PSCLongDateFormat:String;
-function PSCWindowsNTOrHigher : boolean;
+{function PSCWindowsNTOrHigher : boolean;
 function PSCWindows2kOrHigher : boolean;
-function PSCWindowsXPOrHigher : boolean;
+function PSCWindowsXPOrHigher : boolean;}
 function PSCTimeSeparator:Char;
 function PSCDateSeparator:Char;
-Function PSCUnderWindowsNT: boolean;
+//Function PSCUnderWindowsNT: boolean;
 Function PSCGetSystemMetrics(nIndex: Integer): Integer;
 function PSCGetEnumName(TypeInfo: PTypeInfo; Value: Integer): string;
 function PSCFindResourceInstance(const ResName:String;ResType:PChar):THandle;
@@ -234,7 +237,7 @@ function PSCFindResourceInstance(const ResName:String;ResType:PChar):THandle;
 function PSCMinDateTime:TDateTime;
 function PSCMaxDateTime:TDateTime;
 
-procedure PSCModulesToList(List:TList);
+//procedure PSCModulesToList(List:TList);
 Procedure PSCAssignAllProps(Source,Dest: TPersistent);
 Procedure PSCAssignAllPropsExclude(Source,Dest: TPersistent;
   const ExcludeList:IPSCStrings);
@@ -264,7 +267,7 @@ Function PSCGetStringsPropAsText(Instance: TPersistent;
   Const PropName: String): String;
 Procedure PSCPropNamesToStrings(Instance: TPersistent; const PropNames: IPSCStrings;
   StoredProps,NotStoredProps: boolean);
-Function PSCGetHTMLCompiler(Const ACompilerName: String): String;
+{Function PSCGetHTMLCompiler(Const ACompilerName: String): String;
 Function PSCGetHLPCompiler(Const ACompilerName: String): String;
 function PSCGetDelphiRegKey(VerType:TPSCDelphiVer;const KeyName:String):String;
 function PSCGetSpecificDelphiDir(vertype : TPSCDelphiVer) : string;
@@ -275,10 +278,10 @@ function  PSCGetDelphiHelpCntFile(DelphiVer : TPSCDelphiVer) : string;
 procedure PSCRemoveHelpFromCntFile(const HelpFile, CntFile: string);
 procedure PSCAddHelpToCntFile(const HelpFile, HelpName, CntFile: string);
 Function PSCRunProgram(const CmdLine,WorkDir:String;Var ErrorMessage:String;
-  HookOutput:Boolean):Boolean;
+  HookOutput:Boolean):Boolean;}
 Function PSCGetTemporaryPath:String;
-function PSCGetDelphiSourceDirsEx(DelphiVer:TPSCDelphiVer):string;
-function PSCGetDelphiSourceDirsEx2(DelphiVer:TPSCDelphiVer;Opts:TPSCDelphiSourceDirsOpts) : string;
+{function PSCGetDelphiSourceDirsEx(DelphiVer:TPSCDelphiVer):string;
+function PSCGetDelphiSourceDirsEx2(DelphiVer:TPSCDelphiVer;Opts:TPSCDelphiSourceDirsOpts) : string;}
 function PSCGenDPUPath(DelphiVer:TPSCDelphiVer):String;
 procedure PSCModifyFileAttr(const FileName:String;RemoveAttr,AddAttr:Integer);
 function PSCCopyFile(const ASrcFile, ADestFile: string): Boolean;
@@ -293,8 +296,8 @@ Procedure PSCSetObjectProp( Instance : TObject; PropInfo : PPropInfo;
   Value : TObject);
 Function PSCGetObjectPropClass( Instance : TObject; PropInfo : PPropInfo ) : TClass;
 function PSCGetTemporaryFileName(const Prefix : string) : string;
-function PSCCompileFile(DelphiVer: TPSCDelphiVer;const AFullFileName,
-  OutDir,ExtCMDParams: string;var ResultFile,ErrorMessage:string): Boolean;
+//function PSCCompileFile(DelphiVer: TPSCDelphiVer;const AFullFileName,
+//  OutDir,ExtCMDParams: string;var ResultFile,ErrorMessage:string): Boolean;
 function PSCGUIDToString(const ClassID: TGUID): string;
 procedure  PSCModifyDefines(const FileName: string; Products: TstringList);
 Function PSCSubStr(Const S: String; Const Index: Integer;
@@ -311,9 +314,9 @@ Procedure PSCItemHtDrawEx(Canvas: TPSCCanvas; ARect: TRect; Const Text: String;
 Function PSCCorrectBool(Const V: Variant): Variant;
 procedure PSCModifyFilesAttr(const Files:IPSCStrings;RemoveAttr,AddAttr:Integer);
 procedure PSCAssignPropsFromStrings(Instance:TPersistent;const Params:IPSCStrings);
-function PSCGetCompilerPathAndParams(DelphiVer:TPSCDelphiVer;var Params:String):String;
-function PSCGetBestDVersionFromSet(DelphiVers:TPSCDelphiVers):TPSCDelphiVer;
-function PSCGetDelphiToolsAPIDir(DelphiVer:TPSCDelphiVer) : string;
+//function PSCGetCompilerPathAndParams(DelphiVer:TPSCDelphiVer;var Params:String):String;
+//function PSCGetBestDVersionFromSet(DelphiVers:TPSCDelphiVers):TPSCDelphiVer;
+//function PSCGetDelphiToolsAPIDir(DelphiVer:TPSCDelphiVer) : string;
 function PSCSmartExpandRelativePath(const RelativePath: string): string;
 procedure PSCSmartExpandPathInStrings(const Strings:IPSCStrings;const Names:String);
 procedure PSCRenameToBak(Const Path:String);
@@ -528,7 +531,7 @@ begin
 end;
 
 {--------------------------------------}
-
+(*
 const
   SPSCToolsApiDir='Source\Toolsapi';
 
@@ -557,7 +560,7 @@ begin
     end;
   end;
 end;
-
+*)
 {------------------------------------------------------------------}
 
 procedure PSCAssignPropsFromStrings(Instance:TPersistent;const Params:IPSCStrings);
@@ -609,27 +612,16 @@ End;
 {------------------------------------------------------------------}
 
 procedure PSCLoadBitmapFromResource(ABitmap:TPSCBitmap;const AResName:String);
-Var
-  H:THandle;
 begin
-  H:=PSCFindResourceInstance(AResName,RT_BITMAP);
-  If H<>0 then
-    ABitmap.LoadFromResourceName(H, AResName);
+  ABitmap.LoadFromResourceName(HINSTANCE, AResName);
 end;
 
 {------------------------------------------------------------------}
 
 function PSCAddBitmapFromResource(ImageList:TPSCImageList;
   const ResName:String):Integer;
-Var
-  H:THandle;
 begin
-  H:=PSCFindResourceInstance(ResName,RT_BITMAP);
-
-  If H=0 then
-    Result:=-1
-  else
-    Result:=PSCAddBitmapFromResourceEx(ImageList,ResName,H);
+  Result:=PSCAddBitmapFromResourceEx(ImageList,ResName,HINSTANCE);
 end;
 
 {------------------------------------------------------------------}
@@ -655,25 +647,15 @@ Var
   Code: Integer;
 Begin
   Code := FileGetAttr(Name);
-  Result := (Code <> -1) And (FILE_ATTRIBUTE_DIRECTORY And Code <> 0);
+  Result := (Code <> -1) And (faDirectory And Code <> 0);
 End;
 
 {------------------------------------------------------------------}
 
 function PSCGUIDToString(const ClassID: TGUID): string;
-{$IFNDEF LINUX}
-var
-  P: PWideChar;
-begin
-  StringFromCLSID(ClassID, P);
-  Result := WideCharToString(P);
-  CoTaskMemFree(P);
-end;
-{$ELSE}
 begin
   Result:=GUIDToString(ClassID);
 end;
-{$ENDIF}
 
 {--------------------------------------}
 
@@ -831,7 +813,7 @@ begin
 end;
 
 {--------------------------------------}
-
+(*
 const
   SPSCdcc32Exe='dcc32.exe';
   SPSCMakeExe='make.exe';
@@ -865,12 +847,12 @@ var
     if FileExists(Dest) then
        DeleteFile(Dest);
 
-    if AnsiCompareText(ExtractFileDrive(Source), ExtractFileDrive(Dest)) <> 0 then
-    begin
+    //if AnsiCompareText(ExtractFileDrive(Source), ExtractFileDrive(Dest)) <> 0 then
+    //begin
       CopyFile(PChar(Source), PChar(Dest), False);
       DeleteFile(Source);
-    end
-    else MoveFile(PChar(Source), PChar(Dest));
+    //end
+    //else MoveFile(PChar(Source), PChar(Dest));
     ResultFile := Dest;
   end;
 
@@ -940,7 +922,7 @@ Begin
   if (AnsiCompareText(FileExt, SPSCdprExt)=0)
    then _MoveFile(SPSCexeExt);
 End;
-
+*)
 {------------------------------------------------------------------}
 
 function PSCCopyFile(const ASrcFile, ADestFile: string): Boolean;
@@ -978,7 +960,7 @@ begin
 end;
 
 {------------------------------------------------------------------}
-
+(*
 //BeginSkipConst
 function PSCGetDelphiSourceDirsEx2(DelphiVer:TPSCDelphiVer;Opts:TPSCDelphiSourceDirsOpts) : string;
 var
@@ -1033,21 +1015,22 @@ function PSCGetDelphiSourceDirsEx(DelphiVer:TPSCDelphiVer):string;
 begin
   Result:=PSCGetDelphiSourceDirsEx2(DelphiVer,[doAddLibFolder]);
 end;
-
+*)
 {--------------------------------------------------}
 
 Function PSCGetTemporaryPath:String;
-Var
-  PathLen:Integer;
+//Var
+//  PathLen:Integer;
 Begin
-  SetLength(Result,MAX_PATH);
-  PathLen:=GetTempPath(MAX_PATH,PChar(Result));
-  If PathLen>3 Then //skip for drive:\ (c:\)
-    SetLength(Result,PathLen-1);
+  //SetLength(Result,MAX_PATH);
+  //PathLen:=GetTempPath(MAX_PATH,PChar(Result));
+  //If PathLen>3 Then //skip for drive:\ (c:\)
+  //  SetLength(Result,PathLen-1);
+  Result := GetTempDir;
 End;
 
 {--------------------------------------------------}
-
+(*
 Function PSCRunProgram(const CmdLine,WorkDir:String;Var ErrorMessage:String;
                     HookOutput:Boolean):Boolean;
 Var
@@ -1335,7 +1318,7 @@ Function PSCGetHLPCompiler(Const ACompilerName: String): String;
 begin
   Result:=PSCSearchCompiler(ACompilerName, SPSCHRTF_CompilerRegKey, sPSCRTF_CompilerFileName);
 end;
-
+*)
 {-----------------------------------------------------------}
 
 Function PSCGetStringsPropAsText(Instance: TPersistent;
@@ -1571,7 +1554,7 @@ begin
 end;
 
 {------------------------------------------------------------------}
-
+(*
 procedure PSCModulesToList(List:TList);
 begin
   List.Clear;
@@ -1585,10 +1568,10 @@ begin
   List.Clear;
   EnumResourceModules(PSCModulesToListFunc,List);
 end;
-
+*)
 {------------------------------------------------------------------}
 function PSCFindResourceInstance(const ResName:String;ResType:PChar):THandle;
-{$IFNDEF LINUX}
+(*{$IFNDEF LINUX}
 var
   PackList:TList;
   i:Integer;
@@ -1607,11 +1590,11 @@ begin
     PackList.Free;
   end;
 end;
-{$ELSE}
+{$ELSE}  *)
 begin
   Result:=HInstance;
 end;
-{$ENDIF}
+//{$ENDIF}
 
 {---------------------------------------------------------}
 
@@ -1628,12 +1611,12 @@ begin
 end;
 
 {-------------------------------------------------------------------------}
-
+(*
 Function PSCUnderWindowsNT: boolean;
 Begin
   result := Win32Platform = VER_PLATFORM_WIN32_NT;
 End;
-
+*)
 {--------------------------------}
 
 function PSCTimeSeparator:Char;
@@ -1649,7 +1632,7 @@ begin
 end;
 
 {--------------------------------}
-
+(*
 function PSCWindowsNTOrHigher : boolean;
 begin
   result := Win32Platform = VER_PLATFORM_WIN32_NT;
@@ -1669,7 +1652,7 @@ begin
   result := (Win32Platform = VER_PLATFORM_WIN32_NT) and (Win32MajorVersion >= 5)
    and (Win32MinorVersion>=1);
 end;
-
+*)
 {-------------------------------------------------------------}
 
 function PSCShortTimeFormat:String;
@@ -1727,12 +1710,12 @@ begin
 end;
 
 {---------------------------------------------------------}
-
+(*
 function PSCAllocPatternBitmap(BkColor, FgColor: TPSCColor): TPSCBitmap;
 begin
   Result:=AllocPatternBitmap(BkColor, FgColor);
 end;
-
+*)
 {---------------------------------------------------------}
 
 function PSCColorToRGB(AColor:TPSCColor):LongInt;
@@ -1758,7 +1741,7 @@ end;
 
 Function PSCGetSystemMetrics(nIndex: Integer): Integer;
 Begin
-  Result := Windows.GetSystemMetrics(nIndex);
+  Result := {Windows.}GetSystemMetrics(nIndex);
 End;
 
 {---------------------------------------------------------}
@@ -1777,7 +1760,7 @@ Begin
       Result := Nil;
       exit;
     End;
-  Result := PropInfo.PropType^;
+  Result := PropInfo.PropType;
 End;
 
 {------------------------------------------------------------------}
@@ -1794,7 +1777,7 @@ Begin
       tkEnumeration:
         Begin
           Result := GetOrdProp(Instance,PropInfo);
-          BaseType := PSCGetPTypeData(PropInfo).BaseType^;
+          BaseType := PSCGetPTypeData(PropInfo).BaseType;
           If (BaseType = TypeInfo(Boolean)) Or (BaseType = TypeInfo(ByteBool))
             Or
             (BaseType = TypeInfo(WordBool)) Or (BaseType = TypeInfo(LongBool))
