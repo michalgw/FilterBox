@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="psc_d7"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <OtherUnitFiles Value="."/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <SyntaxMode Value="Delphi"/>
+        </SyntaxOptions>
+      </Parsing>
+      <Linking>
+        <Debugging>
+          <DebugInfoType Value="dsDwarf2"/>
+        </Debugging>
+      </Linking>
+      <Other>
+        <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      </Other>
+    </CompilerOptions>
+    <Files Count="22">
+      <Item1>
+        <Filename Value="psc_reg.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="psc_reg"/>
+      </Item1>
+      <Item2>
+        <Filename Value="myla_interfaces.pas"/>
+        <UnitName Value="myla_interfaces"/>
+      </Item2>
+      <Item3>
+        <Filename Value="myla_parser.pas"/>
+        <UnitName Value="myla_parser"/>
+      </Item3>
+      <Item4>
+        <Filename Value="myla_system.pas"/>
+        <UnitName Value="myla_system"/>
+      </Item4>
+      <Item5>
+        <Filename Value="psc_button_color.pas"/>
+        <UnitName Value="psc_button_color"/>
+      </Item5>
+      <Item6>
+        <Filename Value="psc_calculator.pas"/>
+        <UnitName Value="psc_calculator"/>
+      </Item6>
+      <Item7>
+        <Filename Value="psc_calendar.pas"/>
+        <UnitName Value="psc_calendar"/>
+      </Item7>
+      <Item8>
+        <Filename Value="psc_colorbox.pas"/>
+        <UnitName Value="psc_colorbox"/>
+      </Item8>
+      <Item9>
+        <Filename Value="psc_const.pas"/>
+        <UnitName Value="psc_const"/>
+      </Item9>
+      <Item10>
+        <Filename Value="psc_edit.pas"/>
+        <UnitName Value="psc_edit"/>
+      </Item10>
+      <Item11>
+        <Filename Value="psc_edit_color.pas"/>
+        <UnitName Value="psc_edit_color"/>
+      </Item11>
+      <Item12>
+        <Filename Value="psc_edit_date.pas"/>
+        <UnitName Value="psc_edit_date"/>
+      </Item12>
+      <Item13>
+        <Filename Value="psc_edit_parts.pas"/>
+        <UnitName Value="psc_edit_parts"/>
+      </Item13>
+      <Item14>
+        <Filename Value="psc_expreval.pas"/>
+        <UnitName Value="psc_expreval"/>
+      </Item14>
+      <Item15>
+        <Filename Value="psc_fltbox.pas"/>
+        <UnitName Value="psc_fltbox"/>
+      </Item15>
+      <Item16>
+        <Filename Value="psc_fontbox.pas"/>
+        <UnitName Value="psc_fontbox"/>
+      </Item16>
+      <Item17>
+        <Filename Value="psc_holidays.pas"/>
+        <UnitName Value="psc_holidays"/>
+      </Item17>
+      <Item18>
+        <Filename Value="psc_listbox.pas"/>
+        <UnitName Value="psc_listbox"/>
+      </Item18>
+      <Item19>
+        <Filename Value="psc_parser_date.pas"/>
+        <UnitName Value="psc_parser_date"/>
+      </Item19>
+      <Item20>
+        <Filename Value="psc_procs.pas"/>
+        <UnitName Value="psc_procs"/>
+      </Item20>
+      <Item21>
+        <Filename Value="psc_theme.pas"/>
+        <UnitName Value="psc_theme"/>
+      </Item21>
+      <Item22>
+        <Filename Value="psc_wrapper.pas"/>
+        <UnitName Value="psc_wrapper"/>
+      </Item22>
+    </Files>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="IDEIntf"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
