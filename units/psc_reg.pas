@@ -20,6 +20,8 @@
 {***************************************************************************}
 Unit psc_reg;
 
+{$MODE Delphi}
+
 Interface
 {$I psc_defines.inc}
 
@@ -28,6 +30,8 @@ Procedure Register;
 {----------------------------------------------------------}
 
 Implementation
+
+{$R *.dcr}
 
 Uses
   psc_listbox,
@@ -51,16 +55,18 @@ Uses
   myla_parser,
 
 {$IFDEF D6}
-  DesignIntf,
+  {DesignIntf,
   DesignEditors,
-  VCLEditors,
+  VCLEditors,}
   Types,
 {$ELSE}
   DsgnIntf,
 {$ENDIF}
-
+  PropEdits,
+  GraphPropEdits,
+  ComponentEditors,
 {$IFDEF DPSOFT}
-  ToolsAPI,
+  {ToolsAPI,}
 {$ENDIF}
 
   sysutils,
@@ -68,7 +74,7 @@ Uses
   Forms,
   Menus,
   controls,
-  windows,
+  LCLIntf, LCLType, LMessages,
   typinfo,
   db,
   classes
@@ -234,7 +240,7 @@ Type
   public
     Procedure GetValueList(const List: IPSCStrings); override;
   End;
-
+(*
   TPSCCustomSectionEditor = class(TComponentEditor)
   private
     FSlot: TPSCGraphicItem;
@@ -256,7 +262,7 @@ Type
     function GetVerb(Index: Integer): string; override;
     function GetVerbCount: Integer; override;
   end;
-
+*)
 {-------------------------------------------}
 
 Function TPSCPickListProp.GetAttributes: TPropertyAttributes;
@@ -586,7 +592,7 @@ Begin
 End;
 
 {-------------------------------------}
-
+(*
 destructor TPSCCustomSectionEditor.Destroy;
 begin
   FColorBoxEditor.Free;
@@ -621,7 +627,7 @@ end;
 procedure TPSCCustomSectionEditor.Edit;
 begin
   GetSlots;
-  if FSlot<>nil then Designer.SelectComponent(FSlot)
+  //if FSlot<>nil then Designer.InvokeComponentEditor(FSlot);// SelectComponent(FSlot)
 end;
 
 {-------------------------------------}
@@ -634,7 +640,8 @@ begin
       case Index of
         0: begin
              FSlot:=TPSCGraphicItem(TPSCCustomSection(FSection.GetInstance).Add);
-             Designer.SelectComponent(FSlot);
+             //Designer.SelectComponent(FSlot);
+             //Designer.InvokeComponentEditor(FSlot);
              Designer.Modified;
            end;
         1: begin
@@ -691,7 +698,8 @@ begin
     else
        Exit
   end;
-  Designer.CreateComponent(ClassType, Component, 0, 0, 0, 0)
+  //Designer.CreateComponent(ClassType, Component, 0, 0, 0, 0)
+  //Designer.;
 end;
 
 {-------------------------------------}
@@ -711,7 +719,7 @@ function TPSCColorBoxEditor.GetVerbCount: Integer;
 begin
   Result:=3;
 end;
-
+*)
 {-------------------------------------------------------------}
 
 procedure TPSCThemeNameEdit.GetValueList(const List: IPSCStrings);
@@ -796,8 +804,8 @@ Begin
 //------------------------------
 //------------------------------
 
-  RegisterComponentEditor(TPSCCustomSectionControl, TPSCCustomSectionEditor);
-  RegisterComponentEditor(TPSCCustomColorBox, TPSCColorBoxEditor);
+  //RegisterComponentEditor(TPSCCustomSectionControl, TPSCCustomSectionEditor);
+  //RegisterComponentEditor(TPSCCustomColorBox, TPSCColorBoxEditor);
   Classes.RegisterClass(TPSCColorSectionControl);
   Classes.RegisterClass(TPSCDefaultSectionControl);
   Classes.RegisterClass(TPSCButtonSectionControl);
