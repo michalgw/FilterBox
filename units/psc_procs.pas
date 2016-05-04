@@ -26,13 +26,15 @@ Uses
 {$IFDEF D6}
   variants,
 {$ENDIF}
-  Windows,
-  messages,
+  LCLIntf,
+  LCLType,
+  LCLProc,
+  LMessages,
   forms,
   controls,
   menus,
   DB,
-  activex, //needed because TVarType in D5 is declared there
+  //activex, //needed because TVarType in D5 is declared there
   classes,
   extctrls,
   SysUtils,
@@ -183,9 +185,9 @@ Type
     FInstanceID:Integer;
   protected
     FRefCount: Integer;
-    function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
-    function _AddRef: Integer; stdcall;
-    function _Release: Integer; stdcall;
+    function QueryInterface(constref IID: TGUID; out Obj): LongInt;{$ifdef WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+    function _AddRef: Integer; {$ifdef WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+    function _Release: Integer; {$ifdef WINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
   public
     procedure BeforeDestruction; override;
     procedure AfterConstruction; override;
@@ -375,9 +377,9 @@ Type
     Procedure KeyDown(Var Key: Word; Shift: TShiftState); override;
     Procedure KeyPress(Var Key: Char); override;
     Procedure ClearKeys;
-    Procedure CNKeyDown(Var Message: TWMKeyDown); message CN_KeyDown;
-    Procedure WMGetDlgCode(Var Msg: TWMGetDlgCode); message WM_GETDLGCODE;
-    Procedure CNSysKeyDown(Var Message: TWMKeyDown); message CN_SysKeyDown;
+    Procedure CNKeyDown(Var Message: TLMKeyDown); message CN_KeyDown;
+    Procedure WMGetDlgCode(Var Msg: TLMessage); message LM_GETDLGCODE;
+    Procedure CNSysKeyDown(Var Message: TLMKeyDown); message CN_SysKeyDown;
     Procedure InvalidateWhenChanged(Sender: TObject);
   public
     property Canvas;
@@ -396,6 +398,8 @@ Type
   published
   end;
 
+  { TPSCCustomControl }
+
   TPSCCustomControl = Class(TPSCCustomControlAncestor)
   private
     FScrollBarsLocked: Boolean;
@@ -408,14 +412,15 @@ Type
     Procedure SetBorderStyle(Value: TBorderStyle);
   protected
     Function GetPopup: TPopupMenu;
+    function GetOwnPopup: TPopupMenu;
     Function HorzScrollVisible: boolean; virtual;
     Function VertScrollVisible: boolean; virtual;
 {$IFDEF MyRightToLeft}
     Function UseRightToLeftAlignment: Boolean;
 {$ENDIF}
 
-    Procedure WMVScroll(Var Message: TWMScroll); message WM_VSCROLL;
-    Procedure WMHScroll(Var Message: TWMScroll); message WM_HSCROLL;
+    Procedure WMVScroll(Var Message: TLMScroll); message LM_VSCROLL;
+    Procedure WMHScroll(Var Message: TLMScroll); message LM_HSCROLL;
     Procedure PerformHorzScroll(ScrollCode,ScrollPos: Integer); virtual;
     Procedure PerformVertScroll(ScrollCode,ScrollPos: Integer); virtual;
     Procedure UpdateScrollBars; virtual;
@@ -926,7 +931,7 @@ Function PSCDBFieldTypeToPSC(DataType: TFieldType): TPSCFieldType;
 function PSCCreateStreamAdapter(AStream:TStream;
   AOwnership:TPSCItemOwnership):IPSCStream;
 function PSCSupports(const Instance: IPSCInterface; const IID: TGUID; out Intf): Boolean;
-function PSCGetDateFormatted(ALocale: LCID; dwFlags: Cardinal;
+function PSCGetDateFormatted(ALocale: Integer; dwFlags: Cardinal;
   const ADate: TDateTime;const AFormat: String): String;
 function PSCGetLocaleStr(Locale, LocaleType: Integer; const Default: string): string;
 
@@ -960,10 +965,15 @@ function PSCRect(const ARect:TRect):TPSCRect;overload;
 
 Implementation
 
-{$R *.res}
+{$R psc_procs.rc}
 
 uses
-  psc_wrapper;
+  psc_wrapper
+  {$IFDEF WINDOWS}
+  ,
+  Windows
+  {$ENDIF}
+  ;
 
 {----------------------------------------------------------}
 
@@ -977,7 +987,7 @@ end;
 function PSCDrawEdge(const ACanvas:IPSCCanvas; var qrc: TPSCRect;
   edge: Cardinal; grfFlags: Cardinal): Boolean;
 begin
-  Result:=Windows.DrawEdge(PSCGetWindowsHandle(ACanvas),TRect(qrc),edge,grfFlags);
+  Result:=LCLIntf.DrawEdge(PSCGetWindowsHandle(ACanvas),TRect(qrc),edge,grfFlags);
 end;
 
 {-------------------------------------------------------------------------}
@@ -1007,22 +1017,22 @@ End;
 
 Function PSCGetClipRgn(Control: TControl; Canvas: TCanvas): TPSCRegion;
 Begin
-  Result := Windows.CreateRectRgnIndirect(Control.ClientRect);
-  Windows.GetClipRgn(Canvas.Handle,Result);
+  Result := LCLIntf.CreateRectRgnIndirect(Control.ClientRect);
+  LCLIntf.GetClipRgn(Canvas.Handle,Result);
 End;
 
 {------------------------------------------------------------------}
 
 Procedure PSCDeleteClipRgn(Rgn: TPSCRegion);
 Begin
-  Windows.DeleteObject(Rgn);
+  LCLIntf.DeleteObject(Rgn);
 End;
 
 {------------------------------------------------------------------}
 
 Procedure PSCSelectClipRgn(Canvas: TCanvas; Rgn: TPSCRegion);
 Begin
-  Windows.SelectClipRgn(Canvas.Handle,Rgn);
+  LCLIntf.SelectClipRgn(Canvas.Handle,Rgn);
 End;
 
 {---------------------------------------------------------}
@@ -1030,12 +1040,13 @@ End;
 function PSCDrawText(ACanvas:TCanvas;const AStr:String;ACount:Integer;
   var ARect: TRect; AFormat: Cardinal): Integer;
 begin
-  Result:=Windows.DrawText(ACanvas.Handle,PChar(AStr),ACount,TRect(ARect),AFormat);
+  Result:=LCLIntf.DrawText(ACanvas.Handle,PChar(AStr),ACount,TRect(ARect),AFormat);
 end;
 
 {-------------------------------------------------------------------------}
 
 function PSCGetLocaleStr(Locale, LocaleType: Integer; const Default: string): string;
+{$IFDEF WINDOWS}
 var
   L: Integer;
 begin
@@ -1046,14 +1057,17 @@ begin
       GetLocaleInfo(Locale, LocaleType, @Result[1], L);
     end
   else
+{$ELSE}
+begin
+{$ENDIF}
     Result := Default;
 end;
 
 {-------------------------------------------------------------------------}
 
-function PSCGetDateFormatted(ALocale: LCID; dwFlags: Cardinal;
+function PSCGetDateFormatted(ALocale: Integer; dwFlags: Cardinal;
   const ADate: TDateTime;const AFormat: String): String;
-var
+{var
   SystemTime: TSystemTime;
   L : integer;
 begin
@@ -1065,7 +1079,9 @@ begin
     SetLength(Result, L - 1);
     GetDateFormat(ALocale, dwFlags, @SystemTime,
      PChar(AFormat), @Result[1], L - 1);
-  end;
+  end;}
+begin
+  Result := FormatDateTime(AFormat, ADate);
 end;
 
 {------------------------------------------------------------------}
@@ -2038,7 +2054,7 @@ end;
 
 function PSCCreateNewGUID : TGUID;
 begin
-  CoCreateGuid(Result);
+  CreateGuid(Result);
 end;
 
 {-------------------------------------------------------------------------}
@@ -2113,7 +2129,7 @@ var
 begin
   Month:=PSCGetDateElement(Date,2);
   Day:=PSCGetDateElement(Date,3);
-  Result:=ShortMonthNames[Month]+IntToStr(Day);
+  Result:=DefaultFormatSettings.ShortMonthNames[Month]+IntToStr(Day);
 end;
 
 {-------------------------------------------------------------------------}
@@ -2580,18 +2596,18 @@ const
     DFCS_SCROLLLEFT, DFCS_SCROLLRIGHT);
   KindByEnabled: array[Boolean] of Integer = (DFCS_INACTIVE, 0);
 var
-  Bitmap: TBitmap;
+  Bitmap: graphics.TBitmap;
   IWidth, IHeight: Integer;
 begin
   IWidth  := ARect.Right - ARect.Left - 2;
   IHeight := ARect.Bottom - ARect.Top - 2;
-  Bitmap := TBitmap.Create;
+  Bitmap := graphics.TBitmap.Create;
   with Bitmap do
   try
     Width  := IWidth;
     Height := IHeight;
 
-    DrawFrameControl(Canvas.Handle, Rect(-1, -1, IWidth + 1, IHeight + 1),
+    DrawFrameControl(Canvas.Handle, classes.Rect(-1, -1, IWidth + 1, IHeight + 1),
       DFC_SCROLL, Kind[AArrowKind] or KindByEnabled[AEnabled] or
       DFCS_ADJUSTRECT or DFCS_FLAT or DFCS_TRANSPARENT);
     Transparent := True;
@@ -2712,12 +2728,12 @@ Procedure PSCFillRectExclude(Canvas: TCanvas; Const ARect,ExcludeRect: TRect);
 Begin
   With Canvas,ARect Do
     Begin
-      FillRect(Rect(Left,Top,Right,ExcludeRect.Top - 1));
-      FillRect(Rect(Left,ExcludeRect.Top - 1,
+      FillRect(classes.Rect(Left,Top,Right,ExcludeRect.Top - 1));
+      FillRect(classes.Rect(Left,ExcludeRect.Top - 1,
         ExcludeRect.Left - 1,ExcludeRect.Bottom + 1));
-      FillRect(Rect(ExcludeRect.Right + 1,ExcludeRect.Top - 1,
+      FillRect(classes.Rect(ExcludeRect.Right + 1,ExcludeRect.Top - 1,
         Right,ExcludeRect.Bottom + 1));
-      FillRect(Rect(Left,ExcludeRect.Bottom + 1,Right,Bottom))
+      FillRect(classes.Rect(Left,ExcludeRect.Bottom + 1,Right,Bottom))
     End
 End;
 
@@ -2912,6 +2928,7 @@ begin
       LOCALE_IFIRSTWEEKOFYEAR, '0')) + 1;
     If (I > 0) Or (I <= 3) Then
       I := 1;
+    i := 0;
     FLocaleFirstWeekOfYear := TPSCFirstWeekOfYear(I);
   end;
   Result:=FLocaleFirstWeekOfYear;
@@ -2937,10 +2954,10 @@ Var
 Begin
   Result := S;
   For i := 1 To 12 Do
-    If DoReplace(Result,LongMonthNames[i],i) Then
+    If DoReplace(Result,DefaultFormatSettings.LongMonthNames[i],i) Then
       exit;
   For i := 1 To 12 Do
-    If DoReplace(Result,ShortMonthNames[i],i) Then
+    If DoReplace(Result,DefaultFormatSettings.ShortMonthNames[i],i) Then
       exit;
 End;
 
@@ -3116,8 +3133,8 @@ end;
 
 procedure PSCRemoveSysExtraMonthFormat;
 begin
-  SysUtils.ShortDateFormat:=PSCRemoveExtraMonthFormat(
-    ShortDateFormat,True);
+  SysUtils.DefaultFormatSettings.ShortDateFormat:=PSCRemoveExtraMonthFormat(
+    DefaultFormatSettings.ShortDateFormat,True);
 end;
 
 {-------------------------------------------------------------------------}
@@ -3609,28 +3626,28 @@ End;
 
 Function PSCSysDTFormatToRec: TPSCDateTimeFormatRec;
 Begin
-  Result.ShortTimeFormat := SysUtils.ShortTimeFormat;
-  Result.ShortDateFormat := SysUtils.ShortDateFormat;
-  Result.LongDateFormat := SysUtils.LongDateFormat;
-  Result.LongTimeFormat := SysUtils.LongTimeFormat;
-  Result.DateSeparator := SysUtils.DateSeparator;
-  Result.TimeSeparator := SysUtils.TimeSeparator;
-  Result.TimeAMString := SysUtils.TimeAMString;
-  Result.TimePMString := SysUtils.TimePMString;
+  Result.ShortTimeFormat := SysUtils.DefaultFormatSettings.ShortTimeFormat;
+  Result.ShortDateFormat := SysUtils.DefaultFormatSettings.ShortDateFormat;
+  Result.LongDateFormat := SysUtils.DefaultFormatSettings.LongDateFormat;
+  Result.LongTimeFormat := SysUtils.DefaultFormatSettings.LongTimeFormat;
+  Result.DateSeparator := SysUtils.DefaultFormatSettings.DateSeparator;
+  Result.TimeSeparator := SysUtils.DefaultFormatSettings.TimeSeparator;
+  Result.TimeAMString := SysUtils.DefaultFormatSettings.TimeAMString;
+  Result.TimePMString := SysUtils.DefaultFormatSettings.TimePMString;
 End;
 
 {------------------------------}
 
 Procedure PSCRecToSysDTFormat(Const Rec: TPSCDateTimeFormatRec);
 Begin
-  SysUtils.ShortTimeFormat := Rec.ShortTimeFormat;
-  SysUtils.ShortDateFormat := Rec.ShortDateFormat;
-  SysUtils.LongDateFormat := Rec.LongDateFormat;
-  SysUtils.LongTimeFormat := Rec.LongTimeFormat;
-  SysUtils.DateSeparator := Rec.DateSeparator[1];
-  SysUtils.TimeSeparator := Rec.TimeSeparator[1];
-  SysUtils.TimeAMString := Rec.TimeAMString;
-  SysUtils.TimePMString := Rec.TimePMString;
+  SysUtils.DefaultFormatSettings.ShortTimeFormat := Rec.ShortTimeFormat;
+  SysUtils.DefaultFormatSettings.ShortDateFormat := Rec.ShortDateFormat;
+  SysUtils.DefaultFormatSettings.LongDateFormat := Rec.LongDateFormat;
+  SysUtils.DefaultFormatSettings.LongTimeFormat := Rec.LongTimeFormat;
+  SysUtils.DefaultFormatSettings.DateSeparator := Rec.DateSeparator[1];
+  SysUtils.DefaultFormatSettings.TimeSeparator := Rec.TimeSeparator[1];
+  SysUtils.DefaultFormatSettings.TimeAMString := Rec.TimeAMString;
+  SysUtils.DefaultFormatSettings.TimePMString := Rec.TimePMString;
 End;
 
 {------------------------------------------------------------------}
@@ -3763,8 +3780,8 @@ Var
 Function PSCSysDecimalSeparator: Char;
 Begin
   If FSysDecimalSeparator=#0 then
-    FSysDecimalSeparator := PSCGetLocaleStr(GetThreadLocale,LOCALE_SDECIMAL,'.')[1];
-
+    FSysDecimalSeparator := PSCGetLocaleStr(GetThreadLocale,LOCALE_SDECIMAL,
+      DefaultFormatSettings.DecimalSeparator)[1];
   Result := FSysDecimalSeparator;
 End;
 
@@ -3785,7 +3802,7 @@ End;
 
 Function PSCIsAltKeyDown: Boolean;
 Begin
-  Result := ((GetAsyncKeyState(VK_MENU) And $80000000) <> 0);
+  Result := ((GetKeyState(VK_MENU) And $80000000) <> 0);
 End;
 
 {--------------------------------------------}
@@ -3889,22 +3906,32 @@ End;
 {------------------------------------------------}
 
 Function PSCDialogUnitsToPixelsX(X: Integer): Integer;
+{$IFDEF WINDOWS}
 Var
   BaseUnitX: Integer;
 Begin
   BaseUnitX := GetDialogBaseUnits And $0000FFFF;
   Result := (X * BaseUnitX) Div 4;
+{$ELSE}
+begin
+  Result := X * 2;
+{$ENDIF}
 End;
 
 {------------------------------------------------}
 
 Function PSCDialogUnitsToPixelsY(Y: Integer): Integer;
+{$IFDEF WINDOWS}
 Var
   BaseUnitY: Integer;
 Begin
   BaseUnitY := (GetDialogBaseUnits And $FFFF0000) Shr 16;
   Result := (Y * BaseUnitY) Div 8;
-End;
+{$ELSE}
+begin
+  Result := Y * 2;
+{$ENDIF}
+end;
 
 {-------------------------------------------------------------------------}
 
@@ -4933,7 +4960,7 @@ End;
 procedure TPSCCustomControlAncestor.InvalidateRect(const R:TRect);
 begin
   If HandleAllocated then
-    Windows.InvalidateRect(Handle,@R,False);
+    LCLIntf.InvalidateRect(Handle,@R,False);
 end;
 
 {------------------------------------------------------------------}
@@ -4966,7 +4993,7 @@ end;
 
 {------------------------------------------------------------------}
 
-function TPSCIntfPersistent.QueryInterface(const IID: TGUID; out Obj): HResult;
+function TPSCIntfPersistent.QueryInterface(constref IID: TGUID; out Obj): LongInt;
 const
   E_NOINTERFACE = HResult($80004002);
 begin
@@ -5044,11 +5071,11 @@ End;
 
 {--------------------------------------------}
 
-Procedure TPSCCustomControlAncestor.WMGetDlgCode(Var Msg: TWMGetDlgCode);
+Procedure TPSCCustomControlAncestor.WMGetDlgCode(Var Msg: TLMessage);
 Begin
   With Msg Do
     Begin
-      Result := DLGC_WANTMESSAGE Or
+      Result := //DLGC_WANTMESSAGE Or
         DLGC_WANTALLKEYS Or
         DLGC_WANTARROWS Or
         DLGC_WANTCHARS;
@@ -5148,7 +5175,7 @@ End;
 
 {-------------------------------------------------------------}
 
-Constructor TPSCCustomControl.Create(AOwner: TComponent);
+constructor TPSCCustomControl.Create(AOwner: TComponent);
 Begin
   Inherited;
   FBorderStyle := bsSingle;
@@ -5156,7 +5183,7 @@ End;
 
 {-------------------------------------------------------------}
 
-Destructor TPSCCustomControl.Destroy;
+destructor TPSCCustomControl.Destroy;
 Begin
   FMergedPopup.Free;
   Inherited;
@@ -5164,7 +5191,7 @@ End;
 
 {--------------------------------------------}
 
-Procedure TPSCCustomControlAncestor.CNKeyDown(Var Message: TWMKeyDown);
+Procedure TPSCCustomControlAncestor.CNKeyDown(Var Message: TLMKeyDown);
 Begin
   If KeyState = 0 Then
     Inherited
@@ -5181,7 +5208,7 @@ End;
 
 {-------------------------------------------------------------}
 
-Procedure TPSCCustomControlAncestor.CNSysKeyDown(Var Message: TWMKeyDown);
+Procedure TPSCCustomControlAncestor.CNSysKeyDown(Var Message: TLMKeyDown);
 Begin
   With Message Do
     Begin
@@ -5209,7 +5236,7 @@ Begin
     Begin
 
       If C = SkipC Then
-        result := TMControl(c).PopupMenu
+        result := TPSCCustomControl(c).GetOwnPopup
       Else
         result := TMControl(c).GetPopupMenu;
 
@@ -5345,13 +5372,14 @@ End;
 
 {--------------------------------------------}
 
-Function TPSCCustomControl.GetPopup: TPopupMenu;
+function TPSCCustomControl.GetPopup: TPopupMenu;
 Begin
   Result := PSCGetControlPopupMenuEx(Self,Self);
 
   If (FDefaultPopup <> Nil) And (ShowDefaultPopup Or MergePopupMenus) Then
     Begin
-      FMergedPopup.Free;
+      if Assigned(FMergedPopup) then
+        FMergedPopup.Free;
       FMergedPopup:=nil;
 
       If Assigned(FDefaultPopup.OnPopup) Then
@@ -5375,9 +5403,14 @@ Begin
     End;
 End;
 
+function TPSCCustomControl.GetOwnPopup: TPopupMenu;
+begin
+  Result := inherited GetPopupMenu;
+end;
+
 {--------------------------------------------}
 
-Procedure TPSCCustomControl.ShowPopup(X,Y: integer);
+procedure TPSCCustomControl.ShowPopup(X, Y: integer);
 Var
   FMenu: TPopupMenu;
   P: TPoint;
@@ -5388,7 +5421,7 @@ Begin
     exit;
 
   FMenu.PopupComponent := Self;
-  P := ClientToScreen(Point(X,Y));
+  P := ClientToScreen(classes.Point(X,Y));
   FMenu.Popup(P.X,P.Y);
 End;
 
@@ -5427,64 +5460,65 @@ End;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCustomControl.SetBorderStyle(Value: TBorderStyle);
+procedure TPSCCustomControl.SetBorderStyle(Value: TBorderStyle);
 Begin
   If FBorderStyle <> Value Then
     Begin
       FBorderStyle := Value;
-      RecreateWnd;
+      RecreateWnd(Self);
     End;
 End;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCustomControl.SetScrollSize(Code,MinPos,MaxPos,PageSize: Integer);
+procedure TPSCCustomControl.SetScrollSize(Code, MinPos, MaxPos,
+  PageSize: Integer);
 Begin
   PSCSetScrollSize(Handle,Code,MinPos,MaxPos,PageSize);
 End;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCustomControl.SetScrollPos(Code,Value: Integer);
+procedure TPSCCustomControl.SetScrollPos(Code, Value: Integer);
 Begin
   PSCSetScrollPos(Handle,Code,Value);
 End;
 
 {------------------------------------------------------------------}
 
-Function TPSCCustomControl.HorzScrollVisible: boolean;
+function TPSCCustomControl.HorzScrollVisible: boolean;
 Begin
   Result := False;
 End;
 
 {------------------------------------------------------------------}
 
-Function TPSCCustomControl.VertScrollVisible: boolean;
+function TPSCCustomControl.VertScrollVisible: boolean;
 Begin
   Result := False;
 End;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCustomControl.UpdateScrollBars;
+procedure TPSCCustomControl.UpdateScrollBars;
 Begin
 End;
 
 {--------------------------------------}
 
-Procedure TPSCCustomControl.PerformHorzScroll(ScrollCode,ScrollPos: Integer);
+procedure TPSCCustomControl.PerformHorzScroll(ScrollCode, ScrollPos: Integer);
 Begin
 End;
 
 {--------------------------------------}
 
-Procedure TPSCCustomControl.PerformVertScroll(ScrollCode,ScrollPos: Integer);
+procedure TPSCCustomControl.PerformVertScroll(ScrollCode, ScrollPos: Integer);
 Begin
 End;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCustomControl.WMVScroll(Var Message: TWMScroll);
+procedure TPSCCustomControl.WMVScroll(var Message: TLMScroll);
 Begin
   If Not ScrollBarsLocked Then
     Begin
@@ -5495,7 +5529,7 @@ End;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCustomControl.WMHScroll(Var Message: TWMScroll);
+procedure TPSCCustomControl.WMHScroll(var Message: TLMScroll);
 Begin
   If Not ScrollBarsLocked Then
     Begin
@@ -6152,7 +6186,7 @@ Begin
       exit;
     end;
 
-  Result := PSCGetLocaleStr(ACountryID,LOCALE_SCOUNTRY,'');
+  Result := PSCGetLocaleStr(ACountryID,LOCALE_SCOUNTRY,'$' + IntToHex(ACountryID, 8));
   Mytemp.S:=Result;
   FCountryIDToName.Add(MyTemp);
 End;
@@ -6783,6 +6817,8 @@ type
     constructor Create(AFont : TPSCGetFont);
   end;
 
+  { TPSCCanvasAdapter }
+
   TPSCCanvasAdapter = class(TInterfacedObject,IPSCCanvas,IPSCWin32Handle,IPSCVCLCanvas)
   private
     FBrush : IPSCBrush;
@@ -6801,7 +6837,8 @@ type
     function GetBrush: IPSCBrush;
     function GetFont: IPSCFont;
     function GetPen: IPSCPen;
-    function GetTextFlags : integer;
+    //function GetTextFlags : integer;
+    function GetTextStyle: TTextStyle;
 
     Procedure ExcludeClipRect(X1,Y1,X2,Y2: Integer);
 
@@ -6823,7 +6860,8 @@ type
     procedure RoundRect(X1, Y1, X2, Y2, X3, Y3: Integer);
     procedure TextOut(X, Y: Integer; const AText: WideString);
     procedure TextRect(const ARect: TPSCRect; X, Y: Integer; const AText: WideString);
-    procedure SetTextFlags(AValue : integer);
+    //procedure SetTextFlags(AValue : integer);
+    procedure SetTextStyle(AValue: TTextStyle);
     procedure SetBrush(const AValue:IPSCBrush);
     procedure SetPen(const AValue:IPSCPen);
     procedure SetFont(const AValue:IPSCFont);
@@ -7022,9 +7060,9 @@ end;
 
 {------------------------------------------------------------------}
 
-Procedure TPSCCanvasAdapter.ExcludeClipRect(X1,Y1,X2,Y2: Integer);
+procedure TPSCCanvasAdapter.ExcludeClipRect(X1, Y1, X2, Y2: Integer);
 Begin
-  Windows.ExcludeClipRect(FGetCanvas.Handle,X1,Y1,X2,Y2);
+  LCLIntf.ExcludeClipRect(FGetCanvas.Handle,X1,Y1,X2,Y2);
 End;
 
 {------------------------------------------------------------------------------}
@@ -7102,10 +7140,17 @@ begin
 end;
 
 {------------------------------------------------------------------------------}
-
+(*
 function TPSCCanvasAdapter.GetTextFlags: integer;
 begin
   result := FGetCanvas.TextFlags;
+end;
+*)
+{------------------------------------------------------------------------------}
+
+function TPSCCanvasAdapter.GetTextStyle: TTextStyle;
+begin
+  result := FGetCanvas.TextStyle;
 end;
 
 {------------------------------------------------------------------------------}
@@ -7202,9 +7247,9 @@ end;
 
 {------------------------------------------------------------------------------}
 
-procedure TPSCCanvasAdapter.SetTextFlags(AValue: integer);
+procedure TPSCCanvasAdapter.SetTextStyle(AValue: TTextStyle);
 begin
-  FGetCanvas.TextFlags := AValue;
+  FGetCanvas.TextStyle := AValue;
 end;
 
 {------------------------------------------------------------------------------}
@@ -7375,7 +7420,17 @@ end;
 
 function TPSCFontAdapter.GetStyle: TPSCFontStyles;
 begin
-  result := TPSCFontStyles(FGetFont.Style);
+  Result := [];
+  if fsBold in FGetFont.Style then
+    Result := Result + [FS_Bold];
+  if fsItalic in FGetFont.Style then
+    Result := Result + [FS_Italic];
+  if fsUnderline in FGetFont.Style then
+    Result := Result + [FS_Underline];
+  if fsStrikeOut in FGetFont.Style then
+    Result := Result + [FS_StrikeOut];
+
+  //result := TPSCFontStyles(FGetFont.Style);
 end;
 
 {------------------------------------------------------------------------------}
@@ -7402,8 +7457,20 @@ end;
 {------------------------------------------------------------------------------}
 
 procedure TPSCFontAdapter.SetStyle(Value: TPSCFontStyles);
+var
+  fs: TFontStyles;
 begin
-  FGetFont.Style := TFontStyles(Value);
+  //FGetFont.Style := TFontStyles(Value);
+  fs := [];
+  if FS_Bold in Value then
+    fs := fs + [fsBold];
+  if FS_Italic in Value then
+    fs := fs + [fsItalic];
+  if FS_Underline in Value then
+    fs := fs + [fsUnderline];
+  if FS_StrikeOut in Value then
+    fs := fs + [fsStrikeOut];
+  FGetFont.Style := fs;
 end;
 
 {-------------------------------------------------------------------------}
@@ -7538,9 +7605,19 @@ End;
 
 {------------------------------------------------------------------}
 
+function PSCColorToIdent(Color: Longint; var Ident: String): Boolean;
+begin
+  Result := ColorToIdent(Color, Ident);
+end;
+
+function PSCIdentToColor(const Ident: string; var Color: Longint): Boolean;
+begin
+  Result := IdentToColor(Ident, Color);
+end;
+
 initialization
   PSCSetExternalProcs(TPSCExternalProcs.Create);
-  RegisterIntegerConsts(TypeInfo(TPSCColor), IdentToColor, ColorToIdent);
+  RegisterIntegerConsts(TypeInfo(TPSCColor), PSCIdentToColor, PSCColorToIdent);
 End.
 
 
