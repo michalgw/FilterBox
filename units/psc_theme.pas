@@ -25,11 +25,15 @@ interface
 
 uses
   SyncObjs,
-  Windows,
+  Themes,
+  TmSchema,
   classes,
-  Messages,
+  LMessages,
+  LCLType,
+  LCLIntf,
   Forms,
   Graphics,
+  Types,
 
   myla_system,
   myla_interfaces,
@@ -67,7 +71,7 @@ type
       APart: Integer;
       AState: Integer;
       const ARect: TPSCRect;
-      const ACaption: WideString;
+      const ACaption: String;
       AFlags: Integer
       );virtual;abstract;
     procedure GetThemeIntData(
@@ -149,7 +153,7 @@ type
       APart: Integer;
       AState: Integer;
       const ARect: TPSCRect;
-      const ACaption: WideString;
+      const ACaption: String;
       AFlags: Integer
       );override;
     procedure GetThemeIntData(
@@ -196,7 +200,7 @@ type
     FPressedBkColor: TPSCColor;
     FDisabledBorderColor: TPSCColor;
     FDrawProcs: array[TPSCThemeClass] of TPSCDrawThemeClass;
-    function ProcessMsg(var Message: TMessage): Boolean;
+    function ProcessMsg(var Message: TLMessage): Boolean;
     procedure SetContrast(var AColor1: TPSCColor; AColor2: TPSCColor; Threshold: Integer);
     procedure AdjustColors;
     procedure GetBtnColor(
@@ -248,7 +252,7 @@ type
       APart: Integer;
       AState: Integer;
       const ARect: TPSCRect;
-      const ACaption: WideString;
+      const ACaption: String;
       AFlags: Integer
       );override;
 
@@ -275,9 +279,9 @@ type
 
   end;
 
-  TPSCOpenThemeData = function(
+  {TPSCOpenThemeData = function(
     hwnd: HWND;
-    pszClassList: LPCWSTR
+    pszClassList: PChar
     ): THandle; stdcall;
 
   TPSCCloseThemeData = function(
@@ -286,8 +290,8 @@ type
 
   TPSCSetWindowTheme = function(
     hwnd: HWND;
-    pszSubAppName: LPCWSTR;
-    pszSubIdList: LPCWSTR
+    pszSubAppName: PChar;
+    pszSubIdList: PChar
     ): HRESULT; stdcall;
 
   TPSCDrawThemeBackground = function(
@@ -302,7 +306,7 @@ type
     hTheme: THandle;
     hdc: HDC;
     iPartId, iStateId: Integer;
-    pszText: LPCWSTR;
+    pszText: PChar;
     iCharCount: Integer;
     dwTextFlags, dwTextFlags2: DWORD;
     const pRect: TPSCRect
@@ -341,16 +345,18 @@ type
     hTheme: THandle;
     iPartId, iStateId, iPropId: Integer;
     var pColor: COLORREF
-    ): HRESULT; stdcall;
+    ): HRESULT; stdcall;}
 
   TPSCIsThemeActive = function: Bool; stdcall;
+
+  { TPSCThemeLibWindowsXP }
 
   TPSCThemeLibWindowsXP = class(TPSCCustomTheme, IPSCThemeLib)
   private
     FTheme3d:IPSCThemeLib;
-    FThemeLib: THandle;
-    FLock: TCriticalSection;
-    FThemeLibObjects: array[TPSCThemeClass] of THandle;
+    //FThemeLib: THandle;
+    //FLock: SyncObjs.TCriticalSection;
+   { FThemeLibObjects: array[TPSCThemeClass] of THandle;
 
     _OpenThemeData: TPSCOpenThemeData;
     _CloseThemeData: TPSCCloseThemeData;
@@ -363,13 +369,14 @@ type
     _GetThemeInt: TPSCGetThemeInt;
     _GetThemeBool: TPSCGetThemeBool;
     _GetThemeColor: TPSCGetThemeColor;
-    _IsThemeActive: TPSCIsThemeActive;
+    _IsThemeActive: TPSCIsThemeActive;}
 
-    function ProcessMsg(var Message: TMessage): Boolean;
-    procedure RefreshThemeData;
+    //function ProcessMsg(var Message: TLMessage): Boolean;
+    {procedure RefreshThemeData;
     function InitThemeLib: Boolean;
     procedure FreeThemeLib;
-    function GetThemeObject(AClass: TPSCThemeClass): THandle;
+    function GetThemeObject(AClass: TPSCThemeClass): THandle;}
+    function GetThemeDetail(AClass: TPSCThemeClass; APart, AState: Integer): TThemedElementDetails;
   public
     procedure DrawThemeBackground(
       AClass: TPSCThemeClass;
@@ -384,7 +391,7 @@ type
       APart: Integer;
       AState: Integer;
       const ARect: TPSCRect;
-      const ACaption: WideString;
+      const ACaption: String;
       AFlags: Integer
       );override;
 
@@ -435,7 +442,7 @@ implementation
 const
   WM_THEMECHANGED = $031A;
 
-  PSCThemeClassesNames: array[TPSCThemeClass] of WideString  = (
+  PSCThemeClassesNames: array[TPSCThemeClass] of String  = (
     'window', 'button', 'rebar', 'toolbar',
     'status', 'listview', 'header', 'progress',
     'tab', 'trackbar', 'tooltip', 'treeview',
@@ -457,9 +464,9 @@ var
 constructor TPSCThemeLibWindowsXP.Create;
 begin
   inherited Create;
-  FLock := TCriticalSection.Create;
-  InitThemeLib;
-  Application.HookMainWindow(ProcessMsg);
+  //FLock := SyncObjs.TCriticalSection.Create;
+  //InitThemeLib;
+  //Application.HookMainWindow(ProcessMsg);
   FTheme3d:=PSCCreateTheme_3D(0);
 end;
 
@@ -469,30 +476,64 @@ destructor TPSCThemeLibWindowsXP.Destroy;
 var
   MyIndex: TPSCThemeClass;
 begin
-  Application.UnhookMainWindow(ProcessMsg);
-  for MyIndex:= Low(TPSCThemeClass) to High(TPSCThemeClass) do
+  //Application.UnhookMainWindow(ProcessMsg);
+  {for MyIndex:= Low(TPSCThemeClass) to High(TPSCThemeClass) do
     if(FThemeLibObjects[MyIndex] <> 0)then
       _CloseThemeData(FThemeLibObjects[MyIndex]);
-  FreeThemeLib;
-  FLock.Free;
+  FreeThemeLib;}
+  //FLock.Free;
   inherited;
 end;
 
 {-----------------------------------------}
 
+function TPSCThemeLibWindowsXP.GetThemeDetail(AClass: TPSCThemeClass; APart,
+  AState: Integer): TThemedElementDetails;
+begin
+  FillByte(Result, SizeOf(Result), 0);
+  case AClass of
+    tcEdit:
+    case APart of
+      EDIT_PART_EDITTEXT: case AState of
+        EDIT_STATE_FOCUSED: Result := ThemeServices.GetElementDetails(teEditTextFocused);
+        EDIT_STATE_HOT: Result := ThemeServices.GetElementDetails(teEditTextHot);
+        EDIT_STATE_DISABLED: Result := ThemeServices.GetElementDetails(teEditTextDisabled);
+        else Result := ThemeServices.GetElementDetails(teEditTextNormal);
+      end;
+    end;
+    tcComboBox:
+    case APart of
+      COMBOBOX_PART_DROPDOWNBUTTON: case AState of
+        PUSHBUTTON_STATE_PRESSED: Result := ThemeServices.GetElementDetails(tcDropDownButtonPressed);
+        PUSHBUTTON_STATE_HOT: Result := ThemeServices.GetElementDetails(tcDropDownButtonHot);
+        PUSHBUTTON_STATE_DISABLED: Result := ThemeServices.GetElementDetails(tcDropDownButtonDisabled);
+        else Result := ThemeServices.GetElementDetails(tcDropDownButtonNormal);
+      end;
+    end;
+    tcSpin:
+    case APart of
+      SPIN_PART_UP: case AState of
+        PUSHBUTTON_STATE_PRESSED: Result := ThemeServices.GetElementDetails(tsUpPressed);
+        PUSHBUTTON_STATE_HOT: Result := ThemeServices.GetElementDetails(tsUpHot);
+        PUSHBUTTON_STATE_DISABLED: Result := ThemeServices.GetElementDetails(tsUpDisabled);
+        else Result := ThemeServices.GetElementDetails(tsUpNormal);
+      end;
+      SPIN_PART_DOWN: case AState of
+        PUSHBUTTON_STATE_PRESSED: Result := ThemeServices.GetElementDetails(tsDownPressed);
+        PUSHBUTTON_STATE_HOT: Result := ThemeServices.GetElementDetails(tsDownHot);
+        PUSHBUTTON_STATE_DISABLED: Result := ThemeServices.GetElementDetails(tsDownDisabled);
+        else Result := ThemeServices.GetElementDetails(tsDownNormal);
+      end;
+    end;
+  end;
+end;
+
 procedure TPSCThemeLibWindowsXP.DrawThemeBackground(AClass: TPSCThemeClass;
   const ACanvas: IPSCCanvas; APart: Integer; AState: Integer;
   const ARect: TPSCRect);
 begin
-  If (not _IsThemeActive) or (_DrawThemeBackground(
-    GetThemeObject(AClass),
-    PSCGetWindowsHandle(ACanvas),
-    APart,
-    AState,
-    ARect,
-    Nil)<>S_OK)
-  then
-    FTheme3d.DrawThemeBackground(AClass,ACanvas,APart,AState,ARect);
+  ThemeServices.DrawElement(PSCGetWindowsHandle(ACanvas),
+    GetThemeDetail(AClass, APart, AState), TRect(ARect));
 end;
 
 {-----------------------------------------}
@@ -500,26 +541,15 @@ end;
 procedure TPSCThemeLibWindowsXP.DrawThemeText(AClass: TPSCThemeClass;
   const ACanvas: IPSCCanvas;
   APart: Integer; AState: Integer; const ARect: TPSCRect;
-  const ACaption: WideString; AFlags: Integer);
+  const ACaption: String; AFlags: Integer);
 begin
-  If (not _IsThemeActive) or
-    (_DrawThemeText(
-    GetThemeObject(AClass),
-    PSCGetWindowsHandle(ACanvas),
-    APart,
-    AState,
-    PWideChar(ACaption),
-    Length(ACaption),
-    AFlags,
-    0,
-    ARect)<>S_OK)
-  then
-    FTheme3d.DrawThemeText(AClass,ACanvas,APart,AState,ARect,ACaption,AFlags);
+  ThemeServices.DrawText(PSCGetWindowsHandle(ACanvas),
+    GetThemeDetail(AClass, APart, AState), ACaption, TRect(ARect), AFlags, 0);
 end;
 
 {-----------------------------------------}
 
-procedure TPSCThemeLibWindowsXP.FreeThemeLib;
+{procedure TPSCThemeLibWindowsXP.FreeThemeLib;
 begin
   FLock.Enter;
   try
@@ -542,12 +572,12 @@ begin
   finally
     FLock.Leave;
   end;
-end;
+end;}
 
 {------------------------}
 
 function TPSCThemeLibWindowsXP.GetThemeBoolData(AClass: TPSCThemeClass; APart,
-  AState, APropID: Integer): LongBool;
+  AState: Integer; APropID: Integer): LongBool;
 begin
   if (APropID>TMT_PSCINTERNAL) and (APropID<TMT_PSCINTERNAL_MAX) then
     case APropID of
@@ -563,22 +593,41 @@ begin
       Result:=False;
     end
   else
-    If (not _IsThemeActive) or
+    {If (not _IsThemeActive) or
       (_GetThemeBool(GetThemeObject(AClass), APart, AState, APropID, Result)<>S_OK)
-    then
+    then}
       Result:=FTheme3d.GetThemeBoolData(AClass,APart,AState, APropID);
 end;
 
 {------------------------}
 
-function TPSCThemeLibWindowsXP.GetThemeColorData(AClass: TPSCThemeClass;
-  APart, AState, APropID: Integer): TPSCColor;
+function TPSCThemeLibWindowsXP.GetThemeColorData(AClass: TPSCThemeClass; APart,
+  AState: Integer; APropID: Integer): TPSCColor;
 begin
-  If (not _IsThemeActive) or
-    (_GetThemeColor(GetThemeObject(AClass), APart, AState, APropID,
-    Cardinal(Result))<>S_OK)
-  then
-    Result:=FTheme3d.GetThemeColorData(AClass,APart, AState, APropID);
+  Result:= 0;
+  case APropID of
+    TMT_FILLCOLOR:
+      begin
+        if(AClass = tcEdit)then
+          if(AState = EDIT_STATE_DISABLED)then
+            Result:= clPSCWindow
+          else
+            Result:= clPSCWindow;
+      end;
+    TMT_TEXTCOLOR:
+      begin
+        if(AClass = tcEdit)then
+          if(AState = EDIT_STATE_DISABLED)then
+            Result:= clPSCGrayText
+          else
+            Result:= clPSCWindowText;
+      end;
+    TMT_BORDERCOLOR:
+      begin
+        if(AClass = tcEdit)then
+          Result:= clPSCBtnFace;
+      end
+  end;
 end;
 
 {------------------------}
@@ -590,24 +639,24 @@ procedure TPSCThemeLibWindowsXP.GetThemeIntData(
       var AValue: Integer
       );
 begin
-  If (not _IsThemeActive) or
+  {If (not _IsThemeActive) or
     (_GetThemeInt(GetThemeObject(AClass), APart, AState, APropID, AValue)<>S_OK)
-  then
+  then}
     FTheme3d.GetThemeIntData(AClass,APart, AState,APropID,AValue);
 end;
 
 {------------------------}
 
-function TPSCThemeLibWindowsXP.GetThemeObject(AClass: TPSCThemeClass): THandle;
+{function TPSCThemeLibWindowsXP.GetThemeObject(AClass: TPSCThemeClass): THandle;
 begin
   if(FThemeLibObjects[AClass]=0)then
     FThemeLibObjects[AClass]:= _OpenThemeData(0, PWideChar(PSCThemeClassesNames[AClass]));
   Result:= FThemeLibObjects[AClass];
-end;
+end;}
 
 {------------------------}
 
-function TPSCThemeLibWindowsXp.InitThemeLib: Boolean;
+{function TPSCThemeLibWindowsXp.InitThemeLib: Boolean;
 begin
   FLock.Enter;
   try
@@ -631,20 +680,20 @@ begin
   finally
     FLock.Leave;
   end;
-end;
+end;}
 
 {------------------------}
 
 function PSCCreateTheme_WindowsXP(AUserData:Cardinal): IPSCThemeLib;
 begin
-  If PSCWindowsXPOrHigher then
-  begin
+  {If PSCWindowsXPOrHigher then
+  begin}
     if(GlobalThemeLib=Nil)then
       GlobalThemeLib:= TPSCThemeLibWindowsXp.Create;
     Result:= GlobalThemeLib;
-  end
+{  end
   else
-    Result:= PSCCreateTheme_3D(0);
+    Result:= PSCCreateTheme_3D(0);}
 end;
 
 {------------------------}
@@ -676,17 +725,17 @@ begin
 end;
 
 {------------------------}
-
-function TPSCThemeLibWindowsXP.ProcessMsg(var Message: TMessage): Boolean;
+{
+function TPSCThemeLibWindowsXP.ProcessMsg(var Message: TLMessage): Boolean;
 begin
-  if(Message.Msg = WM_THEMECHANGED)then
+  if(Message.Msg = CM_THEMECHANGED)then
     RefreshThemeData;
   Result:= False;
 end;
-
+}
 {------------------------}
 
-procedure TPSCThemeLibWindowsXP.RefreshThemeData;
+{procedure TPSCThemeLibWindowsXP.RefreshThemeData;
 var
   MyIndex: TPSCThemeClass;
 begin
@@ -696,7 +745,7 @@ begin
       _CloseThemeData(FThemeLibObjects[MyIndex]);
       FThemeLibObjects[MyIndex]:= _OpenThemeData(0, PWideChar(PSCThemeClassesNames[MyIndex]));
     end;
-end;
+end;}
 
 {------------------------}
 
@@ -714,14 +763,14 @@ begin
   FDrawProcs[tcSpin]:= DrawSpin;
   FDrawProcs[tcComboBox]:= DrawComboBox;
   AdjustColors;
-  Application.HookMainWindow(ProcessMsg);
+  //Application.HookMainWindow(ProcessMsg);
 end;
 
 {------------------------}
 
 destructor TPSCThemeLibWordXP.Destroy;
 begin
-  Application.UnhookMainWindow(ProcessMsg);
+  //Application.UnhookMainWindow(ProcessMsg);
   inherited;
 end;
 
@@ -900,7 +949,7 @@ end;
 
 procedure TPSCThemeLibWordXP.DrawThemeText(AClass: TPSCThemeClass;
   const ACanvas: IPSCCanvas; APart, AState: Integer; const ARect: TPSCRect;
-  const ACaption: WideString; AFlags: Integer);
+  const ACaption: String; AFlags: Integer);
 begin
 
 end;
@@ -943,9 +992,9 @@ end;
 
 {------------------------}
 
-function TPSCThemeLibWordXP.ProcessMsg(var Message: TMessage): Boolean;
+function TPSCThemeLibWordXP.ProcessMsg(var Message: TLMessage): Boolean;
 begin
-  if(Message.Msg = WM_SYSCOLORCHANGE)then
+  if(Message.Msg = CM_SYSCOLORCHANGE)then
     AdjustColors;
   Result:= False;
 end;
@@ -1274,7 +1323,7 @@ end;
 
 procedure TPSCThemeLib3d.DrawThemeText(AClass: TPSCThemeClass;
   const ACanvas: IPSCCanvas; APart, AState: Integer; const ARect: TPSCRect;
-  const ACaption: WideString; AFlags: Integer);
+  const ACaption: String; AFlags: Integer);
 begin
 
 end;

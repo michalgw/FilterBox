@@ -25,7 +25,7 @@ interface
 
 uses
   psc_const,
-
+  Graphics,
   myla_interfaces;
 
 const
@@ -66,42 +66,42 @@ const
   PSC_COLOR_3DHILIGHT = PSC_COLOR_BTNHIGHLIGHT;
   PSC_COLOR_BTNHILIGHT = PSC_COLOR_BTNHIGHLIGHT;
 
-{$IFDEF D7}
-  clPSCSystemColor = $FF000000;
-{$ELSE}
+//{$IFDEF D7}
+  //clPSCSystemColor = $FF000000;
+//{$ELSE}
   clPSCSystemColor = $80000000;
-{$ENDIF}
+//{$ENDIF}
 
-  clPSCScrollBar = TPSCColor(clPSCSystemColor or PSC_COLOR_SCROLLBAR);
-  clPSCBackground = TPSCColor(clPSCSystemColor or PSC_COLOR_BACKGROUND);
-  clPSCActiveCaption = TPSCColor(clPSCSystemColor or PSC_COLOR_ACTIVECAPTION);
-  clPSCInactiveCaption = TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVECAPTION);
-  clPSCMenu = TPSCColor(clPSCSystemColor or PSC_COLOR_MENU);
-  clPSCWindow = TPSCColor(clPSCSystemColor or PSC_COLOR_WINDOW);
-  clPSCWindowFrame = TPSCColor(clPSCSystemColor or PSC_COLOR_WINDOWFRAME);
-  clPSCMenuText = TPSCColor(clPSCSystemColor or PSC_COLOR_MENUTEXT);
-  clPSCWindowText = TPSCColor(clPSCSystemColor or PSC_COLOR_WINDOWTEXT);
-  clPSCCaptionText = TPSCColor(clPSCSystemColor or PSC_COLOR_CAPTIONTEXT);
-  clPSCActiveBorder = TPSCColor(clPSCSystemColor or PSC_COLOR_ACTIVEBORDER);
-  clPSCInactiveBorder = TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVEBORDER);
-  clPSCAppWorkSpace = TPSCColor(clPSCSystemColor or PSC_COLOR_APPWORKSPACE);
-  clPSCHighlight = TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHT);
-  clPSCHighlightText = TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHTTEXT);
-  clPSCBtnFace = TPSCColor(clPSCSystemColor or PSC_COLOR_BTNFACE);
-  clPSCBtnShadow = TPSCColor(clPSCSystemColor or PSC_COLOR_BTNSHADOW);
-  clPSCGrayText = TPSCColor(clPSCSystemColor or PSC_COLOR_GRAYTEXT);
-  clPSCBtnText = TPSCColor(clPSCSystemColor or PSC_COLOR_BTNTEXT);
-  clPSCInactiveCaptionText = TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVECAPTIONTEXT);
-  clPSCBtnHighlight = TPSCColor(clPSCSystemColor or PSC_COLOR_BTNHIGHLIGHT);
-  clPSC3DDkShadow = TPSCColor(clPSCSystemColor or PSC_COLOR_3DDKSHADOW);
-  clPSC3DLight = TPSCColor(clPSCSystemColor or PSC_COLOR_3DLIGHT);
-  clPSCInfoText = TPSCColor(clPSCSystemColor or PSC_COLOR_INFOTEXT);
-  clPSCInfoBk = TPSCColor(clPSCSystemColor or PSC_COLOR_INFOBK);
-  clPSCHotLight = TPSCColor(clPSCSystemColor or PSC_COLOR_HOTLIGHT);
-  clPSCGradientActiveCaption = TPSCColor(clPSCSystemColor or PSC_COLOR_GRADIENTACTIVECAPTION);
-  clPSCGradientInactiveCaption = TPSCColor(clPSCSystemColor or PSC_COLOR_GRADIENTINACTIVECAPTION);
-  clPSCMenuHighlight = TPSCColor(clPSCSystemColor or PSC_COLOR_MENUHILIGHT);
-  clPSCMenuBar = TPSCColor(clPSCSystemColor or PSC_COLOR_MENUBAR);
+  clPSCScrollBar = clScrollBar;//TPSCColor(clPSCSystemColor or PSC_COLOR_SCROLLBAR);
+  clPSCBackground = clBackground;// TPSCColor(clPSCSystemColor or PSC_COLOR_BACKGROUND);
+  clPSCActiveCaption = clActiveCaption;// TPSCColor(clPSCSystemColor or PSC_COLOR_ACTIVECAPTION);
+  clPSCInactiveCaption = clInactiveCaption;// TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVECAPTION);
+  clPSCMenu = clMenu;// TPSCColor(clPSCSystemColor or PSC_COLOR_MENU);
+  clPSCWindow = clWindow;// TPSCColor(clPSCSystemColor or PSC_COLOR_WINDOW);
+  clPSCWindowFrame = clWindowFrame;// TPSCColor(clPSCSystemColor or PSC_COLOR_WINDOWFRAME);
+  clPSCMenuText = clMenuText;// TPSCColor(clPSCSystemColor or PSC_COLOR_MENUTEXT);
+  clPSCWindowText = clWindowText;// TPSCColor(clPSCSystemColor or PSC_COLOR_WINDOWTEXT);
+  clPSCCaptionText = clCaptionText;// TPSCColor(clPSCSystemColor or PSC_COLOR_CAPTIONTEXT);
+  clPSCActiveBorder = clActiveBorder;// TPSCColor(clPSCSystemColor or PSC_COLOR_ACTIVEBORDER);
+  clPSCInactiveBorder = clInactiveBorder;// TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVEBORDER);
+  clPSCAppWorkSpace = clAppWorkspace;// TPSCColor(clPSCSystemColor or PSC_COLOR_APPWORKSPACE);
+  clPSCHighlight = clHighlight;// TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHT);
+  clPSCHighlightText = clHighlightedText;// TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHTTEXT);
+  clPSCBtnFace = clBtnFace;// TPSCColor(clPSCSystemColor or PSC_COLOR_BTNFACE);
+  clPSCBtnShadow = clBtnShadow;// TPSCColor(clPSCSystemColor or PSC_COLOR_BTNSHADOW);
+  clPSCGrayText = clGrayText;// TPSCColor(clPSCSystemColor or PSC_COLOR_GRAYTEXT);
+  clPSCBtnText = clBtnText;// TPSCColor(clPSCSystemColor or PSC_COLOR_BTNTEXT);
+  clPSCInactiveCaptionText = clInactiveCaptionText;// TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVECAPTIONTEXT);
+  clPSCBtnHighlight = clBtnHighlight;// TPSCColor(clPSCSystemColor or PSC_COLOR_BTNHIGHLIGHT);
+  clPSC3DDkShadow = cl3DDkShadow;// TPSCColor(clPSCSystemColor or PSC_COLOR_3DDKSHADOW);
+  clPSC3DLight = cl3DLight;// TPSCColor(clPSCSystemColor or PSC_COLOR_3DLIGHT);
+  clPSCInfoText = clInfoText;// TPSCColor(clPSCSystemColor or PSC_COLOR_INFOTEXT);
+  clPSCInfoBk = clInfoBk;// TPSCColor(clPSCSystemColor or PSC_COLOR_INFOBK);
+  clPSCHotLight = clHotLight;// TPSCColor(clPSCSystemColor or PSC_COLOR_HOTLIGHT);
+  clPSCGradientActiveCaption = clGradientActiveCaption;// TPSCColor(clPSCSystemColor or PSC_COLOR_GRADIENTACTIVECAPTION);
+  clPSCGradientInactiveCaption = clGradientInactiveCaption;// TPSCColor(clPSCSystemColor or PSC_COLOR_GRADIENTINACTIVECAPTION);
+  clPSCMenuHighlight = clMenuHighlight;// TPSCColor(clPSCSystemColor or PSC_COLOR_MENUHILIGHT);
+  clPSCMenuBar = clMenuBar;// TPSCColor(clPSCSystemColor or PSC_COLOR_MENUBAR);
 
   clPSCBlack = TPSCColor($000000);
   clPSCMaroon = TPSCColor($000080);
@@ -125,8 +125,8 @@ const
   clPSCSkyBlue = TPSCColor($F0CAA6);
   clPSCCream = TPSCColor($F0FBFF);
   clPSCMedGray = TPSCColor($A4A0A0);
-  clPSCNone = TPSCColor($1FFFFFFF);
-  clPSCDefault = TPSCColor($20000000);
+  clPSCNone = clNone;// TPSCColor($1FFFFFFF);
+  clPSCDefault = clDefault;// TPSCColor($20000000);
 
   PSC_VK_LBUTTON = 1;
   PSC_VK_RBUTTON = 2;

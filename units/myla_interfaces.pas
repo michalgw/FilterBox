@@ -23,6 +23,9 @@ unit myla_interfaces;
 interface
 {$I psc_defines.inc}
 
+uses
+  Graphics;
+
 type
   TPSCFieldType = (
     FT_UNK,        // =0
@@ -463,7 +466,7 @@ type
 
   TPSCTextCase = (tcDefault,tcUpper,tcLower);
 
-  TPSCColor = -$7FFFFFFF-1..$7FFFFFFF;
+  TPSCColor = TColor;//-$7FFFFFFF-1..$7FFFFFFF;
 
   TPSCPenMode = (
     pm_Black,
@@ -594,7 +597,8 @@ type
     function GetBrush: IPSCBrush;
     function GetFont: IPSCFont;
     function GetPen: IPSCPen;
-    function GetTextFlags : integer;
+    //function GetTextFlags : integer;
+    function GetTextStyle: TTextStyle;
 
     procedure Arc(X1, Y1, X2, Y2, X3, Y3, X4, Y4: Integer);
     procedure Chord(X1, Y1, X2, Y2, X3, Y3, X4, Y4: Integer);
@@ -614,7 +618,8 @@ type
     procedure RoundRect(X1, Y1, X2, Y2, X3, Y3: Integer);
     procedure TextOut(X, Y: Integer; const AText: WideString);
     procedure TextRect(const ARect: TPSCRect; X, Y: Integer; const AText: WideString);
-    procedure SetTextFlags(AValue : integer);
+    //procedure SetTextFlags(AValue : integer);
+    procedure SetTextStyle(AValue : TTextStyle);
     procedure SetBrush(const AValue:IPSCBrush);
     procedure SetPen(const AValue:IPSCPen);
     procedure SetFont(const AValue:IPSCFont);
@@ -622,7 +627,8 @@ type
     property Brush: IPSCBrush read GetBrush write SetBrush;
     property Font: IPSCFont read GetFont write SetFont;
     property Pen: IPSCPen read GetPen write SetPen;
-    property TextFlags : integer read GetTextFlags write SetTextFlags;
+    //property TextFlags : integer read GetTextFlags write SetTextFlags;
+    property TextStyle: TTextStyle read GetTextStyle write SetTextStyle;
   end;
 
   TPSCThemeClass = (
@@ -663,7 +669,7 @@ type
       APart: Integer;
       AState: Integer;
       const ARect: TPSCRect;
-      const ACaption: WideString;
+      const ACaption: String;
       AFlags: Integer
       );
     procedure GetThemeIntData(
