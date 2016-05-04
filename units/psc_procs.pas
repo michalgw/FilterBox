@@ -48,7 +48,13 @@ Uses
   myla_system,
   myla_interfaces,
 
-  psc_const;
+  psc_const
+  {$IFDEF WINDOWS}
+  ,
+  Windows
+  {$ENDIF}
+  ;
+
 
 type
   TPSCRegion = Cardinal;
@@ -158,6 +164,11 @@ const
   SPSCResName_Btn_SelectToday:String='PSC_BTN_SELECTTODAY';
 
 //EndSkipConst
+
+const
+  LOCALE_ITLZERO = {$IFDEF WINDOWS}Windows.LOCALE_ITLZERO{$ELSE}37{$ENDIF};
+  LOCALE_ITIME = {$IFDEF WINDOWS}Windows.LOCALE_ITIME{$ELSE}35{$ENDIF};
+  LOCALE_ITIMEMARKPOSN = $00001005;
 
 Type
   IPSCWin32Handle = interface
@@ -968,12 +979,7 @@ Implementation
 {$R psc_procs.rc}
 
 uses
-  psc_wrapper
-  {$IFDEF WINDOWS}
-  ,
-  Windows
-  {$ENDIF}
-  ;
+  psc_wrapper;
 
 {----------------------------------------------------------}
 

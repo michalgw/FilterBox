@@ -25,7 +25,7 @@ interface
 uses
   classes,
   sysutils,
-  windows,
+  //windows,
 
   myla_system,
   myla_interfaces,
@@ -983,14 +983,14 @@ begin
   begin
     MySysLocale := GetSysLocale;
     result := GetDateAltFormatted(ADate, 'gg');
-    case MySysLocale.PriLangID of
-      LANG_JAPANESE:
-        Result := Copy(Result, 1, CharToBytelen(Result, 1));
-      LANG_CHINESE:
-        if (MySysLocale.SubLangID = SUBLANG_CHINESE_TRADITIONAL)
-         and (ByteToCharLen(Result, Length(Result)) = 4) then
-            Result := Copy(Result, 1, CharToBytelen(Result, 2));
-    end;
+    //case MySysLocale.PriLangID of
+    //  LANG_JAPANESE:
+    //    Result := Copy(Result, 1, CharToBytelen(Result, 1));
+    //  LANG_CHINESE:
+    //    if (MySysLocale.SubLangID = SUBLANG_CHINESE_TRADITIONAL)
+    //     and (ByteToCharLen(Result, Length(Result)) = 4) then
+    //        Result := Copy(Result, 1, CharToBytelen(Result, 2));
+    //end;
   end;
 end;
 
@@ -1211,7 +1211,7 @@ end;
 
 function TPSCWindowsDateTimeFormat.GetDateAltFormatted(const ADate:TDateTime;const AFormat: string): string;
 begin
-  Result:=PSCGetDateFormatted(FCurrentLocale,DATE_USE_ALT_CALENDAR,
+  Result:=PSCGetDateFormatted(FCurrentLocale,0{DATE_USE_ALT_CALENDAR},
     ADate,AFormat);
 end;
 
@@ -1219,14 +1219,14 @@ end;
 
 function TPSCWindowsDateTimeFormat.GetDateSeparator: String;
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SDATE, '/');
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SDATE}, '/');
 end;
 
 {------------------------------------------------------------------------------}
 
 function TPSCWindowsDateTimeFormat.GetLongDateFormat: String;
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SLONGDATE, 'mmmm d, yyyy');
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SLONGDATE}, 'mmmm d, yyyy');
 end;
 
 {------------------------------------------------------------------------------}
@@ -1236,7 +1236,7 @@ const
   MyDefLongDayNames : array[1..7] of string = ('Sunday', 'Monday', 'Tuesday',
   'Wednesday', 'Thursday', 'Friday', 'Saturday');
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SDAYNAME1 + (AIndex + 5) mod 7,
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SDAYNAME1 + (AIndex + 5) mod 7},
    MyDefLongDayNames[AIndex]);
 end;
 
@@ -1247,7 +1247,7 @@ const
   MyDefLongMonthNames : array[1..12] of string = ('January', 'February', 'March',
    'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SMONTHNAME1 + AIndex - 1,
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SMONTHNAME1 + AIndex - 1},
    MyDefLongMonthNames[AIndex]);
 end;
 
@@ -1262,7 +1262,7 @@ end;
 
 function TPSCWindowsDateTimeFormat.GetShortDateFormat: String;
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SSHORTDATE, 'm/d/yy');
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SSHORTDATE}, 'm/d/yy');
 end;
 
 {------------------------------------------------------------------------------}
@@ -1272,7 +1272,7 @@ const
   MyDefShortDayNames : array[1..7] of string = ('Sun', 'Mon', 'Tue', 'Wed',
    'Thu', 'Fri', 'Sat');
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SABBREVDAYNAME1 + (AIndex + 5) mod 7,
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SABBREVDAYNAME1 + (AIndex + 5) mod 7},
    MyDefShortDayNames[AIndex]);
 end;
 
@@ -1283,7 +1283,7 @@ const
   MyDefShortMonthNames : array[1..12] of string = ('Jan', 'Feb', 'Mar', 'Apr',
    'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_SABBREVMONTHNAME1 + AIndex - 1,
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_SABBREVMONTHNAME1 + AIndex - 1},
    MyDefShortMonthNames[AIndex]);
 end;
 
@@ -1305,21 +1305,21 @@ end;
 
 function TPSCWindowsDateTimeFormat.GetTimeAMString: String;
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_S1159, 'am');
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_S1159}, 'am');
 end;
 
 {------------------------------------------------------------------------------}
 
 function TPSCWindowsDateTimeFormat.GetTimePMString: String;
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_S2359, 'pm');
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_S2359}, 'pm');
 end;                                           
 
 {------------------------------------------------------------------------------}
 
 function TPSCWindowsDateTimeFormat.GetTimeSeparator: String;
 begin
-  result := PSCGetLocaleStr(FCurrentLocale, LOCALE_STIME, ':');
+  result := PSCGetLocaleStr(FCurrentLocale, 0{LOCALE_STIME}, ':');
 end;
 
 {------------------------------------------------------------------------------}
