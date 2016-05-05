@@ -25,13 +25,13 @@ interface
 
 Uses
 {$IFDEF D6}
-  SqlTimSt,
+  //SqlTimSt,
   FMTBcd,
   variants,
 {$ENDIF}
 
   Classes,
-  DBCommon,
+  //DBCommon,
   DB,
   sysutils,
 
@@ -75,6 +75,13 @@ Const
   fldREF = 22;
   fldTABLE = 23;
   fldDATETIME = 24;
+
+// Fake class for lazarus port
+type
+  TExprParser = class
+    FilterData: Pointer;
+  end;
+  TParserOptions = integer;
 
 Type
   TPSCFilterFunc = (fUnknown,fUpper,fLower,fSubStr,fTrim,fTrimLeft,fTrimRight,
@@ -274,7 +281,7 @@ Const
     fldVARBYTES,fldINT32,fldBLOB,fldBLOB,fldBLOB,fldBLOB,fldBLOB,
     fldBLOB,fldBLOB,fldCURSOR,fldZSTRING,fldZSTRING,fldINT64,fldADT,
     fldArray,fldREF,fldTABLE,fldBLOB,fldBLOB,fldUNKNOWN,fldUNKNOWN,
-    fldUNKNOWN,fldZSTRING{$IFDEF D6},fldTimeStamp,fldBCD{$ENDIF});
+    fldUNKNOWN,fldZSTRING{$IFDEF D6},fldTimeStamp,fldBCD{$ENDIF},fldZSTRING,fldBLOB);
     
 {$Z-}
 
@@ -620,8 +627,8 @@ Function PSCCreateFilterParserEx(DataSet: TDataSet; Const Expr: String;
 Begin
   Result:=nil;
   Try
-    Result := TExprParser.Create(DataSet,Expr,
-      [],ParserOptions,'',Nil,FldTypeMap);
+    Result := TExprParser.Create;//(DataSet,Expr,
+//      [],ParserOptions,'',Nil,FldTypeMap);
   Except
     PSCError(PSCConsts.ErrBadFilter);
   End;
@@ -644,7 +651,7 @@ Begin
       FalseDataSet.AssignDataSet(DataSet);
     FieldsFromColl(FalseDataSet);
 
-    Result := PSCCreateFilterParserEx(FalseDataSet,Simplified,[poExtSyntax]);
+    Result := PSCCreateFilterParserEx(FalseDataSet,Simplified, 0{[poExtSyntax]});
 
   Finally
     FalseDataSet.Free;
@@ -1199,7 +1206,7 @@ End;
 
 Function TPSCCustomExprEval.FindRecord(Search: TPSCSearchType): Boolean;
 Var
-  BMark: TBookMarkStr;
+  BMark: TBookMark;
 Begin
   Result := False;
   If Not (Assigned(DataSet) And DataSet.Active) Then
@@ -1302,7 +1309,7 @@ Var
   CurrValue: Currency;
   MyBoolean: Boolean;
   {$IFDEF D6}
-  MyTimeStamp: TSQLTimeStamp;
+  //MyTimeStamp: TSQLTimeStamp;
   {$ENDIF}
 Begin
   With ANode^ Do
@@ -1311,10 +1318,10 @@ Begin
       FieldType := FT_UNK;
       Result := Null;
 
-      {$IFNDEF D6}
+      {.$IFNDEF D6}
       If iType=fldTIMESTAMP then   // not sure if really needed
         iType:=fldDateTime;        //
-      {$ENDIF}
+      {.$ENDIF}
 
       Case iType Of
         fldZSTRING:
@@ -1344,12 +1351,12 @@ Begin
             FieldType := FT_DATETIME;
           End;
         {$IFDEF D6}
-        fldTIMESTAMP:
+        {fldTIMESTAMP:
           Begin
             MyTimeStamp:=PSQLTimeStamp(Offs)^;
             Result:=VarFromDateTime(SQLTimeStampToDateTime(MyTimeStamp));
             FieldType := FT_DATETIME;
-          End;
+          End;}
         {$ENDIF}
         fldBOOL:
           Begin
@@ -1470,12 +1477,12 @@ Begin
         Result := TStringField.Create(Nil);
       ftLargeInt:
         Result := TIntegerField.Create(Nil);  // not TLargeInt field because it is not sup by ExprParser
-      ftADT:
+{      ftADT:
         Result := TADTField.Create(Nil);
       ftArray:
         Result := TArrayField.Create(Nil);
       ftReference:
-        Result := TReferenceField.Create(Nil);
+        Result := TReferenceField.Create(Nil);}
       ftDataSet,
       ftOraBlob,
       ftOraClob,
@@ -1487,13 +1494,13 @@ Begin
         End;
       ftVariant:
         Result := TVariantField.Create(Nil);
-      ftInterface,
-        ftIDispatch: Result := TIDispatchField.Create(Nil);
+{      ftInterface,
+        ftIDispatch: Result := TIDispatchField.Create(Nil);}
       ftGuid:
         Result := TGuidField.Create(Nil);
       {$IFDEF D6}
-      ftTimeStamp:
-        Result := TSQLTimeStampField.Create(Nil);
+{      ftTimeStamp:
+        Result := TSQLTimeStampField.Create(Nil);}
       {$ENDIF}
     Else
       Begin
