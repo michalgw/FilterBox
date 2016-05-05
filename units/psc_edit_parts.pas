@@ -24,11 +24,13 @@ interface
 {$I psc_defines.inc}
 
 Uses
-  Windows,
-  messages,
+  LCLIntf,
+  Lmessages,
   forms,
   controls,
   classes,
+  types,
+  LCLType,
 
   myla_system,
   myla_interfaces,
@@ -137,7 +139,7 @@ type
     Procedure KeyDown(Var Key: Word; Shift: TShiftState); override;
     Procedure DoButtonClick(BtnIndex: Integer); override;
     Procedure DoExit; override;
-    Procedure WMGetDlgCode(Var Msg: TWMGetDlgCode); message WM_GetDlgCode;
+    Procedure WMGetDlgCode(Var Msg: TLMessage); message LM_GetDlgCode;
     
   public
     Function GetMaxTextWidth(AWithBorder:Boolean): integer; virtual;
@@ -1435,11 +1437,11 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomPartsEdit.WMGetDlgCode(var Msg: TWMGetDlgCode);
+Procedure TPSCCustomPartsEdit.WMGetDlgCode(var Msg: TLMessage);
 Begin
   With Msg Do
     Begin
-      Result := DLGC_WANTMESSAGE Or
+      Result := //DLGC_WANTMESSAGE Or
         DLGC_WANTALLKEYS Or
         DLGC_WANTARROWS Or
         DLGC_WANTCHARS;
