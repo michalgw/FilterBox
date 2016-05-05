@@ -25,11 +25,14 @@ interface
 
 Uses
   sysutils,
-  Windows,
-  messages,
+  LCLIntf,
+  LCLType,
+  LCLProc,
+  Lmessages,
   forms,
   controls,
   classes,
+  Types,
 
   myla_system,
   myla_interfaces,
@@ -129,9 +132,9 @@ Type
     Procedure SetDigits(V:Integer);
     Procedure SetFormat(V:TFloatFormat);
     Procedure SetPrecision(V:Integer);
-    Procedure WMEraseBkgnd(Var Message: TWMEraseBkgnd); message WM_EraseBkgnd;
-    Procedure WMTimer(Var Message: TMessage); message WM_TIMER;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FontChanged;
+    Procedure WMEraseBkgnd(Var Message: TLMEraseBkgnd); message LM_EraseBkgnd;
+    Procedure WMTimer(Var Message: TLMessage); message LM_TIMER;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FontChanged;
     Procedure SetValue(V: Extended);
     Procedure SetCalcValue(Const V: String);
     Procedure SetBorderStyle(V: TBorderStyle);
@@ -167,8 +170,8 @@ Type
   protected
     function FloatToStrFormatted(const AValue:Extended;AForDisplay:Boolean):String;
 
-    Procedure WMSize(Var Message: TWMSize); message WM_Size;
-    Procedure CMEnabledChanged(Var Message: TMessage); message
+    Procedure WMSize(Var Message: TLMSize); message LM_Size;
+    Procedure CMEnabledChanged(Var Message: TLMessage); message
       CM_ENABLEDCHANGED;
     Procedure CreateParams(Var Params: TCreateParams); override;
     Procedure CreateWnd; override;
@@ -249,12 +252,12 @@ Type
     Property Color;
     Property Constraints;
     Property BiDiMode;
-    Property Ctl3D;
+    //Property Ctl3D;
     Property DockSite;
     Property DragCursor;
     Property DragKind;
     Property ParentBiDiMode;
-    Property ParentCtl3D;
+    //Property ParentCtl3D;
     Property DragMode;
     Property Enabled;
     Property Font;
@@ -686,8 +689,8 @@ Begin
   With Params Do
     Begin
       Style := Style Or WS_TABSTOP Or WS_CLIPCHILDREN;
-      WindowClass.Style := WindowClass.Style And Not CS_DBLCLKS;
-      PSCUpdateParamsWithBorderStyle(Params,FBorderStyle,Ctl3d);
+      //WindowClass.Style := WindowClass.Style And Not CS_DBLCLKS;
+      PSCUpdateParamsWithBorderStyle(Params,FBorderStyle,False{Ctl3d});
     End;
 End;
 
@@ -1040,7 +1043,7 @@ Begin
       FButtonHeight := Round(TextHeight('0') * 1.8);
     End;
 
-  SendMessage(Handle,WM_SIZE,0,0);
+  SendMessage(Handle,LM_SIZE,0,0);
 End;
 
 {--------------------------------------------}
@@ -1585,7 +1588,7 @@ End;
 
 {--------------------------------------------}
 
-Procedure TPSCCustomCalculator.cmEnabledChanged(Var Message: TMessage);
+Procedure TPSCCustomCalculator.cmEnabledChanged(Var Message: TLMessage);
 Begin
   Inherited;
   Invalidate;
@@ -1667,7 +1670,7 @@ Begin
   If FBorderStyle <> V Then
     Begin
       FBorderStyle := V;
-      RecreateWnd;
+      RecreateWnd(Self);
     End;
 End;
 
@@ -1684,14 +1687,14 @@ End;
 
 {--------------------------------------------}
 
-Procedure TPSCCustomCalculator.WMEraseBkgnd(Var Message: TWMEraseBkgnd);
+Procedure TPSCCustomCalculator.WMEraseBkgnd(Var Message: TLMEraseBkgnd);
 Begin
   Message.Result := 1;
 End;
 
 {-------------------------------------------}
 
-Procedure TPSCCustomCalculator.WMSize(Var Message: TWMSize);
+Procedure TPSCCustomCalculator.WMSize(Var Message: TLMSize);
 Begin
   Inherited;
   UpdateSize;
@@ -1699,7 +1702,7 @@ End;
 
 {--------------------------------------------}
 
-Procedure TPSCCustomCalculator.WMTimer(Var Message: TMessage);
+Procedure TPSCCustomCalculator.WMTimer(Var Message: TLMessage);
 Begin
   If (Message.wParam = 1) And FIsButtonDown Then
     Begin
@@ -1710,7 +1713,7 @@ End;
 
 {--------------------------------------------}
 
-Procedure TPSCCustomCalculator.CMFontChanged(Var Message: TMessage);
+Procedure TPSCCustomCalculator.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   FontChanged;
