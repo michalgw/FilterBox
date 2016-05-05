@@ -28,12 +28,13 @@ Uses
   Buttons,
   ImgList,
   StdCtrls,
-  commctrl,
+  comctrls,
   sysutils,
-  messages,
+  Lmessages,
   classes,
   controls,
-  windows,
+  LCLIntf,
+  LCLType,
   forms,
 
   myla_system,
@@ -92,9 +93,9 @@ type
     function StyleStored: Boolean;
 
   protected
-    procedure WMKillFocus(Var Message: TWMSetFocus); message WM_KILLFOCUS;
-    procedure WMSetFocus(Var Message: TWMSetFocus); message WM_SETFOCUS;
-    procedure WMKeyDown(var Message: TWMKeyDown); message WM_KEYDOWN;
+    procedure WMKillFocus(Var Message: TLMSetFocus); message LM_KILLFOCUS;
+    procedure WMSetFocus(Var Message: TLMSetFocus); message LM_SETFOCUS;
+    procedure WMKeyDown(var Message: TLMKeyDown); message LM_KEYDOWN;
     procedure MouseDown(Button: TMouseButton; Shift:TShiftState;
       X,Y: Integer);override;
     procedure MouseMove(Shift: TShiftState; X,Y: Integer); override;
@@ -421,14 +422,14 @@ begin
     end;
 end;
 
-procedure TPSCCustomColorEdit.WMKillFocus(var Message: TWMSetFocus);
+procedure TPSCCustomColorEdit.WMKillFocus(var Message: TLMSetFocus);
 begin
   Invalidate;
 end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomColorEdit.WMSetFocus(var Message: TWMSetFocus);
+procedure TPSCCustomColorEdit.WMSetFocus(var Message: TLMSetFocus);
 begin
   Invalidate;
 end;
@@ -593,7 +594,7 @@ end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomColorEdit.WMKeyDown(var Message: TWMKeyDown);
+procedure TPSCCustomColorEdit.WMKeyDown(var Message: TLMKeyDown);
 begin
   inherited;
   if Message.CharCode in [VK_DOWN, VK_RETURN]	then
