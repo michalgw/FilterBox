@@ -24,8 +24,8 @@ interface
 {$I psc_defines.inc}
 
 Uses
-  Windows,
-  messages,
+  LCLType,
+  Lmessages,
   forms,
   controls,
   classes,
@@ -272,7 +272,7 @@ Type
     Procedure UpdatePanel; virtual;
     Procedure AlignContents; virtual;
     Procedure AlignControls(AControl: TControl; Var Rect: TRect); override;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FontChanged;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FontChanged;
     Procedure CreateWnd; override;
     Procedure DoDaySelected(Sender: TObject; const ADate: TDateTime;
       ANoneBtn:WordBool);
@@ -282,8 +282,8 @@ Type
     Function IsEmpty: Boolean;
 
     procedure ButtonClick(ABtnKind:TPSCCalendarPanelButton);
-    Procedure WMWindowPosChanging(Var Message: TWMWindowPosChanging);
-      message WM_WINDOWPOSCHANGING;
+    Procedure WMWindowPosChanging(Var Message: TLMWindowPosChanging);
+      message LM_WINDOWPOSCHANGING;
 
     Constructor Create(AOwner: TComponent); override;
     Destructor Destroy; override;
@@ -308,7 +308,7 @@ Type
       write SetPanelKind default cpkDateTime;
     Property IntegralSize: Boolean read FIntegralSize write SetIntegralSize
       default cPSCDefIntegralSize;
-    Property BevelOuter default cPSCDefBevelOuter;
+    //Property BevelOuter default cPSCDefBevelOuter;
     Property OnDaySelected: TPSCDaySelectedEvent read FOnDaySelected write
       FOnDaySelected;
     Property ShowDateEdit: boolean read FShowDateEdit write SetShowDateEdit
@@ -1193,12 +1193,11 @@ Type
 Constructor TPSCCustomCalendarPanel.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
-
   ControlStyle := ControlStyle -
     [csCaptureMouse,csClickEvents,csDoubleClicks,csSetCaption];
   FullRepaint := False;
   FShowDateEdit := cPSCDefShowDateEdit;
-  BevelOuter := cPSCDefBevelOuter;
+  //BevelOuter := cPSCDefBevelOuter;
   FIntegralSize := cPSCDefIntegralSize;
   FCalendar := CreateCalendar;
   FDateEdit := TPSCDateTimeUpDown.Create(Self);
@@ -1252,7 +1251,7 @@ Begin
       BorderStyle:=bsSingle;
       TabStop := True;
       MultiSelect := False;
-      BorderEdges := [];
+      //BorderEdges := [];
       OnMouseUp := Self.CalendarMouseUp;
       OnDateChanged := Self.DateChanged;
       If Not (csDesigning In ComponentState) Then
@@ -1321,7 +1320,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendarPanel.CMFontChanged(Var Message: TMessage);
+Procedure TPSCCustomCalendarPanel.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   UpdatePanel;
@@ -1604,7 +1603,7 @@ End;
 {------------------------------------------------------------------------------}
 
 Procedure TPSCCustomCalendarPanel.WMWindowPosChanging(
-  Var Message: TWMWindowPosChanging);
+  Var Message: TLMWindowPosChanging);
 Begin
   Inherited;
   With Message.WindowPos^ Do
