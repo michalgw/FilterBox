@@ -26,13 +26,15 @@ Interface
 Uses
   dialogs,
   ImgList,
-  commctrl,
-  messages,
+  ComCtrls,
+  Lmessages,
   classes,
   controls,
-  windows,
+  LCLIntf,
+  LCLType,
   forms,
   SysUtils,
+  Types,
 
   myla_system,
   myla_interfaces,
@@ -654,7 +656,7 @@ Type
   TPSCCustomSectionControl = Class(TControl,IPSCInterface,IPSCValidator)
   private
     FCanvas: TPSCCanvas;
-    Procedure WMPaint(Var Message: TWMPaint); message WM_PAINT;
+    Procedure WMPaint(Var Message: TLMPaint); message LM_PAINT;
     Procedure IPSCValidator.InvalidateRect = InvalidateRegion;
     Procedure IPSCValidator.Invalidate = InvalidateControl;
     Procedure InvalidateRegion(Rect: TRect; Erase: Boolean);
@@ -790,20 +792,20 @@ Type
     Procedure SetHideSelection(Value: TPSCHideSelection);
     Procedure CMControlListChange(Var Message: TCMControlListChange);
       message CM_CONTROLLISTCHANGE;
-    Procedure CMMouseEnter(Var Message: TMessage); message CM_MOUSEENTER;
-    Procedure CMMouseLeave(Var Message: TMessage); message CM_MOUSELEAVE;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FONTCHANGED;
-    Procedure CMColorChanged(Var Message: TMessage); message CM_COLORCHANGED;
-    Procedure CMCancelMode(Var Message: TWMCancelMode); message CM_CANCELMODE;
+    Procedure CMMouseEnter(Var Message: TLMessage); message CM_MOUSEENTER;
+    Procedure CMMouseLeave(Var Message: TLMessage); message CM_MOUSELEAVE;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FONTCHANGED;
+    Procedure CMColorChanged(Var Message: TLMessage); message CM_COLORCHANGED;
+    Procedure CMCancelMode(Var Message: TLMessage); message CM_CANCELMODE;
     Procedure CMHintShowPause(Var Message: TCMHintShowPause);
       message CM_HINTSHOWPAUSE;
     Procedure CMHintShow(Var Message: TCMHintShow); message CM_HINTSHOW;
-    Procedure WMNCHitTest(Var Message: TWMNCHitTest); message WM_NCHITTEST;
-    Procedure WMGetDlgCode(Var Message: TMessage); message WM_GETDLGCODE;
-    Procedure WMEnable(Var Message: TWMEnable); message WM_ENABLE;
-    Procedure WMPaint(Var Message: TWMPaint); message WM_PAINT;
-    Procedure WMWindowPosChanging(Var Message: TWMWindowPosChanging);
-      message WM_WINDOWPOSCHANGING;
+    Procedure WMNCHitTest(Var Message: TLMNCHitTest); message LM_NCHITTEST;
+    Procedure WMGetDlgCode(Var Message: TLMessage); message LM_GETDLGCODE;
+    Procedure WMEnable(Var Message: TLMessage); message LM_ENABLE;
+    Procedure WMPaint(Var Message: TLMPaint); message LM_PAINT;
+    Procedure WMWindowPosChanging(Var Message: TLMWindowPosChanging);
+      message LM_WINDOWPOSCHANGING;
 
     // IPSCDraw
     Procedure Draw(Canvas: TPSCCanvas; Const BoundsRect: TRect);
@@ -853,8 +855,8 @@ Type
 
     Procedure Loaded; override;
     Procedure CreateWnd; override;
-    Procedure WndProc(Var Message: TMessage); override;
-    Function CanResize(Var NewWidth,NewHeight: Integer): Boolean; override;
+    Procedure WndProc(Var Message: TLMessage); override;
+    Function CanResize(Var NewWidth,NewHeight: Integer): Boolean; //override;
     Function CanAutoSize(Var NewWidth,NewHeight: Integer): Boolean; override;
     Procedure AdjustSize; override;
     Procedure AlignControls(AControl: TControl; Var Rect: TRect); override;
@@ -1005,8 +1007,8 @@ type
   TPSCColorDlg = Class(TPSCInterfacedPersistent,IPSCColorDialog)
   private
     FDialog: TPSCColorDialog;
-    Function GetOptions: TColorDialogOptions;
-    Procedure SetOptions(Value: TColorDialogOptions);
+    //Function GetOptions: TColorDialogOptions;
+    //Procedure SetOptions(Value: TColorDialogOptions);
     Function GetHelpContext: THelpContext;
     Procedure SetHelpContext(Value: THelpContext);
   public
@@ -1018,8 +1020,8 @@ type
   published
     Property HelpContext: THelpContext read GetHelpContext
       write SetHelpContext default 0;
-    Property Options: TColorDialogOptions read GetOptions
-      write SetOptions default [];
+    //Property Options: TColorDialogOptions read GetOptions
+    //  write SetOptions default [];
   End;
 
   PPSCColorData = ^TPSCColorData;
@@ -1306,9 +1308,9 @@ Begin
       If BackgroundColor = clPSCNone Then
         exit;
       With Brush Do
-        If ButtonState_Exclusive In State Then
+        {If ButtonState_Exclusive In State Then
           Bitmap := PSCAllocPatternBitmap(BackgroundColor,ForegroundColor)
-        Else
+        Else}
           Begin
             Color := BackgroundColor;
             Style := BrushStyle_Solid;
@@ -4169,7 +4171,7 @@ Begin
         For I := 0 To 30 Do
           Begin
             if (I = 25) or
-              ((not PSCWindowsXPOrHigher) and (I in [COLOR_MENUHILIGHT, COLOR_MENUBAR])) then
+              {((not PSCWindowsXPOrHigher) and }(I in [COLOR_MENUHILIGHT, COLOR_MENUBAR]){)} then
               Continue;
             S := PSCColorToString(TColor(UINT(I) or clSystemColor));
             System.Delete(S,1,2);
@@ -4400,7 +4402,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomSectionControl.WMPaint(Var Message: TWMPaint);
+Procedure TPSCCustomSectionControl.WMPaint(Var Message: TLMPaint);
 Begin
   If Message.DC <> 0 Then
     Begin
@@ -4550,7 +4552,7 @@ Type
   public
     Procedure ActivateHintData(Rect: TRect; Const AHint: String;
       AData: Pointer); override;
-    Function IsHintMsg(Var Msg: TMsg): Boolean; override;
+    Function IsHintMsg(Msg: TMsg): Boolean; override;
   End;
 
   TSectionAccess = Class(TPSCCustomSectionControl);
@@ -4583,14 +4585,14 @@ End;
 
 {-------------------------------------}
 
-Function TPSCColorBoxHint.IsHintMsg(Var Msg: TMsg): Boolean;
+Function TPSCColorBoxHint.IsHintMsg(Msg: TMsg): Boolean;
 Begin
   Result := Inherited IsHintMsg(Msg);
   If Result And (FColorBox <> Nil) Then
     With FColorBox Do
       Begin
         FState := FState - [cbsFastHint];
-        If (Msg.Message = WM_KEYDOWN) And (Msg.hwnd = Handle) Then
+        If (Msg.Message = LM_KEYDOWN) And (Msg.hwnd = Handle) Then
           FState := FState + [cbsSkipMouseMove];
       End;
 End;
@@ -4638,17 +4640,17 @@ End;
 
 {-------------------------------------}
 
-Function TPSCColorDlg.GetOptions: TColorDialogOptions;
-Begin
-  Result := GetProp.Options
-End;
+//Function TPSCColorDlg.GetOptions: TColorDialogOptions;
+//Begin
+//  Result := GetProp.Options
+//End;
 
 {-------------------------------------}
 
-Procedure TPSCColorDlg.SetOptions(Value: TColorDialogOptions);
-Begin
-  GetProp.Options := Value
-End;
+//Procedure TPSCColorDlg.SetOptions(Value: TColorDialogOptions);
+//Begin
+//  GetProp.Options := Value
+//End;
 
 {-------------------------------------}
 
@@ -5353,14 +5355,14 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.CMMouseEnter(Var Message: TMessage);
+Procedure TPSCCustomColorBox.CMMouseEnter(Var Message: TLMessage);
 Begin
   Inherited
 End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.CMMouseLeave(Var Message: TMessage);
+Procedure TPSCCustomColorBox.CMMouseLeave(Var Message: TLMessage);
 Begin
   Inherited;
   If FMouse <> Nil Then
@@ -5369,7 +5371,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.CMFontChanged(Var Message: TMessage);
+Procedure TPSCCustomColorBox.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   AdjustSize;
@@ -5377,7 +5379,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.CMColorChanged(Var Message: TMessage);
+Procedure TPSCCustomColorBox.CMColorChanged(Var Message: TLMessage);
 Begin
   Inherited;
   Perform(CM_BORDERCHANGED,0,0);
@@ -5434,7 +5436,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.WMNCHitTest(Var Message: TWMNCHitTest);
+Procedure TPSCCustomColorBox.WMNCHitTest(Var Message: TLMNCHitTest);
 Var
   Rect: TRect;
 Begin
@@ -5451,7 +5453,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.WMGetDlgCode(Var Message: TMessage);
+Procedure TPSCCustomColorBox.WMGetDlgCode(Var Message: TLMessage);
 Begin
   Inherited;
   With Message Do
@@ -5460,7 +5462,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.WMEnable(Var Message: TWMEnable);
+Procedure TPSCCustomColorBox.WMEnable(Var Message: TLMessage);
 Begin
   Inherited;
   Invalidate
@@ -5468,7 +5470,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.WMPaint(Var Message: TWMPaint);
+Procedure TPSCCustomColorBox.WMPaint(Var Message: TLMPaint);
 Begin
   ControlState := ControlState + [csCustomPaint];
   Inherited;
@@ -5499,7 +5501,7 @@ End;
 {-------------------------------------}
 
 Procedure TPSCCustomColorBox.WMWindowPosChanging(Var
-  Message: TWMWindowPosChanging);
+  Message: TLMWindowPosChanging);
 Begin
   Inherited;
   With Message.WindowPos^ Do
@@ -5523,10 +5525,10 @@ Var
 Begin
   Rect := Self.BoundsRect;
   Try
-    UpdateBoundsRect(BoundsRect);
-    Perform(WM_PAINT,Canvas.Handle,0);
+    //UpdateBoundsRect(BoundsRect);
+    Perform(LM_PAINT,Canvas.Handle,0);
   Finally
-    UpdateBoundsRect(Rect)
+    //UpdateBoundsRect(Rect)
   End
 End;
 
@@ -6015,15 +6017,15 @@ End;
 
 Type
   TControlAccess = Class(TControl);
-  TWndProc = Procedure(Var Message: TMessage) Of Object;
+  TWndProc = Procedure(Var Message: TLMessage) Of Object;
 
-Procedure TPSCCustomColorBox.WndProc(Var Message: TMessage);
+Procedure TPSCCustomColorBox.WndProc(Var Message: TLMessage);
 Var
   Method: TPSCMethod;
 Begin
   If Not (csDesigning In ComponentState) Then
     Case Message.Msg Of
-      WM_MOUSEFIRST..WM_MOUSELAST:
+      LM_MOUSEFIRST..LM_MOUSELAST:
         Begin
           Method.Code := @TControlAccess.WndProc;
           Method.Data := Self;
@@ -6171,11 +6173,11 @@ Begin
     Begin
       If Slot = Nil Then
         Begin
-          If csAlignmentNeeded In ControlState Then
+          {If csAlignmentNeeded In ControlState Then
             Begin
               FState := FState + [cbsAdjustingNeeded];
               Exit
-            End;
+            End;}
           If FSelectSameColors Then
             UpdateSelection;
           SetUpdating(true);
@@ -6271,19 +6273,19 @@ End;
 Procedure TPSCCustomColorBox.SetUpdating(Value: Boolean);
 Begin
   If Value Then
-    Begin
-      If Not FDoubleBuffered Then
-        Begin
-          FDoubleBuffered := true;
+    //Begin
+    //  If Not FDoubleBuffered Then
+    //    Begin
+    //      FDoubleBuffered := true;
           FState := FState + [cbsUpdatingNeeded]
-        End
-    End
+    //    End
+    //End
   Else
-    If cbsUpdatingNeeded In FState Then
-      Begin
-        FDoubleBuffered := false;
+    //If cbsUpdatingNeeded In FState Then
+    //  Begin
+    //    FDoubleBuffered := false;
         FState := FState - [cbsUpdatingNeeded]
-      End
+      //End
 End;
 
 {-------------------------------------}
@@ -6458,10 +6460,10 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomColorBox.CMCancelMode(Var Message: TWMCancelMode);
+Procedure TPSCCustomColorBox.CMCancelMode(Var Message: TLMessage);
 Begin
   Inherited;
-  Perform(WM_CANCELMODE,0,0)
+  Perform(LM_CANCELMODE,0,0)
 End;
 
 {-------------------------------------}
