@@ -28,10 +28,13 @@ Uses
 {$IFDEF D6}
   variants,
 {$ENDIF}
-  Windows,
+  GraphType,
+  LCLIntf,
+  LCLType,
+  LCLProc,
   Forms,
   Controls,
-  Messages,
+  LMessages,
   Menus,
   Classes,
   DB,
@@ -655,14 +658,14 @@ type
     Procedure PickParameter; virtual;
     Procedure OnUpdate(Sender: TObject; Item: TPSCNamedItem); virtual;
 
-    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
-    Procedure WMSetFocus(Var Message: TWMSetFocus); message WM_SetFocus;
-    Procedure WMKillFocus(Var Message: TWMSetFocus); message WM_KillFocus;
-    Procedure WMEraseBkgnd(Var Msg: TWMEraseBkgnd); message WM_EraseBkgnd;
-    Procedure WMGetDlgCode(Var Msg: TWMGetDlgCode); message WM_GetDlgCode;
-    Procedure WMSetCursor(Var Message: TWMSetCursor); message WM_SetCursor;
-    Procedure WMSize(Var Message: TWMSize); message WM_Size;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FontChanged;
+    procedure CMEnabledChanged(var Message: TLMessage); message CM_ENABLEDCHANGED;
+    Procedure WMSetFocus(Var Message: TLMSetFocus); message LM_SetFocus;
+    Procedure WMKillFocus(Var Message: TLMSetFocus); message LM_KillFocus;
+    //Procedure WMEraseBkgnd(Var Msg: TLMEraseBkgnd); message LM_EraseBkgnd;
+    Procedure WMGetDlgCode(Var Msg: TLMessage); message LM_GetDlgCode;
+    Procedure WMSetCursor(Var Message: TLMSetCursor); message LM_SetCursor;
+    Procedure WMSize(Var Message: TLMSize); message LM_Size;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FontChanged;
 
     Property InternalImages:TPSCImageList Read FImageList;
     Property HorzPosition: Integer read FHorzPosition write SetHorzPosition;
@@ -817,11 +820,11 @@ type
 
   TPSCListBox = Class(TPSCCustomListBox)
   published
-    Property BevelInner;
-    Property BevelOuter;
-    Property BevelKind;
-    Property BevelWidth;
-    Property BevelEdges;
+    //Property BevelInner;
+    //Property BevelOuter;
+    //Property BevelKind;
+    //Property BevelWidth;
+    //Property BevelEdges;
     Property BorderWidth;
     
     property AutoComplete;
@@ -862,8 +865,8 @@ type
     Property BiDiMode;
     Property DragCursor;
     Property DragKind;
-    Property ImeMode;
-    Property ImeName;
+    //Property ImeMode;
+    //Property ImeName;
     Property ParentBiDiMode;
     Property Color;
     Property Constraints;
@@ -1983,7 +1986,7 @@ End;
 
 {-------------------------------------------}
 
-procedure TPSCCustomListBox.WMSize(Var Message: TWMSize);
+procedure TPSCCustomListBox.WMSize(Var Message: TLMSize);
 Begin
   Inherited;
   TopIndex:=TopIndex;
@@ -2221,7 +2224,7 @@ End;
 
 {-------------------------------------------}
 
-procedure TPSCCustomListBox.WMSetCursor(Var Message: TWMSetCursor);
+procedure TPSCCustomListBox.WMSetCursor(Var Message: TLMSetCursor);
 Var
   P: TPoint;
 Begin
@@ -2757,7 +2760,7 @@ End;
 
 {--------------------------------------------}
 
-procedure TPSCCustomListBox.WMKillFocus(Var Message: TWMSetFocus);
+procedure TPSCCustomListBox.WMKillFocus(Var Message: TLMSetFocus);
 Begin
   Inherited;
   UpdateFocusRect;
@@ -2765,7 +2768,7 @@ End;
 
 {--------------------------------------------}
 
-procedure TPSCCustomListBox.WMSetFocus(Var Message: TWMSetFocus);
+procedure TPSCCustomListBox.WMSetFocus(Var Message: TLMSetFocus);
 Begin
   Inherited;
   UpdateFocusRect;
@@ -2937,14 +2940,14 @@ type
 
 procedure TPSCCustomListBox.UpdatePopupParams(APopupForm: TForm);
 Begin
-  With THackForm(APopupForm) Do
+{  With THackForm(APopupForm) Do
     Begin
       BevelEdges := PopupParams.BevelEdges;
       BevelInner := PopupParams.BevelInner;
       BevelOuter := PopupParams.BevelOuter;
       BevelKind := PopupParams.BevelKind;
       BevelWidth := PopupParams.BevelWidth;
-    End;
+    End;}
   If Assigned(FOnUpdatePopup) Then
     FOnUpdatePopup(Self,APopupForm);
 End;
@@ -3406,7 +3409,7 @@ End;
 
 {------------------------------------------------------------------}
 
-procedure TPSCCustomListBox.CMFontChanged(Var Message: TMessage);
+procedure TPSCCustomListBox.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   FontChanged;
@@ -3550,7 +3553,7 @@ Var
 Begin
   If Not (csDesigning In ComponentState) And (Not Focused) And CanFocus Then
     Begin
-      Windows.SetFocus(Handle);
+      //Windows.SetFocus(Handle);
       SetFocus;
     End;
 
@@ -3776,7 +3779,7 @@ Begin
         If (odFocused In DrawState) And (Not FHideFocus) Then
         begin
           Bound.Right:=ClientWidth;
-          Windows.DrawFocusRect(Canvas.Handle,Bound);
+          {Windows.}DrawFocusRect(Canvas.Handle,Bound);
         end;
 
         Canvas.Brush.Color := Color;
@@ -3823,7 +3826,7 @@ Begin
           Brush.Color := Self.Color;
           Pen.Color := Self.Font.Color;
           Font.Color := Self.Font.Color;
-          Windows.DrawFocusRect(Handle,Bound);
+          {Windows.}DrawFocusRect({Handle,}Bound);
         End;
     End;
 End;
@@ -3979,7 +3982,7 @@ End;
 
 {------------------------------------------------------------------}
 
-procedure TPSCCustomListBox.WMGetDlgCode(Var Msg: TWMGetDlgCode);
+procedure TPSCCustomListBox.WMGetDlgCode(Var Msg: TLMessage);
 Begin
   Msg.Result := DLGC_WANTARROWS;
 End;
@@ -4303,7 +4306,7 @@ begin
   BorderIcons := [biSystemMenu];
   BorderStyle := bsDialog;
   Position := poScreenCenter;
-  Scaled := False;
+  //Scaled := False;
   PSCSetFormFont(Self);
 
   Edit:= TPSCEdit.Create(Self);
@@ -4855,7 +4858,7 @@ Begin
   FIntegralHeight := True;
   FAddItemText := PSCConsts.ClickHereToAddItem;
   FClickHereColor := cPSCDefaultClickHereColor;
-  Ctl3d := True;
+  //Ctl3d := True;
   ParentColor := False;
   TabStop := True;
   FOptions := cPSCListBoxDefaultOptions;
@@ -5020,7 +5023,7 @@ End;
 
 {------------------------------}
 
-procedure TPSCCustomListBox.CMEnabledChanged(var Message: TMessage);
+procedure TPSCCustomListBox.CMEnabledChanged(var Message: TLMessage);
 begin
   inherited;
   Invalidate;
@@ -5165,16 +5168,16 @@ procedure TPSCCustomListBox.CreateParams(Var Params: TCreateParams);
 Begin
   Inherited CreateParams(Params);
   Params.Style := Params.Style Or WS_HSCROLL Or WS_VSCROLL Or WS_TABSTOP;
-  Params.WindowClass.style := Params.WindowClass.style Or CS_DBLCLKS;
-  PSCUpdateParamsWithBorderStyle(Params,BorderStyle,Ctl3d);
+  //Params.WindowClass.style := Params.WindowClass.style Or CS_DBLCLKS;
+  PSCUpdateParamsWithBorderStyle(Params,BorderStyle,False);
 End;
 
 {------------------------------------------------------------------}
 
-procedure TPSCCustomListBox.WMEraseBkgnd(Var Msg: TWMEraseBkgnd);
-Begin
-  Msg.Result := 1;
-End;
+//procedure TPSCCustomListBox.WMEraseBkgnd(Var Msg: TLMEraseBkgnd);
+//Begin
+//  Msg.Result := 1;
+//End;
 
 {------------------------------------------------------------------}
 
@@ -5971,8 +5974,8 @@ Begin
   With FSubPanel do
   begin
     Parent:=Self;
-    BevelInner:=bvNone;
-    BevelOuter:=bvNone;
+    BevelInner:=GraphType.bvNone;
+    BevelOuter:=GraphType.bvNone;
     Align:=alClient;
     ParentColor:=True;
   end;
