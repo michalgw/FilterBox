@@ -25,14 +25,17 @@ interface
 
 Uses
   stdctrls,
-  Windows,
-  messages,
+  LCLIntf,
+  LMessages,
+  LCLType,
   forms,
   controls,
   menus,
   classes,
   db,
   extctrls,
+  GraphType,
+  LCLProc,
 
   myla_system,
   myla_interfaces,
@@ -152,16 +155,16 @@ type
     Procedure AdjustEdit;virtual;
     procedure ThemeChanged;
     procedure Changed;virtual;
-    Procedure WMEraseBkgnd(Var Msg: TWMEraseBkgnd); message WM_EraseBkgnd;
-    Procedure CMMouseLeave(Var Message: TMessage); message CM_MouseLeave;
+    Procedure WMEraseBkgnd(Var Msg: TLMEraseBkgnd); message LM_EraseBkgnd;
+    Procedure CMMouseLeave(Var Message: TLMessage); message CM_MouseLeave;
     Procedure CreateWnd; override;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FONTCHANGED;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FONTCHANGED;
     Procedure SetAutoSize(V: boolean);{$IFDEF D6} override;{$ENDIF}
     Procedure SetBtnKind(V: TPSCEditBtnKind); virtual;
     Procedure DoButtonClick(BtnIndex: Integer); virtual;
     Procedure DoButtonDown(BtnIndex: Integer); virtual;
     Procedure DoButtonUp(BtnIndex: Integer); virtual;
-    Procedure CreateParams(Var Params: TCreateParams); override;
+    //Procedure CreateParams(Var Params: TCreateParams); override;
     Procedure MouseDown(Button: TMouseButton; Shift:TShiftState;
       X,Y: Integer);override;
     Procedure MouseMove(Shift: TShiftState; X,Y: Integer); override;
@@ -218,11 +221,11 @@ type
     procedure OkButtonOnClick(Sender:TObject);
   protected
     Procedure CreateParams(Var Params: TCreateParams); override;
-    Procedure WMActivate(Var Message: TWMActivate); message WM_ACTIVATE;
-    Procedure WMMouseActivate(Var Message: TWMMouseActivate); message
-      WM_MOUSEACTIVATE;
-    Procedure WMNCActivate(Var Message: TWMNCActivate); message WM_NCACTIVATE;
-    Procedure CMFONTCHANGED(Var M: TMessage); message CM_FONTCHANGED;
+    Procedure WMActivate(Var Message: TLMActivate); message LM_ACTIVATE;
+    {Procedure WMMouseActivate(Var Message: TLMMouseActivate); message
+      LM_MOUSEACTIVATE;}
+    Procedure WMNCActivate(Var Message: TLMNCActivate); message LM_NCACTIVATE;
+    Procedure CMFONTCHANGED(Var M: TLMessage); message CM_FONTCHANGED;
     Procedure KeyDown(Var Key: Word; Shift: TShiftState); override;
     Procedure KeyPress(Var Key: Char); override;
     Procedure ClosePopup(Canceled,AHide:boolean); virtual;
@@ -250,11 +253,11 @@ type
   published
     Property WantReturns: Boolean Read FWantReturns Write FWantReturns;
     Property BorderStyle default bsToolWindow;
-    Property BevelEdges;
+    {Property BevelEdges;
     Property BevelInner;
     Property BevelOuter;
     Property BevelKind;
-    Property BevelWidth;
+    Property BevelWidth;}
     Property OnPopupClosed: TPSCOnPopupClosed read FOnPopupClosed write
       FOnPopupClosed;
     Property OnBeforePopup: TPSCNotifyEvent Read FOnBeforePopup Write FOnBeforePopup;
@@ -293,14 +296,14 @@ type
     Procedure DoDropDown; virtual;
     procedure MouseDown(Button: TMouseButton;Shift: TShiftState;
       X, Y: Integer);override;
-    Procedure GetDropped(Var Message: TMessage); message CB_GETDROPPEDSTATE;
+    //Procedure GetDropped(Var Message: TLMessage); message CB_GETDROPPEDSTATE;
     Procedure DoButtonDown(BtnIndex: Integer); override;
     Procedure UpdatePopup; virtual;
     Procedure KeyPress(Var Key: Char); override;
     Procedure PopupCloseEvent(Sender: TObject; Canceled: Boolean); virtual;
     Procedure KeyDown(Var Key: Word; Shift: TShiftState); override;
     Procedure CancelValue; virtual;
-    Procedure CMExit(Var M: TMessage); message cm_exit;
+    Procedure CMExit(Var M: TLMessage); message cm_exit;
 
     Property OnDropDown: TPSCNotifyEvent read FOnDropDown write FOnDropDown;
     Property OnCloseUp: TPSCNotifyEvent read FOnCloseUp write FOnCloseUp;
@@ -386,7 +389,7 @@ type
     Procedure EditOnMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X,Y: Integer); virtual;
     Procedure EditOnChange(Sender: TObject); virtual;
-    procedure EditWndProc(var Message: TMessage);
+    procedure EditWndProc(var Message: TLMessage);
   protected
     Procedure EditOnKeyDown(Sender: TObject; Var Key: Word;
       Shift: TShiftState); virtual;
@@ -394,11 +397,11 @@ type
     Procedure EditOnKeyUp(Sender: TObject; Var Key: Word;
       Shift: TShiftState); virtual;
 
-    Procedure cmExit(Var M: TMessage);message cm_Exit;
-    procedure WMWindowPosChanged(var Message: TWMWindowPosChanged);message WM_WindowPosChanged;
-    procedure CMColorChanged(var Message: TMessage); message CM_COLORCHANGED;
-    procedure CMFontChanged(var Message: TMessage); message CM_FONTCHANGED;
-    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    Procedure cmExit(Var M: TLMessage);message cm_Exit;
+    procedure WMWindowPosChanged(var Message: TLMWindowPosChanged);message LM_WindowPosChanged;
+    procedure CMColorChanged(var Message: TLMessage); message CM_COLORCHANGED;
+    procedure CMFontChanged(var Message: TLMessage); message CM_FONTCHANGED;
+    procedure CMEnabledChanged(var Message: TLMessage); message CM_ENABLEDCHANGED;
     Procedure DestroyEdit; virtual;
     Procedure RecreateEdit; virtual;
     Procedure Loaded; override;
@@ -714,7 +717,7 @@ type
   THackWinControl = Class(TWinControl)
   End;
 
-procedure TPSCCustomContainerEdit.CMColorChanged(var Message: TMessage);
+procedure TPSCCustomContainerEdit.CMColorChanged(var Message: TLMessage);
 begin
   inherited;
   THackControl(GetEdit).Color:=Color;
@@ -722,7 +725,7 @@ end;
 
 {--------------------------------}
 
-procedure TPSCCustomContainerEdit.CMFontChanged(var Message: TMessage);
+procedure TPSCCustomContainerEdit.CMFontChanged(var Message: TLMessage);
 begin
   inherited;
   THackControl(GetEdit).Font:=Font;
@@ -754,7 +757,7 @@ end;
 
 {--------------------------------}
 
-procedure TPSCCustomContainerEdit.WMWindowPosChanged(var Message: TWMWindowPosChanged);
+procedure TPSCCustomContainerEdit.WMWindowPosChanged(var Message: TLMWindowPosChanged);
 begin
   inherited;
   UpdateInplaceBounds;
@@ -990,7 +993,7 @@ End;
 
 Function TPSCEditorAccess_DBEdit.GetOEMConvert: boolean;
 Begin
-  Result := FEdit.OEMConvert;
+  Result := False;//FEdit.OEMConvert;
 End;
 
 {--------------------------------}
@@ -1109,7 +1112,7 @@ End;
 
 Procedure TPSCEditorAccess_DBEdit.SetOEMConvert(V: boolean);
 Begin
-  FEdit.OemConvert := V;
+  //FEdit.OemConvert := V;
 End;
 
 {--------------------------------}
@@ -1214,7 +1217,7 @@ end;
 
 Procedure TPSCEditorAccess_DBEdit.ClearUndo;
 begin
-  FEdit.ClearUndo;
+  //FEdit.ClearUndo;
 end;
 
 {--------------------------------}
@@ -1320,7 +1323,7 @@ End;
 
 Function TPSCEditorAccess_Edit.GetOEMConvert: boolean;
 Begin
-  Result := GetEdit.OEMConvert;
+  Result := False;//GetEdit.OEMConvert;
 End;
 
 {--------------------------------}
@@ -1437,7 +1440,7 @@ End;
 
 Procedure TPSCEditorAccess_Edit.SetOEMConvert(V: boolean);
 Begin
-  GetEdit.OEMConvert := V;
+  //GetEdit.OEMConvert := V;
 End;
 
 {--------------------------------}
@@ -1521,7 +1524,7 @@ end;
 
 Procedure TPSCEditorAccess_Edit.ClearUndo;
 begin
-  GetEdit.ClearUndo;
+  //GetEdit.ClearUndo;
 end;
 
 {--------------------------------}
@@ -1872,7 +1875,7 @@ End;
 
 {--------------------------------}
 
-procedure TPSCCustomContainerEdit.CMEnabledChanged(var Message: TMessage);
+procedure TPSCCustomContainerEdit.CMEnabledChanged(var Message: TLMessage);
 begin
   inherited;
   THackControl(GetEdit).Enabled := Enabled;
@@ -2182,10 +2185,10 @@ End;
 
 {---------------------------------------}
 
-procedure TPSCCustomContainerEdit.EditWndProc(var Message: TMessage);
+procedure TPSCCustomContainerEdit.EditWndProc(var Message: TLMessage);
 begin
   THackWinControl(GetEdit).WndProc(Message);
-  if (Message.Msg in [WM_SETFOCUS, WM_KILLFOCUS]) then
+  if (Message.Msg in [LM_SETFOCUS, LM_KILLFOCUS]) then
     Invalidate;
 end;
 
@@ -2204,7 +2207,7 @@ begin
     Canvas.Font:=Font;
     ClientHeight := Canvas.TextHeight('Wg09')+MyBorderHeight;
 
-    MyHeight:=PSCGetEditHeight(Font, Ctl3d);
+    MyHeight:=PSCGetEditHeight(Font, False);
     If Height<MyHeight then
       Height:=MyHeight;
   end;
@@ -2219,7 +2222,7 @@ end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomButtonControl.CMFontChanged(var Message: TMessage);
+procedure TPSCCustomButtonControl.CMFontChanged(var Message: TLMessage);
 begin
   Inherited;
   AdjustEdit;
@@ -2229,7 +2232,7 @@ end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomButtonControl.CMMouseLeave(var Message: TMessage);
+procedure TPSCCustomButtonControl.CMMouseLeave(var Message: TLMessage);
 begin
   inherited;
   FButtonState:=PUSHBUTTON_STATE_NORMAL;
@@ -2253,11 +2256,11 @@ end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomButtonControl.CreateParams(var Params: TCreateParams);
-begin
-  inherited;
-  Params.WindowClass.style := Params.WindowClass.style Or CS_DBLCLKS;
-end;
+//procedure TPSCCustomButtonControl.CreateParams(var Params: TCreateParams);
+//begin
+//  inherited;
+//  Params.WindowClass.style := Params.WindowClass.style Or CS_DBLCLKS;
+//end;
 
 {-----------------------------------------}
 
@@ -2405,8 +2408,8 @@ begin
   GetCursorPos(P);
   CursorHandle := WindowFromPoint(P);
   FocusHandle := GetFocus;
-  MyIsChildOfCursorHandle:=(Handle = CursorHandle) or IsChild(Handle,CursorHandle);
-  MyIsChildOfFocusHandle:=(Handle = FocusHandle) or IsChild(Handle,FocusHandle);
+  MyIsChildOfCursorHandle:=(Handle = CursorHandle);// or IsChild(Handle,CursorHandle);
+  MyIsChildOfFocusHandle:=(Handle = FocusHandle);// or IsChild(Handle,FocusHandle);
   Result:= Application.Active and CanFocus and
     (MyIsChildOfFocusHandle or (GetCapture = 0) and MyIsChildOfCursorHandle)
     or (csDesigning in ComponentState);
@@ -2761,7 +2764,7 @@ end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomButtonControl.WMEraseBkgnd(var Msg: TWMEraseBkgnd);
+procedure TPSCCustomButtonControl.WMEraseBkgnd(var Msg: TLMEraseBkgnd);
 begin
   Msg.Result:= 1;
 end;
@@ -2788,14 +2791,14 @@ End;
 
 Procedure TPSCCustomPopupEdit.UpdatePopupParams(PopupForm: TPSCPopupForm);
 Begin
-  With PopupForm Do
+  {With PopupForm Do
     Begin
       BevelEdges := PopupParams.BevelEdges;
       BevelInner := PopupParams.BevelInner;
       BevelOuter := PopupParams.BevelOuter;
       BevelKind := PopupParams.BevelKind;
       BevelWidth := PopupParams.BevelWidth;
-    End;
+    End;}
   If Assigned(FOnUpdatePopup) Then
     FOnUpdatePopup(Self,PopupForm);
 End;
@@ -2830,14 +2833,14 @@ end;
 
 {--------------------------------------}
 
-Procedure TPSCCustomPopupEdit.GetDropped(Var Message: TMessage);
-Begin
-  Message.result := integer(DroppedDown);
-End;
+//Procedure TPSCCustomPopupEdit.GetDropped(Var Message: TMessage);
+//Begin
+//  Message.result := integer(DroppedDown);
+//End;
 
 {--------------------------------------}
 
-Procedure TPSCCustomPopupEdit.cmExit(Var M: TMessage);
+Procedure TPSCCustomPopupEdit.cmExit(Var M: TLMessage);
 Begin
   Inherited;
   If Not DroppedDown And ([csDestroying,csDesigning]*ComponentState=[]) Then
@@ -2846,7 +2849,7 @@ End;
 
 {--------------------------------------}
 
-Procedure TPSCCustomContainerEdit.cmExit(Var M: TMessage);
+Procedure TPSCCustomContainerEdit.cmExit(Var M: TLMessage);
 begin
   If (FEditorAccess<>nil) and (FEdit<>nil) then
     inherited;
@@ -3076,7 +3079,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCPopupForm.CMFONTCHANGED(Var M: TMessage);
+Procedure TPSCPopupForm.CMFONTCHANGED(Var M: TLMessage);
 Begin
   Inherited;
   ResizeFormControls;
@@ -3122,17 +3125,17 @@ end;
 type
   TPSCPanelInPopup=class(TPSCPanel)
   public
-    Procedure WMLButtonDown(Var Message: TWMLButtonDown);message WM_LButtonDown;
+    Procedure WMLButtonDown(Var Message: TLMLButtonDown);message LM_LButtonDown;
   end;
 
-Procedure TPSCPanelInPopup.WMLButtonDown(Var Message: TWMLButtonDown);
+Procedure TPSCPanelInPopup.WMLButtonDown(Var Message: TLMLButtonDown);
 Begin
   If Parent Is TPSCPopupForm Then
     Begin
       Message.Result := -1;
       ReleaseCapture;
       With TControl(Parent) Do
-        Perform(WM_SysCommand,SC_Move Or htCaption,0);
+        Perform(LM_SysCommand,SC_Move Or htCaption,0);
     End
   Else
     Inherited;
@@ -3176,8 +3179,8 @@ begin
   begin
     Caption:='';
     Align:=alBottom;
-    BevelInner:=bvNone{bvLowered};
-    BevelOuter:=bvNone;
+    BevelInner:= GraphType.bvNone{bvLowered};
+    BevelOuter:=GraphType.bvNone;
     Parent:=Self;
     ParentColor:=True;
   end;
@@ -3298,7 +3301,7 @@ Type
   public
     Constructor Create(Collection: TCollection); override;
 
-    Procedure WindowProc(Var Message: TMessage);
+    Procedure WindowProc(Var Message: TLMessage);
   End;
 
 Var
@@ -3314,11 +3317,11 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCPopupHook.WindowProc(Var Message: TMessage);
+Procedure TPSCPopupHook.WindowProc(Var Message: TLMessage);
 Begin
   Case Message.Msg Of
-    WM_NCACTIVATE:
-      If Not TWMNCActivate(Message).Active Then
+    LM_NCACTIVATE:
+      If Not TLMNCActivate(Message).Active Then
         Begin
           Message.Result := 1;
           Exit
@@ -3436,7 +3439,7 @@ Type
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.WMNCActivate(Var Message: TWMNCActivate);
+Procedure TPSCPopupForm.WMNCActivate(Var Message: TLMNCActivate);
 Begin
   Message.result := 1;
 End;
@@ -3553,7 +3556,9 @@ Var
   SaveState: TFormState;
 Begin
   SaveState := FFormState;
+  {$IFDEF WINDOWS}
   Include(FFormState,fsModal);
+  {$ENDIF}
   Try
     PSCHookPopupWindow(Self);
     Inherited Show;
@@ -3583,7 +3588,7 @@ end;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.WMActivate(Var Message: TWMActivate);
+Procedure TPSCPopupForm.WMActivate(Var Message: TLMActivate);
 
   function NeedToClose(AControl:TWinControl):Boolean;
   begin
@@ -3605,11 +3610,11 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.WMMouseActivate(Var Message: TWMMouseActivate);
-Begin
-  Inherited;
-  Message.Result := MA_NOACTIVATE;
-End;
+//Procedure TPSCPopupForm.WMMouseActivate(Var Message: TWMMouseActivate);
+//Begin
+//  Inherited;
+//  Message.Result := MA_NOACTIVATE;
+//End;
 
 {-------------------------------------------}
 
