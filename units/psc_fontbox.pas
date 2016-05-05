@@ -28,12 +28,15 @@ Uses
   StdCtrls,
 
   Printers,
-  messages,
+  Lmessages,
   classes,
   controls,
-  windows,
+  LCLIntf,
+  LCLType,
+  LCLProc,
   forms,
   graphics,
+  Types,
 
   myla_system,
   myla_interfaces,
@@ -62,12 +65,12 @@ Type
 
     Procedure SetObjects(Value: TCollection);
     Procedure KillTimer;
-    Procedure WMTimer(Var Message: TWMTimer); message WM_TIMER;
-    Procedure LBAddString(Var Message: TMessage); message LB_ADDSTRING;
+    Procedure WMTimer(Var Message: TLMTimer); message LM_TIMER;
+    {Procedure LBAddString(Var Message: TMessage); message LB_ADDSTRING;
     Procedure LBInsertString(Var Message: TMessage); message LB_INSERTSTRING;
     Procedure LBDeleteString(Var Message: TMessage); message LB_DELETESTRING;
-    Procedure LBResetContent(Var Message: TMessage); message LB_RESETCONTENT;
-    Procedure WMGetDlgCode(Var Message: TMessage); message WM_GETDLGCODE;
+    Procedure LBResetContent(Var Message: TMessage); message LB_RESETCONTENT;}
+    Procedure WMGetDlgCode(Var Message: TLMessage); message LM_GETDLGCODE;
   protected
     Procedure CreateWnd; override;
     Procedure DestroyWnd; override;
@@ -104,11 +107,11 @@ Type
     Procedure SetImages(Value: TPSCImageList);
     Procedure SetShowImages(Value: Boolean);
     Procedure SeTPSCSelectionShowing(Value: TPSCSelectionShowing);
-    Procedure CNDrawItem(Var Message: TWMDrawItem); message CN_DRAWITEM;
+    Procedure CNDrawItem(Var Message: TLMDrawItems); message CN_DRAWITEM;
   protected
     Procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
-    Procedure CreateParams(Var Params: TCreateParams); override;
+    //Procedure CreateParams(Var Params: TCreateParams); override;
     Function CreateObjects: TCollection; override;
     Function GetImageSize(Var Size: TSize): Boolean; virtual;
     Procedure DrawImage(Index: Integer; Const Rect: TRect); virtual;
@@ -186,13 +189,13 @@ Type
     Procedure RemeasureItems(Index: Integer);
     Procedure FontsChanged(Sender: TObject);
     Procedure RebuildSystemFonts(Rebuild: Boolean);
-    Procedure CMFontChange(Var Message: TMessage); message CM_FONTCHANGE;
-    Procedure CNDrawItem(Var Message: TWMDrawItem); message CN_DRAWITEM;
-    Procedure CNMeasureItem(Var Message: TWMMeasureItem);
+    Procedure CMFontChange(Var Message: TLMessage); message CM_FONTCHANGE;
+    Procedure CNDrawItem(Var Message: TLMDrawItems); message CN_DRAWITEM;
+    Procedure CNMeasureItem(Var Message: TLMMeasureItem);
       message CN_MEASUREITEM;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FONTCHANGED;
-    Procedure WMEraseBkgnd(Var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
-    Procedure CMHintShow(Var Message: TMessage); message CM_HINTSHOW;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FONTCHANGED;
+    Procedure WMEraseBkgnd(Var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
+    Procedure CMHintShow(Var Message: TLMessage); message CM_HINTSHOW;
   protected
     Function DoMouseWheelDown(Shift: TShiftState; MousePos: TPoint): Boolean;
       override;
@@ -260,8 +263,8 @@ Type
     Property Enabled;
     Property ExtendedSelect;
     Property Font;
-    Property ImeMode;
-    Property ImeName;
+    //Property ImeMode;
+    //Property ImeName;
     Property ItemHeight;
     Property MultiSelect;
     Property ParentColor;
@@ -273,7 +276,7 @@ Type
     Property Style;
     Property TabOrder;
     Property TabStop;
-    Property TabWidth;
+    //Property TabWidth;
     Property Visible;
     Property OnClick;
     Property OnContextPopup;
@@ -484,8 +487,8 @@ End;
 
 Destructor TPSCCustomObjListBox.Destroy;
 Begin
-  If HandleAllocated Then
-    DestroyWindowHandle;
+  {If HandleAllocated Then
+    DestroyWindowHandle;}
   FObjects.Free;
   FObjects := Nil;
   Inherited Destroy
@@ -511,9 +514,9 @@ End;
 
 Procedure TPSCCustomObjListBox.DefaultHandler(Var Message);
 Begin
-  With TMessage(Message) Do
+  With TLMessage(Message) Do
     If Not FSmoothScroll Or Multiselect Or
-      (Msg <> WM_LBUTTONDOWN) And (Msg <> WM_LBUTTONUP) Then
+      (Msg <> LM_LBUTTONDOWN) And (Msg <> LM_LBUTTONUP) Then
       Inherited DefaultHandler(Message)
 End;
 
@@ -523,14 +526,14 @@ Procedure TPSCCustomObjListBox.KillTimer;
 Begin
   If FScrollTimer <> 0 Then
     Begin
-      Windows.KillTimer(Handle,FScrollTimer);
+      LCLIntf.KillTimer(Handle,FScrollTimer);
       FScrollTimer := 0
     End
 End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomObjListBox.WMTimer(Var Message: TWMTimer);
+Procedure TPSCCustomObjListBox.WMTimer(Var Message: TLMTimer);
 Var
   P: TPoint;
 Begin
@@ -585,8 +588,8 @@ Begin
     Begin
       MouseCapture := false;
       KillTimer;
-      SendMessage(GetParentHandle,WM_COMMAND,
-        MakeLong(Handle,LBN_SELCHANGE),Handle)
+      {SendMessage(GetParentHandle,LM_COMMAND,
+        MakeLong(Handle,LBN_SELCHANGE),Handle)}
     End
 End;
 
@@ -619,7 +622,7 @@ Begin
 End;
 
 {-------------------------------------}
-
+(*
 Procedure TPSCCustomObjListBox.LBAddString(Var Message: TMessage);
 Begin
   Inherited;
@@ -656,10 +659,10 @@ Begin
   If Not FSaveObjects Then
     ResetItems
 End;
-
+*)
 {-------------------------------------}
 
-Procedure TPSCCustomObjListBox.WMGetDlgCode(Var Message: TMessage);
+Procedure TPSCCustomObjListBox.WMGetDlgCode(Var Message: TLMessage);
 Begin
   Inherited;
   With Message Do
@@ -693,8 +696,8 @@ Procedure TPSCCustomObjListBox.KeyDown(Var Key: Word; Shift: TShiftState);
 
   Procedure Move(Delta: Integer);
   Begin
-    SendMessage(GetParentHandle,WM_COMMAND,
-      MakeLong(Handle,LBN_SELCHANGE),Handle);
+    //SendMessage(GetParentHandle,LM_COMMAND,
+    //  MakeLong(Handle,LBN_SELCHANGE),Handle);
     MoveItemIndex(Delta);
     Key := 0
   End;
@@ -720,7 +723,7 @@ Var
     Y,dy: Integer;
     Rect: TRect;
   Begin
-    SendMessage(Handle,WM_SETREDRAW,0,0);
+    //SendMessage(Handle,LM_SETREDRAW,0,0);
     Try
       Rect := ClientRect;
       With ItemRect(Index) Do
@@ -742,7 +745,7 @@ Var
           dy := Bottom - Rect.Top;
       ScrollWindow(Handle,0,dy,@Rect,Nil);
     Finally
-      SendMessage(Handle,WM_SETREDRAW,1,0)
+      //SendMessage(Handle,LM_SETREDRAW,1,0)
     End;
     With Rect Do
       If Delta > 0 Then
@@ -849,7 +852,7 @@ Begin
 End;
 
 {-------------------------------------}
-
+(*
 Procedure TPSCCustomImgListBox.CreateParams(Var Params: TCreateParams);
 Begin
   Inherited CreateParams(Params);
@@ -857,7 +860,7 @@ Begin
     If (Self.Style = lbStandard) And FShowImages Then
       Style := Style Or LBS_OWNERDRAWFIXED
 End;
-
+*)
 {-------------------------------------}
 
 Function TPSCCustomImgListBox.CreateObjects: TCollection;
@@ -892,7 +895,7 @@ Begin
   If FShowImages <> Value Then
     Begin
       FShowImages := Value;
-      RecreateWnd
+      RecreateWnd(Self)
     End
 End;
 
@@ -944,7 +947,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomImgListBox.CNDrawItem(Var Message: TWMDrawItem);
+Procedure TPSCCustomImgListBox.CNDrawItem(Var Message: TLMDrawItems);
 Var
   State: TOwnerDrawState;
   Rect: TRect;
@@ -953,12 +956,12 @@ Var
 Begin
   With Message.DrawItemStruct^ Do
     Begin
-      State := TOwnerDrawState(TPSCLongRec(itemState).Lo);
+      State := TOwnerDrawState(Integer(TPSCLongRec(itemState).Lo));
       If Not (ssShowFocusRect In SelectionShowing) Then
         State := State - [odFocused];
       If Not (ssShowSelection In SelectionShowing) Then
         State := State - [odSelected];
-      Canvas.Handle := hDC;
+      //Canvas.Handle := hDC;
       Canvas.Font := Font;
       Canvas.Brush := Brush;
       If (Integer(itemID) >= 0) And (odSelected In State) Then
@@ -987,7 +990,7 @@ Begin
         Begin
           If ShowImage Then
             rcItem.Left := Rect.Left;
-          DrawFocusRect(hDC,rcItem)
+          DrawFocusRect(Canvas.Handle,rcItem)
         End;
       Canvas.Handle := 0
     End
@@ -1097,9 +1100,9 @@ Var
         Result := I <> -1;
         If Result Then
           Begin
-            FontParams := TFontParams(Items.Objects[I]);
+            FontParams.Value := Integer(Items.Objects[I]);
             FontParams.FontType := FontParams.FontType Or FontType;
-            Items.Objects[I] := TObject(FontParams)
+            Items.Objects[I] := TObject(FontParams.Value)
           End
       End
   End;
@@ -1269,7 +1272,7 @@ End;
 Procedure TPSCCustomFontBox.RemeasureItems(Index: Integer);
 Var
   I: Integer;
-  MeasureItemMsg: TWMMeasureItem;
+  MeasureItemMsg: TLMMeasureItem;
   MeasureItemStruct: TMeasureItemStruct;
 
   Procedure DoMeasureItem(Index: Integer);
@@ -1279,8 +1282,8 @@ Var
     MeasureItemStruct.itemWidth := Width;
     MeasureItemStruct.itemHeight := ItemHeight;
     Dispatch(MeasureItemMsg);
-    Perform(LB_SETITEMHEIGHT,Index,
-      MakeLParam(MeasureItemStruct.itemHeight,0))
+    //Perform(LB_SETITEMHEIGHT,Index,
+    //  MakeLParam(MeasureItemStruct.itemHeight,0))
   End;
 
 Begin
@@ -1296,7 +1299,7 @@ Begin
       Else
         For I := 0 To Items.Count - 1 Do
           DoMeasureItem(I);
-      SendMessage(Handle,LB_SETTOPINDEX,TopIndex,0)
+      //SendMessage(Handle,LB_SETTOPINDEX,TopIndex,0)
     End
 End;
 
@@ -1330,7 +1333,7 @@ Begin
             ReleaseDC(0,DC)
           End
         End;
-      If FDevice In [fbPrinter,fbBoth] Then
+      If (FDevice In [fbPrinter,fbBoth]) and Assigned(Printer) Then
         With Printer Do
           If Printers.Count > 0 Then
             Begin
@@ -1770,7 +1773,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomFontBox.WMEraseBkgnd(Var Message: TWMEraseBkgnd);
+Procedure TPSCCustomFontBox.WMEraseBkgnd(Var Message: TLMEraseBkgnd);
 Var
   Rect: TRect;
 Begin
@@ -1788,7 +1791,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomFontBox.CMFontChange(Var Message: TMessage);
+Procedure TPSCCustomFontBox.CMFontChange(Var Message: TLMessage);
 Begin
   Inherited;
   RebuildSystemFonts(false)
@@ -1796,7 +1799,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomFontBox.CNDrawItem(Var Message: TWMDrawItem);
+Procedure TPSCCustomFontBox.CNDrawItem(Var Message: TLMDrawItems);
 Var
   Rect: TRect;
   DrawLine: Boolean;
@@ -1819,14 +1822,14 @@ Begin
   If DrawLine Then
     With Message.DrawItemStruct^ Do
       Begin
-        FillRect(hDC,Rect,Canvas.Brush.Handle);
-        DrawEdge(hDC,Rect,BDR_RAISEDOUTER,BF_BOTTOM Or BF_TOP Or BF_FLAT)
+        FillRect(Canvas.Handle,Rect,Canvas.Brush.Handle);
+        DrawEdge(Canvas.Handle,Rect,BDR_RAISEDOUTER,BF_BOTTOM Or BF_TOP Or BF_FLAT)
       End
 End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomFontBox.CNMeasureItem(Var Message: TWMMeasureItem);
+Procedure TPSCCustomFontBox.CNMeasureItem(Var Message: TLMMeasureItem);
 Var
   DC: HDC;
   Ht: Integer;
@@ -1888,7 +1891,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomFontBox.CMFontChanged(Var Message: TMessage);
+Procedure TPSCCustomFontBox.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   { Work around of list box bug }
@@ -1897,7 +1900,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCCustomFontBox.CMHintShow(Var Message: TMessage);
+Procedure TPSCCustomFontBox.CMHintShow(Var Message: TLMessage);
 Var
   Item: Integer;
 Begin
