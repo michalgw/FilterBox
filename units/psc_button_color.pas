@@ -28,13 +28,15 @@ Uses
   Buttons,
   ImgList,
   StdCtrls,
-  commctrl,
+  ComCtrls,
   sysutils,
 
-  messages,
+  lmessages,
   classes,
   controls,
-  windows,
+  LCLIntf,
+  LCLType,
+  LCLProc,
   forms,
 
   myla_system,
@@ -75,13 +77,13 @@ type
     Procedure UpdateDragBar;
     Procedure DoDragBarMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X,Y: Integer);
-    Procedure WMNCActivate(Var Message: TWMNCActivate); message WM_NCACTIVATE;
-    Procedure WMActivate(Var Message: TWMActivate); message WM_ACTIVATE;
-    Procedure WMWindowPosChanging(Var Message: TWMWindowPosChanging);
-      message WM_WINDOWPOSCHANGING;
-    Procedure WMSysCommand(Var Message: TWMSysCommand); message WM_SYSCOMMAND;
+    Procedure WMNCActivate(Var Message: TLMNCActivate); message LM_NCACTIVATE;
+    Procedure WMActivate(Var Message: TLMActivate); message LM_ACTIVATE;
+    Procedure WMWindowPosChanging(Var Message: TLMWindowPosChanging);
+      message LM_WINDOWPOSCHANGING;
+    Procedure WMSysCommand(Var Message: TLMSysCommand); message LM_SYSCOMMAND;
     Procedure CMDialogKey(Var Message: TCMDialogKey); message CM_DIALOGKEY;
-    Procedure CMActiveChanged(Var Message: TMessage);
+    Procedure CMActiveChanged(Var Message: TLMessage);
       message CM_ACTIVECHANGED;
   protected
     Procedure Notification(AComponent: TComponent;
@@ -128,7 +130,7 @@ type
     Property ClientHeight;
     Property ClientWidth;
     Property Color;
-    Property Ctl3D;
+    //Property Ctl3D;
     Property DragMode;
     Property Enabled;
     Property ParentFont default False;
@@ -140,20 +142,20 @@ type
     Property Icon;
     Property KeyPreview;
     Property Menu;
-    Property ObjectMenuItem;
+    //Property ObjectMenuItem;
     Property PixelsPerInch;
     Property PopupMenu;
     Property Position;
-    Property PrintScale;
-    Property Scaled;
+    //Property PrintScale;
+    //Property Scaled;
     Property ShowHint;
     Property VertScrollBar;
     Property Visible;
     Property Width;
     Property WindowState;
-    Property WindowMenu;
+    //Property WindowMenu;
     Property OnActivate;
-    Property OnCanResize;
+    //Property OnCanResize;
     Property OnConstrainedResize;
     Property OnDockDrop;
     Property OnDockOver;
@@ -194,12 +196,12 @@ type
 
     Procedure SetColorBox(Value: TPSCCustomColorBox);
     Function GetColorBox: TPSCCustomColorBox;
-    Procedure WMEraseBkgnd(Var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    Procedure WMEraseBkgnd(Var Message: TLmEraseBkgnd); message LM_ERASEBKGND;
   protected
     Procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
 
-    Function CanResize(Var NewWidth,NewHeight: Integer): Boolean; override;
+    Function CanResize(Var NewWidth,NewHeight: Integer): Boolean;// override;
   public
     Property ColorBox: TPSCCustomColorBox read GetColorBox write SetColorBox;
   End;
@@ -277,8 +279,8 @@ type
     Procedure SetImageInactive(Value: Integer);
     Procedure SetImagePressed(Value: Integer);
     Procedure CMHintShow(Var Message: TCMHintShow); message CM_HINTSHOW;
-    Procedure CMMouseEnter(Var Message: TMessage); message CM_MOUSEENTER;
-    Procedure CMMouseLeave(Var Message: TMessage); message CM_MOUSELEAVE;
+    Procedure CMMouseEnter(Var Message: TLMessage); message CM_MOUSEENTER;
+    Procedure CMMouseLeave(Var Message: TLMessage); message CM_MOUSELEAVE;
     Procedure PopupDeactivate(Sender: TObject; PrevWindow: HWND);
     Procedure UpdateTracking;
     Procedure SetStyle(Value: TPSCColorBoxStyle);
@@ -441,8 +443,8 @@ Function TPSCColorBoxPopup.CanResize(Var NewWidth,NewHeight: Integer): Boolean;
 Var
   dy,dx: Integer;
 Begin
-  Result := Inherited CanResize(NewWidth,NewHeight);
-  If Result And Not (csDesigning In ColorBox.ComponentState) Then
+  {Result := Inherited CanResize(NewWidth,NewHeight);}
+  If {Result And} Not (csDesigning In ColorBox.ComponentState) Then
     Begin
       With DragBar Do
         If Visible Then
@@ -478,7 +480,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCColorBoxPopup.WMEraseBkgnd(Var Message: TWmEraseBkgnd);
+Procedure TPSCColorBoxPopup.WMEraseBkgnd(Var Message: TLmEraseBkgnd);
 Begin
   Message.Result := 1
 End;
@@ -491,8 +493,8 @@ Type
     FMouseInControl: Boolean;
     FMagnetic: Boolean;
 
-    Procedure CMMouseEnter(Var Message: TMessage); message CM_MOUSEENTER;
-    Procedure CMMouseLeave(Var Message: TMessage); message CM_MOUSELEAVE;
+    Procedure CMMouseEnter(Var Message: TLMessage); message CM_MOUSEENTER;
+    Procedure CMMouseLeave(Var Message: TLMessage); message CM_MOUSELEAVE;
     Procedure CMDialogKey(Var Message: TCMDialogKey); message CM_DIALOGKEY;
   protected
     Procedure Paint; override;
@@ -528,7 +530,7 @@ Type
   public
     Constructor Create(Collection: TCollection); override;
 
-    Procedure WindowProc(Var Message: TMessage);
+    Procedure WindowProc(Var Message: TLMessage);
   End;
 
   TPopupHooks = Class(TPSCNamedItems)
@@ -553,7 +555,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPopupHook.WindowProc(Var Message: TMessage);
+Procedure TPopupHook.WindowProc(Var Message: TLMessage);
 Const
   ShowFlags: Array[Boolean] Of Word = (
     SWP_NOSIZE + SWP_NOMOVE + SWP_NOZORDER + SWP_NOACTIVATE + SWP_HIDEWINDOW,
@@ -563,12 +565,12 @@ Var
   ShowFlag,NeedToHide: Boolean;
 Begin
   Case Message.Msg Of
-    WM_NCLBUTTONDOWN:
+    LM_NCLBUTTONDOWN:
       With FForm Do
         Begin
           If Not Active Then
             BringToFront;
-          SendCancelMode(FForm);
+          //SendCancelMode(FForm);
           Update
         End;
     CM_SHOWINGCHANGED:
@@ -579,8 +581,8 @@ Begin
             If HandleAllocated And Visible Then
               SetWindowPos(Handle,0,0,0,0,0,ShowFlags[ShowFlag])
       End;
-    WM_NCACTIVATE:
-      If Not TWMNCActivate(Message).Active Then
+    LM_NCACTIVATE:
+      If Not TLMNCActivate(Message).Active Then
         For I := 0 To FPopups.Count - 1 Do
           With TPSCPopupWindow(FPopups[I]) Do
             If HandleAllocated And IsWindowVisible(Handle) Then
@@ -588,9 +590,9 @@ Begin
                 Message.Result := 1;
                 Exit
               End;
-    WM_ACTIVATE:
+    LM_ACTIVATE:
       Begin
-        If TWMActivate(Message).Active <> WA_INACTIVE Then
+        If TLMActivate(Message).Active <> WA_INACTIVE Then
           Begin
             For I := 0 To FPopups.Count - 1 Do
               With TPSCPopupWindow(FPopups[I]) Do
@@ -603,7 +605,7 @@ Begin
             NeedToHide := true;
             For I := 0 To FPopups.Count - 1 Do
               With TPSCPopupWindow(FPopups[I]) Do
-                If HandleAllocated And (TWMActivate(Message)
+                If HandleAllocated And (TLMActivate(Message)
                   .ActiveWindow = Handle) Then
                   Begin
                     NeedToHide := false;
@@ -616,7 +618,7 @@ Begin
                     If HandleAllocated And Visible Then
                       SetWindowPos(Handle,0,0,0,0,0,ShowFlags[false]);
                 If FForm.HandleAllocated And FForm.Visible Then
-                  PostMessage(FForm.Handle,WM_NCACTIVATE,0,0)
+                  PostMessage(FForm.Handle,LM_NCACTIVATE,0,0)
               End
           End;
         // this is very very tricky
@@ -632,17 +634,17 @@ Begin
             Exit
           End
       End;
-    WM_PARENTNOTIFY:
-      With TWMParentNotify(Message) Do
+    LM_PARENTNOTIFY:
+{      With TLMNotify(Message) Do
         Case Event Of
-          WM_LBUTTONDOWN,WM_MBUTTONDOWN,WM_RBUTTONDOWN:
+          LM_LBUTTONDOWN,LM_MBUTTONDOWN,LM_RBUTTONDOWN:
             For I := 0 To FPopups.Count - 1 Do
               With TPSCPopupWindow(FPopups[I]) Do
                 If HandleAllocated And Visible Then
                   Perform(CM_ACTIVECHANGED,0,
                     WindowFromPoint(FForm.ClientToScreen(Point(XPos,YPos)))
                     );
-        End
+        End}
   End;
   FOldWindowProc(Message);
 End;
@@ -795,7 +797,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCDragBar.CMMouseEnter(Var Message: TMessage);
+Procedure TPSCDragBar.CMMouseEnter(Var Message: TLMessage);
 Begin
   Inherited;
   If Not FMouseInControl And Enabled Then
@@ -807,7 +809,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCDragBar.CMMouseLeave(Var Message: TMessage);
+Procedure TPSCDragBar.CMMouseLeave(Var Message: TLMessage);
 Begin
   Inherited;
   If FMouseInControl And Enabled Then
@@ -825,7 +827,7 @@ Begin
   If (Dragging = dsDragging) And (Message.CharCode = VK_ESCAPE) Then
     Begin
       Parent.BoundsRect := StartDragRect;
-      Perform(WM_CANCELMODE,0,0);
+      Perform(LM_CANCELMODE,0,0);
       Message.CharCode := 0;
       Message.Result := 1
     End
@@ -879,7 +881,7 @@ Begin
               BoundsRect := DragRect
             End
         End;
-      While PeekMessage(Msg,0,WM_PAINT,WM_PAINT,PM_NOREMOVE) Do
+      While PeekMessage(Msg,0,LM_PAINT,LM_PAINT,PM_NOREMOVE) Do
         UpdateWindow(Msg.hwnd)
     End
 End;
@@ -942,8 +944,8 @@ Begin
         Case FBorderStyle Of
           pbsSizePopup,pbsSizeDragBar,pbsSizeToolWin:
             Style := Style Or WS_DLGFRAME Or WS_THICKFRAME;
-          pbsPopup,pbsDragBar,pbsToolWindow:
-            Style := Style Or BorderStyle[Ctl3D]
+          //pbsPopup,pbsDragBar,pbsToolWindow:
+          //  Style := Style Or BorderStyle[Ctl3D]
         End;
         Case FBorderStyle Of
           pbsDragBar,pbsSizeDragBar: DragBar;
@@ -994,7 +996,7 @@ Begin
   If FBorderStyle <> Value Then
     Begin
       FBorderStyle := Value;
-      RecreateWnd
+      RecreateWnd(Self)
     End
 End;
 
@@ -1033,14 +1035,14 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCPopupWindow.WMNCActivate(Var Message: TWMNCActivate);
+Procedure TPSCPopupWindow.WMNCActivate(Var Message: TLMNCActivate);
 Begin
   Message.Result := 1
 End;
 
 {-------------------------------------}
 
-Procedure TPSCPopupWindow.WMActivate(Var Message: TWMActivate);
+Procedure TPSCPopupWindow.WMActivate(Var Message: TLMActivate);
 Begin
   Inherited;
   If (csDestroyingHandle In ControlState) Then
@@ -1050,7 +1052,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCPopupWindow.CMActiveChanged(Var Message: TMessage);
+Procedure TPSCPopupWindow.CMActiveChanged(Var Message: TLMessage);
 Begin
   If Active Then
     Begin
@@ -1072,7 +1074,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCPopupWindow.WMWindowPosChanging(Var Message: TWMWindowPosChanging)
+Procedure TPSCPopupWindow.WMWindowPosChanging(Var Message: TLMWindowPosChanging)
   ;
 Begin
   Inherited;
@@ -1083,7 +1085,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCPopupWindow.WMSysCommand(Var Message: TWMSysCommand);
+Procedure TPSCPopupWindow.WMSysCommand(Var Message: TLMSysCommand);
 Begin
   If Message.CmdType And $FFF0 = SC_KEYMENU Then
     Message.Result := 0
@@ -1101,7 +1103,7 @@ Begin
       If Not (BorderStyle In [pbsToolWindow,pbsSizeToolWin]) Then
         Begin
           ModalResult := mrCancel;
-          SendCancelMode(Self);
+          //SendCancelMode(Self);
           Hide;
           Message.Result := 1
         End
@@ -1127,7 +1129,7 @@ Begin
   HandleNeeded;
   Bounds := BoundsRect;
   ControlRect := Control.BoundsRect;
-  MapWindowPoints(Control.Parent.Handle,0,ControlRect,2);
+  //MapWindowPoints(Control.Parent.Handle,0,ControlRect,2);
   PSCCalcPopupRect(ControlRect,Alignment,Bounds);
   Popup(Bounds.Left,Bounds.Top);
 End;
@@ -1239,8 +1241,8 @@ Procedure PSCDrawImageList(ACanvas: TPSCCanvas; X,Y: Integer;
   DrawingStyle: TDrawingStyle);
 Const
   ROP_DSPDxax = $00E20746;
-  DrawingStyles: Array[TDrawingStyle] Of Longint = (ILD_FOCUS,ILD_SELECTED,
-    ILD_NORMAL,ILD_TRANSPARENT);
+  //DrawingStyles: Array[TDrawingStyle] Of Longint = (ILD_FOCUS,ILD_SELECTED,
+  //  ILD_NORMAL,ILD_TRANSPARENT);
 Var
   R: TRect;
   DestDC,SrcDC: HDC;
@@ -1263,8 +1265,8 @@ Var
       End;
     ACanvas.Brush.Color := color;
     DestDC := ACanvas.Handle;
-    Windows.SetTextColor(DestDC,clPSCWhite);
-    Windows.SetBkColor(DestDC,clPSCBlack);
+    {Windows.}SetTextColor(DestDC,clPSCWhite);
+    {Windows.}SetBkColor(DestDC,clPSCBlack);
     BitBlt(DestDC,X + disp,Y + disp,ImageList.Width,ImageList.Height,SrcDC,
       0,0,ROP_DSPDxax);
   End;
@@ -1275,9 +1277,10 @@ Begin
   If Enabled Then
     Begin
       With ImageList Do
-        ImageList_DrawEx(Handle,Index,ACanvas.Handle,X,Y,0,0,
-          GetRGBColor(BkColor),GetRGBColor(BlendColor),
-          DrawingStyles[DrawingStyle]);
+        ImageList.Draw(ACanvas, X, Y, Index, DrawingStyle, itImage);
+        //ImageList_DrawEx(Handle,Index,ACanvas.Handle,X,Y,0,0,
+        //  GetRGBColor(BkColor),GetRGBColor(BlendColor),
+        //  DrawingStyles[DrawingStyle]);
       exit
     End;
   MonoBitmap := TPSCBitmap.Create;
@@ -1289,8 +1292,9 @@ Begin
       Canvas.Brush.Color := clPSCWhite;
       Canvas.FillRect(PSCRect(0,0,ImageList.Width,ImageList.Height))
     End;
-  ImageList_DrawEx(ImageList.Handle,Index,MonoBitmap.Canvas.Handle,0,0,
-    0,0,CLR_DEFAULT,0,ILD_NORMAL);
+  ImageList.Draw(MonoBitmap.Canvas, 0, 0, Index, DrawingStyle, itImage);
+  //ImageList_DrawEx(ImageList.Handle,Index,MonoBitmap.Canvas.Handle,0,0,
+  //  0,0,CLR_DEFAULT,0,ILD_NORMAL);
   R := PSCRect(X,Y,X + ImageList.Width,Y + ImageList.Height);
   SrcDC := MonoBitmap.Canvas.Handle;
   DrawBitBlt(true);
@@ -1499,9 +1503,9 @@ Var
               End;
         With Brush Do
           Begin
-            If S0 = cbsExclusive Then
+            {If S0 = cbsExclusive Then
               Bitmap := PSCAllocPatternBitmap(BgColor,FgColor)
-            Else
+            Else}
               Begin
                 Color := BgColor;
                 Style := BrushStyle_Solid;
@@ -1747,7 +1751,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCColorButton.CMMouseEnter(Var Message: TMessage);
+Procedure TPSCColorButton.CMMouseEnter(Var Message: TLMessage);
 Begin
   Inherited;
   FMouseInside := true;
@@ -1783,7 +1787,7 @@ End;
 
 {-------------------------------------}
 
-Procedure TPSCColorButton.CMMouseLeave(Var Message: TMessage);
+Procedure TPSCColorButton.CMMouseLeave(Var Message: TLMessage);
 Begin
   Inherited;
   FMouseInside := false;
