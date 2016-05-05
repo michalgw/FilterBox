@@ -28,14 +28,16 @@ Uses
   dialogs,
   stdctrls,
   menus,
-  Windows,
-  Messages,
+  LCLIntf,
+  LCLType,
+  LMessages,
   Controls,
   Forms,
   Printers,
   db,
   Sysutils,
   classes,
+  types,
 
   myla_system,
   myla_interfaces,
@@ -331,6 +333,8 @@ type
     cstWhiteOnBlack,cstBlackOnWhite,cstMSMoney2002,cstForPrinting,
     cstOutlookMonthView);
 
+  { TPSCCustomCalendar }
+
   TPSCCustomCalendar = Class(TPSCCustomControlAncestor)
   private
     FMonthListBox:TObject;
@@ -430,7 +434,7 @@ type
     Procedure UpdateSelection;
     Procedure UpdateLimits;
     Procedure TimerEvent(Timer: TObject; EventID: Integer);
-    Procedure SetPrintOptions(Const Value: TPSCCalendarPrintOptions);
+    //Procedure SetPrintOptions(Const Value: TPSCCalendarPrintOptions);
 
     Function GetEndDate: TDateTime;
     Function GetAutoSize: boolean;
@@ -449,18 +453,18 @@ type
     FRowHeight: Integer;
     FHeaderHeight: Integer;
     FDaysOfWeekHeight: Integer;
-    Procedure WMGetDlgCode(Var Message: TMessage);message WM_GETDLGCODE;
-    Procedure WMWindowPosChanging(Var Message: TWMWindowPosChanging);
-      message WM_WINDOWPOSCHANGING;
-    Procedure CMBorderChanged(Var Message: TMessage); message CM_BORDERCHANGED;
-    Procedure WMEraseBkgnd(Var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
-    Procedure WMSize(Var Message: TWMSize); message WM_SIZE;
-    Procedure WMSetCursor(Var Message: TWMSetCursor); message WM_SETCURSOR;
-    Procedure CMCtl3DChanged(Var Message: TMessage); message CM_CTL3DCHANGED;
-    Procedure CMParentColorChanged(Var Message: TMessage); message
+    Procedure WMGetDlgCode(Var Message: TLMessage);message LM_GETDLGCODE;
+    Procedure WMWindowPosChanging(Var Message: TLMWindowPosChanging);
+      message LM_WINDOWPOSCHANGING;
+    Procedure CMBorderChanged(Var Message: TLMessage); message CM_BORDERCHANGED;
+    //Procedure WMEraseBkgnd(Var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
+    Procedure WMSize(Var Message: TLMSize); message LM_SIZE;
+    Procedure WMSetCursor(Var Message: TLMSetCursor); message LM_SETCURSOR;
+    //Procedure CMCtl3DChanged(Var Message: TMessage); message CM_CTL3DCHANGED;
+    Procedure CMParentColorChanged(Var Message: TLMessage); message
       CM_PARENTCOLORCHANGED;
-    Procedure CMColorChanged(Var Message: TMessage); message CM_COLORCHANGED;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FONTCHANGED;
+    Procedure CMColorChanged(Var Message: TLMessage); message CM_COLORCHANGED;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FONTCHANGED;
 
     Function GetMonthStartDate(MonthCol,MonthRow: Integer;
       DecFirstWeek: Boolean): TDateTime;
@@ -648,8 +652,8 @@ type
     Procedure SelectToCalendBeg;
     Procedure SelectToCalendEnd;
     Procedure ChangeSelection(Const ASelStart,ASelFinish: TDateTime);
-    Procedure Print;
-    procedure PrintWithDialog;
+    //Procedure Print;
+    //procedure PrintWithDialog;
 
     Property UpdateCount: Integer read FUpdateCount;
     Property Canvas;
@@ -668,8 +672,8 @@ type
     Property DaysOfWeekHeight: Integer read FDaysOfWeekHeight;
     Property SelShiftState: TShiftState read FSelShiftState;
     Property Modified: Boolean read FModified;
-    Property PrintOptions: TPSCCalendarPrintOptions read FPrintOptions write
-      SetPrintOptions;
+    //Property PrintOptions: TPSCCalendarPrintOptions read FPrintOptions write
+    //  SetPrintOptions;
     Property PrintedPageCurrent: Integer read FPrintedPageCurrent;
     Property PrintedPageTotal: Integer read FPrintedPageTotal;
     Property CancelPrinting: Boolean read FCancelPrinting write FCancelPrinting;
@@ -687,11 +691,11 @@ type
       FOnDrawDayOutline;
     Property OnPrintProgress: TPSCNotifyEvent read FOnPrintProgress write
       FOnPrintProgress;
-    Property BevelEdges;
-    Property BevelInner;
-    Property BevelOuter;
-    Property BevelKind;
-    Property BevelWidth;
+    //Property BevelEdges;
+    //Property BevelInner;
+    //Property BevelOuter;
+    //Property BevelKind;
+    //Property BevelWidth;
   End;
 
   TPSCMonthPopupType = (ptStandard,ptMSMoney,ptMonthCalendar);
@@ -803,8 +807,8 @@ type
     Procedure SetHeaderCase(Value: TPSCTextCase);
     Procedure SetShortMonthName(Value: Boolean);
     Procedure HolidaysChange(Sender: TObject);
-    Procedure WMCaptureChanged(Var Message: TMessage);
-      message WM_CAPTURECHANGED;
+    Procedure WMCaptureChanged(Var Message: TLMessage);
+      message LM_CAPTURECHANGED;
     Procedure ItemsOnGetHolidayDate(Sender: TObject; Holiday: TPSCHolidayItem;
       Const BaseDate: TDateTime; Var ADate: TDateTime);
   protected
@@ -814,7 +818,7 @@ type
     property SelectedArrow: TPSCSelectedArrow Read FSelectedArrow;
 
     Procedure CMHintShow(Var Message: TCMHintShow); message CM_HINTSHOW;
-    Procedure CMMouseLeave(Var Message: TMessage); message CM_MOUSELEAVE;
+    Procedure CMMouseLeave(Var Message: TLMessage); message CM_MOUSELEAVE;
 
     Function GetHintStr(Var HintStr: String; CursorPos: TPoint;
       Var CursorRect: TRect): Integer; virtual;
@@ -1019,6 +1023,8 @@ type
   End;
 
   PPSCCalendarState = ^TPSCCalendarState;
+
+  { TPSCCustomCalendarPro2 }
 
   TPSCCustomCalendarPro2 = class(TPSCCustomCalendarPro)
   private
@@ -1283,11 +1289,11 @@ type
     Property NavButtonsSpeed;
     Property OnDrawDayOutline;
     Property OnPrintProgress;
-    Property BevelEdges;
-    Property BevelInner;
-    Property BevelOuter;
-    Property BevelKind;
-    Property BevelWidth;
+    //Property BevelEdges;
+    //Property BevelInner;
+    //Property BevelOuter;
+    //Property BevelKind;
+    //Property BevelWidth;
 
     Property Align;
     Property Anchors;
@@ -1334,7 +1340,7 @@ type
     Property AutoSize;
     Property MultiSelect;
     Property ClearOnKeyMoving;
-    Property PrintOptions;
+    //Property PrintOptions;
     Property ShowMonthPopup;
     Property ShowNavButtons;
     Property ShowToday;
@@ -1354,7 +1360,7 @@ type
     Property StartDate;
     Property Flat;
     Property BorderStyle;
-    Property BorderEdges;
+    //Property BorderEdges;
     Property MaxSelDates;
     Property WeekCursor;
     Property SelectKind;
@@ -1469,11 +1475,11 @@ type
   published
     Property CalendarStyle;
     Property AlterEvenOdd;
-    Property BevelEdges;
-    Property BevelInner;
-    Property BevelKind;
-    Property BevelOuter;
-    Property BevelWidth;
+    //Property BevelEdges;
+    //Property BevelInner;
+    //Property BevelKind;
+    //Property BevelOuter;
+    //Property BevelWidth;
     Property CalendarsInHeight;
     Property CalendarsInWidth;
     Property CountryInHoliday;
@@ -1542,7 +1548,7 @@ type
     Property AutoSize;
     Property MultiSelect Stored False;
     Property ClearOnKeyMoving;
-    Property PrintOptions;
+    //Property PrintOptions;
     Property ShowMonthPopup;
     Property ShowNavButtons;
     Property ShowToday;
@@ -1562,7 +1568,7 @@ type
     Property StartDate Stored False;
     Property Flat;
     Property BorderStyle;
-    Property BorderEdges;
+    //Property BorderEdges;
     Property MaxSelDates;
     Property WeekCursor;
     Property SelectKind;
@@ -1668,17 +1674,17 @@ type
     Procedure SelectYear;
     Procedure OnFontChanged(Sender: TObject);
     Procedure YearsPopupClosed(Sender: TObject; Canceled: Boolean);
-    Procedure CMCtl3DChanged(Var Message: TMessage); message CM_CTL3DCHANGED;
-    Procedure WMEraseBkgnd(Var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    //Procedure CMCtl3DChanged(Var Message: TMessage); message CM_CTL3DCHANGED;
+    //Procedure WMEraseBkgnd(Var Message: TLmEraseBkgnd); message LM_ERASEBKGND;
     Procedure TimerEvent(Timer: TObject; EventID: Integer);
   protected
     Function GetHitTest(P: TPoint; Var Month: Integer): TPSCMonthHitTest;virtual;
 
-    Procedure WMGetDlgCode(Var Message: TMessage); message WM_GETDLGCODE;
-    Procedure CMMouseLeave(Var Message: TMessage); message CM_MOUSELEAVE;
-    Procedure CMColorChanged(Var Message: TMessage); message CM_COLORCHANGED;
-    Procedure CMFontChanged(Var Message: TMessage); message CM_FONTCHANGED;
-    Procedure CMTextChanged(Var Message: TMessage); message CM_TEXTCHANGED;
+    Procedure WMGetDlgCode(Var Message: TLMessage); message LM_GETDLGCODE;
+    Procedure CMMouseLeave(Var Message: TLMessage); message CM_MOUSELEAVE;
+    Procedure CMColorChanged(Var Message: TLMessage); message CM_COLORCHANGED;
+    Procedure CMFontChanged(Var Message: TLMessage); message CM_FONTCHANGED;
+    Procedure CMTextChanged(Var Message: TLMessage); message CM_TEXTCHANGED;
     Procedure CreateParams(Var Params: TCreateParams); override;
     Procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
@@ -1792,7 +1798,7 @@ type
   private
     FMonths: TPSCMonthsBox;
     Procedure SelectMonth(Sender: TObject);
-    Procedure WMEraseBkgnd(Var Message: TWMEraseBkgnd); message WM_ERASEBKGND;
+    //Procedure WMEraseBkgnd(Var Message: TLMEraseBkgnd); message LM_ERASEBKGND;
   protected
     Procedure CreateParams(Var Params: TCreateParams); override;
   public
@@ -3104,17 +3110,17 @@ begin
   MySize := GetTextSize(AText);
   MyRect := ARect;
   UpdateDaySelectRect(ARect, GetTextSize(AText), MyRect);
-  with Canvas, MyRect, Colors do
+  with Canvas, MyRect, Self.Colors do
   begin
     MyOldBrushColor := Brush.Color;
     MyHitTest := GetHitTest(ARect.TopLeft, MyDate);
-    Brush.Color := GetBkColor(ADate, MyHitTest, Colors.Days);
+    Brush.Color := GetBkColor(ADate, MyHitTest, Self.Colors.Days);
     FillRect(ARect);
     MyLeftRect := Rect(Left, Top, (Right + Left) div 2, Bottom);
     MyRightRect := Rect((Left + Right) div 2, Top, Right, Bottom);
     MyOldPenColor := Pen.Color;
     Pen.Width := 1;
-    Pen.Color := GetBkColor(ADate, MyHitTest, Colors.Days);
+    Pen.Color := GetBkColor(ADate, MyHitTest, Self.Colors.Days);
     Brush.Color := Selected;
     case SelectStyle of
       sslEllipse :
@@ -3329,10 +3335,10 @@ begin
       begin
         with Canvas do
         begin
-          if Brush.Color <> Colors.ArrowColor then
-            Brush.Color := Colors.ArrowColor;
-          if Pen.Color <> Colors.ArrowColor then
-            Pen.Color := Colors.ArrowColor;
+          if Brush.Color <> Self.Colors.ArrowColor then
+            Brush.Color := Self.Colors.ArrowColor;
+          if Pen.Color <> Self.Colors.ArrowColor then
+            Pen.Color := Self.Colors.ArrowColor;
         end;
         if AArea = chtRightArrow then
           _DrawArrow(Canvas, false, ARect);
@@ -3433,7 +3439,7 @@ begin
         Delta := 0;
       MyOldPenColor := Pen.Color;
       MyOldPenWidth := Pen.Width;
-      Pen.Color := Colors.WeekLineColor;
+      Pen.Color := Self.Colors.WeekLineColor;
       Pen.Width := 1;
       MoveTo(Rect.Left + Delta, Rect.Bottom - 1);
       LineTo(Rect.Right - Delta, Rect.Bottom - 1);
@@ -3484,7 +3490,7 @@ var
 begin
   if Rect.Bottom - Rect.Top = 0 then
     exit;
-  with Canvas, Colors do
+  with Canvas, Self.Colors do
   begin
   if HeaderStyle <> chsOutlook then
     begin
@@ -3905,13 +3911,13 @@ begin
     if AlterEvenOdd then
     begin
       if MyMonth mod 2 = 0 then
-        result := Colors.GrayedBkColor;
+        result := Self.Colors.GrayedBkColor;
     end
     else
     begin
       if (AArea in [chtLeftGray,chtRightGray]) or (PastDaysAsGrayed and
        (ADate < PSCDateOf(PSCNow))) then
-        result := Colors.GrayedBkColor;
+        result := Self.Colors.GrayedBkColor;
     end;
   end;
 end;
@@ -3946,7 +3952,7 @@ var
           ctsHelix:
           begin
             MyOldPenColor := Pen.Color;
-            Pen.Color := Colors.NowRect;
+            Pen.Color := Self.Colors.NowRect;
             MyOldPenWidth := Pen.Width;
             Pen.Width := 2;
             PSCDrawDayHelix(Canvas, MyRect);
@@ -3958,7 +3964,7 @@ var
             with MyRect do
             MyTodayRect := Rect(Left, Top, Right, Bottom);
             MyOldBrushColor := Brush.Color;
-            Brush.Color := Colors.NowRect;
+            Brush.Color := Self.Colors.NowRect;
             Canvas.FrameRect(MyTodayRect);
             Brush.Color := MyOldBrushColor;
           end;
@@ -4001,9 +4007,9 @@ begin
     if FShowHolidays and not (AArea in [chtLeftGray,chtRightGray]) and
       GetHolidayNames(ADate,HolidayNames) then
     begin
-      Font := Colors.HolidaysFont;
+      Font := Self.Colors.HolidaysFont;
       if ASelect and (SelectStyle <> sslFrameRect) then
-        Font.Color := Colors.SelectedText;
+        Font.Color := Self.Colors.SelectedText;
       FontStyle := Font.Style;
       TextColor := Font.Color;
     end;
@@ -4011,7 +4017,7 @@ begin
      and (FirstDayFormat <> '') then
       MyText := GetFirstDayText(ADate, MyText, ARect, FirstDayFormat);
     UpdateDayRect(ARect, MyText, MyRect);
-    GetDayXYAligned(ARect, GetTextSize(MyText), MySlipX, MySlipY);
+    GetDayXYAligned(ARect, Size(GetTextWidth(MyText), GetTextHeight(MyText)), MySlipX, MySlipY);
     PSCUpdateCanvasState(Canvas);
     MySize := TextExtent(MyText);
     MyOldBrushStyle := Brush.Style;
@@ -4130,7 +4136,8 @@ end;
 
 {-------------------------------------}
 
-function TPSCCustomCalendarPro2.GetDayName(ADayIndex: Integer; ALength:TPSCWeekDaysLength): string;
+function TPSCCustomCalendarPro2.GetDayName(ADayIndex: Integer;
+  ALength: TPSCWeekDaysLength): String;
 const
   MyWeekDaysLength : array[0..4] of
     TPSCWeekDaysLength = (wdlOne, wdlOne, wdlTwo, wdlOne, wdlThree);
@@ -4148,7 +4155,7 @@ begin
       MyWasteWidth := 2;
     end;
     result := inherited GetDayName(ADayIndex, ALength);
-    MySize := GetTextSize(result);
+    MySize := Size(GetTextWidth(result), GetTextHeight(result));
     if ((ColWidth - MyWasteWidth) < MySize.cx) and (Length(result) > 1) then
     begin
       MyOldLength := ALength;
@@ -4156,7 +4163,7 @@ begin
       if ALength <> MyOldLength then
       begin
         result := GetDayName(ADayIndex, ALength);
-        MySize := GetTextSize(result);
+        MySize := Size(GetTextWidth(result), GetTextHeight(result));
       end;
     end;
     case WeekDayCase of
@@ -4202,7 +4209,7 @@ begin
   with MyRect, Canvas do
   begin
     MySize := ASize;//GetTextSize(AText);
-    MyMaxSize := GetTextSize('30');
+    MyMaxSize := Size(GetTextWidth('30'), GetTextHeight('30'));;
     MyControlSlip := ((Right - Left) - MyMaxSize.cx) div 2;
     ASlipX := ((Right - Left) - MySize.cx) div 2;
     ASlipY := ((Bottom - Top) - MySize.cy) div 2 + 1;
@@ -4218,7 +4225,7 @@ begin
       ASlipX := ((Right - Left) - MySize.cx) div 2;
     end;
     if FontStyle_Italic in Font.Style then
-      ASlipX := ASlipX - (GetTextSize('g').cx div 2);
+      ASlipX := ASlipX - (GetTextWidth('g') div 2);
   end;
 end;
 
@@ -4299,9 +4306,9 @@ end;
 
 {-------------------------------------}
 
-procedure TPSCCustomCalendarPro2.DoMouseOnHitTest(const ADate : TDateTime;
-  AHitTest: TPSCCalendarHitTest; AP : TPoint; var AYearInHeader,
-  AMonthInHeader: TRect; var ALeft : integer; var ATop : integer);
+procedure TPSCCustomCalendarPro2.DoMouseOnHitTest(const ADate: TDateTime;
+  AHitTest: TPSCCalendarHitTest; AP: TPoint; var AYearInHeader: TRect;
+  var AMonthInHeader: TRect; var ALeft: integer; var ATop: integer);
 var
   MyMonthWidth, MyMonthHeight : integer;
   MyR : TRect;
@@ -4412,7 +4419,7 @@ begin
           MoveTo(Left + Delta + SideWidth + 1 + i * ColWidth, Top + 2);
           LineTo(Left + Delta + SideWidth + 1 + i * ColWidth, Bottom - 3);
         end;
-        Pen.Color := Colors.HeaderBorderColor;
+        Pen.Color := Self.Colors.HeaderBorderColor;
         if i <> 7 then
         begin
           MoveTo(Left + Delta + SideWidth + i * ColWidth, Top + 2);
@@ -4469,14 +4476,14 @@ begin
       chtFooter:
       begin
         Font.Size := MyNewSize;
-        MySizeXY := GetTextSize('T');
+        MySizeXY := Size(GetTextWidth('T'), GetTextHeight('T'));
         AHeight := MySizeXY.cy + 5;
       end;
       chtMonthHead:
       begin
         Font := HeaderFont;
         Font.Size := MyNewSize;
-        MySizeXY := GetTextSize('s');
+        MySizeXY := Size(GetTextWidth('s'), GetTextHeight('s'));
         if ShowHeader then
         begin
           case HeaderStyle of
@@ -4492,7 +4499,7 @@ begin
       chtWeekDays:
       begin
         Font.Size := WeekDaysFont.Size;
-        MySizeXY := GetTextSize('T');
+        MySizeXY := Size(GetTextWidth('T'), GetTextHeight('T'));
         if CalendarStyle = cstOutlookMonthView then
           AHeight := MySizeXY.cy + 2
         else
@@ -4502,20 +4509,20 @@ begin
       begin
         Font.Size := MyNewSize;
         Font.Style := [];
-        MySizeXY := GetTextSize('221 ');
+        MySizeXY := Size(GetTextWidth('221 '), GetTextHeight('221 '));
         AWidth := (MySizeXY.cx + 8);
         AHeight := (MySizeXY.cy + 2);
         if FontStyle_Italic in Self.Font.Style then
-          AWidth := AWidth + (GetTextSize('2').cx div 7);
+          AWidth := AWidth + (GetTextWidth('2') div 7);
       end;
       chtWeekRight: AWidth := 0;
       chtWeekLeft:
       begin
         Font.Size := WeekNumbersFont.Size;
-        MySizeXY := GetTextSize('11');
+        MySizeXY := Size(GetTextWidth('11'), GetTextHeight('11'));
         if ShowWeekNumbers then
         begin
-          MySizeXY := GetTextSize('22');
+          MySizeXY := Size(GetTextWidth('22'), GetTextHeight('22'));
           AWidth := MySizeXY.cx;
         end
         else
@@ -4530,7 +4537,7 @@ begin
       chtMonthHead:
       begin
         Font := HeaderFont;
-        MySizeXY := GetTextSize('s');
+        MySizeXY := Size(GetTextWidth('s'), GetTextHeight('s'));
         if ShowHeader then
         begin
           case HeaderStyle of
@@ -4546,7 +4553,7 @@ begin
       chtWeekDays:
       begin
         Font.Size := WeekDaysFont.Size;
-        MySizeXY := GetTextSize('T');
+        MySizeXY := Size(GetTextWidth('T'), GetTextHeight('T'));
         AHeight := MySizeXY.cy;
       end;
     end;
@@ -4645,17 +4652,17 @@ var
   MyImageRect : TRect;
   MySizeXY : TSize;
   MyS : string;
-  MyBkMode : integer;
+  //MyBkMode : integer;
 begin
   with Canvas do
   begin
     if ShowFooter then
     begin
       FillRect(ARect);
-      MySizeXY := GetTextSize('11');
+      MySizeXY := Size(GetTextWidth('11'), GetTextHeight('11'));
       MyS := PSCRemoveCharSet(['&'], PSCConsts.TodayButton) + ': ' +
         DateToStr(PSCDateOf(PSCNow));
-      MyBkMode := GetBkMode(Canvas.Handle);
+      //MyBkMode := GetBkMode(Canvas.Handle);
       SetBkMode(Handle, TRANSPARENT);
       with ARect do
       begin
@@ -4675,13 +4682,13 @@ begin
           Pen.Color := clPSCGrayText;
           MoveTo(Left - 1, Top);
           LineTo(Left - 1, Bottom);
-          Pen.Color := Colors.Days;
+          Pen.Color := Self.Colors.Days;
           MoveTo(Right, Top);
           LineTo(Right, Bottom);
         end;
       if TodayStyle = ctsHelix then
         DrawFooterHelix(Canvas, MyImageRect);
-      SetBkMode(Handle, MyBkMode);
+      SetBkMode(Handle, BKMODE_LAST);
     end;
   end;
 end;
@@ -4802,7 +4809,7 @@ begin
   with ARect, ACanvas do
   begin
     MyOldPenColor := Pen.Color;
-    Pen.Color := Colors.NowRect;
+    Pen.Color := Self.Colors.NowRect;
     Pen.Width := 2;
      MoveTo(Left, Top + 3);
      LineTo((Left + Right) div 2 + 2, Top + 3);
@@ -4844,7 +4851,7 @@ begin
     begin
       with Canvas, Rect do
       begin
-        Pen.Color := Colors.Border;
+        Pen.Color := Self.Colors.Border;
         if not (mpLeft in MonthPos) then
         begin
           MoveTo(Left, Top);
@@ -4889,7 +4896,7 @@ begin
   with ASourceRect, Canvas do
   begin
     MyDelta := SelectionAndBorderDists;
-    MySize := GetTextSize(AText);
+    MySize := Size(GetTextWidth(AText), GetTextHeight(AText));
     if ((Bottom - Top) - 2 * MySize.cy) > 0 then
     begin
       case DayVertAlign of
@@ -5577,13 +5584,13 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetVersion(const AValue:String);
+procedure TPSCCustomCalendar.SetVersion(const AValue: String);
 begin
 end;
 
 {------------------------------------------------------------------------------}
 
-Constructor TPSCCustomCalendar.Create(AOwner: TComponent);
+constructor TPSCCustomCalendar.Create(AOwner: TComponent);
 Begin
   FUserData:=PSCCreateDateArray;
   FVersion:=SPSCProductVerNo;
@@ -5616,8 +5623,8 @@ Begin
   ParentColor := false;
   FWeekCursor := crDefault;
   Flat := true;
-  FBorderStyle := cPSCDefCalendarBorderStyle;
-  FBorderEdges := [beLeft,beTop,beRight,beBottom];
+  //FBorderStyle := cPSCDefCalendarBorderStyle;
+  //FBorderEdges := [beLeft,beTop,beRight,beBottom];
   FExtendedSelect := true;
   Width := 170;
   Height := 170;
@@ -5634,7 +5641,7 @@ Type
     Dates: UINT;
   End;
 
-Destructor TPSCCustomCalendar.Destroy;
+destructor TPSCCustomCalendar.Destroy;
 Begin
   FPrintOptions.Free;
   FPrintOptions := Nil;
@@ -5651,14 +5658,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.BeginUpdate;
+procedure TPSCCustomCalendar.BeginUpdate;
 Begin
   FUpdateCount := FUpdateCount + 1;
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.EndUpdate;
+procedure TPSCCustomCalendar.EndUpdate;
 Begin
   FUpdateCount := FUpdateCount - 1;
   UpdateSelection;
@@ -5666,7 +5673,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.UpdateSelection;
+procedure TPSCCustomCalendar.UpdateSelection;
 Begin
   If (FUpdateCount = 0) And FModified Then
     Begin
@@ -5677,14 +5684,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.CreateCalendarColors: TPSCCalendarColors;
+function TPSCCustomCalendar.CreateCalendarColors: TPSCCalendarColors;
 Begin
   Result := TPSCCalendarColors.Create(Self)
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.ClearSelection: Boolean;
+function TPSCCustomCalendar.ClearSelection: Boolean;
 Var
   Rect: TRect;
   OldCount: Integer;
@@ -5731,7 +5738,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.ClearWeekSelection;
+procedure TPSCCustomCalendar.ClearWeekSelection;
 Begin
   If FWeeksSelected Then
     Begin
@@ -5742,14 +5749,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.StartDateStored: Boolean;
+function TPSCCustomCalendar.StartDateStored: Boolean;
 Begin
   Result := PSCDateOf(StartDate) <> CorrectStartDate(PSCDateOf(PSCNow));
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetMultiSelect(Value: Boolean);
+procedure TPSCCustomCalendar.SetMultiSelect(Value: Boolean);
 Var
   Date: TDateTime;
   Selected: Boolean;
@@ -5769,8 +5776,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.ChangeSelection(Const ASelStart,ASelFinish:
-  TDateTime);
+procedure TPSCCustomCalendar.ChangeSelection(const ASelStart,
+  ASelFinish: TDateTime);
 Begin
   BeginUpdate;
   Try
@@ -5784,7 +5791,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.SelectDay(Const Date: TDateTime;
+function TPSCCustomCalendar.SelectDay(const Date: TDateTime;
   ClearSelection: Boolean): Boolean;
 Begin
   BeginUpdate;
@@ -5799,8 +5806,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.SelectWeek(Date: TDateTime;
-  ClearSelection: Boolean): Boolean;
+function TPSCCustomCalendar.SelectWeek(Date: TDateTime; ClearSelection: Boolean
+  ): Boolean;
 Var
   I: Integer;
   Value: Boolean;
@@ -5834,8 +5841,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.SelectMonth(Date: TDateTime;
-  ClearSelection: Boolean): Boolean;
+function TPSCCustomCalendar.SelectMonth(Date: TDateTime; ClearSelection: Boolean
+  ): Boolean;
 Var
   Week: Integer;
   Finish: TDateTime;
@@ -5884,7 +5891,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.CheckWeekSelected(Date: TDateTime): Boolean;
+function TPSCCustomCalendar.CheckWeekSelected(Date: TDateTime): Boolean;
 Var
   I: Integer;
 Begin
@@ -5902,7 +5909,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.InvalidateWeek(Const Date: TDateTime);
+procedure TPSCCustomCalendar.InvalidateWeek(const Date: TDateTime);
 Var
   Rect: TRect;
 Begin
@@ -5919,7 +5926,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.InvalidateWeekSelection;
+procedure TPSCCustomCalendar.InvalidateWeekSelection;
 Var
   BeginDate,EndDate: TDateTime;
 Begin
@@ -5935,7 +5942,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.UpdateWeekSelection(NeedIvalidate: Boolean);
+procedure TPSCCustomCalendar.UpdateWeekSelection(NeedIvalidate: Boolean);
 Var
   Date: TDateTime;
   OldWeeksSel: Boolean;
@@ -5957,7 +5964,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.InvalidateArrow(Arrow: TPSCCalendarHitTest);
+procedure TPSCCustomCalendar.InvalidateArrow(Arrow: TPSCCalendarHitTest);
 Var
   R: TRect;
 Begin
@@ -5970,7 +5977,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetArrowRect(Arrow: TPSCCalendarHitTest): TRect;
+function TPSCCustomCalendar.GetArrowRect(Arrow: TPSCCalendarHitTest): TRect;
 Var
   ArrowWidth: Integer;
 Begin
@@ -5990,7 +5997,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetMonthStartDate(MonthCol,MonthRow: Integer;
+function TPSCCustomCalendar.GetMonthStartDate(MonthCol, MonthRow: Integer;
   DecFirstWeek: Boolean): TDateTime;
 Var
   Date: TDateTime;
@@ -6007,16 +6014,16 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetHitTest(X,Y: Integer;
-  Var Date: TDateTime): TPSCCalendarHitTest;
+function TPSCCustomCalendar.GetHitTest(X, Y: Integer; var Date: TDateTime
+  ): TPSCCalendarHitTest;
 begin
   Result:=GetHitTest(Point(X,Y),Date);
 end;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetHitTest(P: TPoint;
-  Var Date: TDateTime): TPSCCalendarHitTest;
+function TPSCCustomCalendar.GetHitTest(P: TPoint; var Date: TDateTime
+  ): TPSCCalendarHitTest;
 Const
   WeekSide: Array[Boolean] Of TPSCCalendarHitTest = (chtWeekRight,chtWeekLeft);
 Var
@@ -6097,8 +6104,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.DateToPos(Const Date: TDateTime;
-  Var MonthCol,MonthRow: Integer): Boolean;
+function TPSCCustomCalendar.DateToPos(const Date: TDateTime; var MonthCol,
+  MonthRow: Integer): Boolean;
 Var
   Year,Month,Day,Year1,Month1: Word;
   Distance: Integer;
@@ -6131,8 +6138,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.DateToRect(Const ADate: TDateTime;
-  Var ALeft, ATop, ARight, ABottom: Integer): Boolean;
+function TPSCCustomCalendar.DateToRect(const ADate: TDateTime; var ALeft, ATop,
+  ARight, ABottom: Integer): Boolean;
 var
   MyRect:TRect;
 begin
@@ -6148,8 +6155,8 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.DateToRect(Const Date: TDateTime;
-  Var Rect: TRect): Boolean;
+function TPSCCustomCalendar.DateToRect(const Date: TDateTime; var Rect: TRect
+  ): Boolean;
 Var
   MRow,MCol,DRow,DCol: Integer;
   Day: Word;
@@ -6178,8 +6185,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetWeekRect(Date: TDateTime;
-  Side: TPSCCalendarHitTest; Var Rect: TRect): Boolean;
+function TPSCCustomCalendar.GetWeekRect(Date: TDateTime;
+  Side: TPSCCalendarHitTest; var Rect: TRect): Boolean;
 Begin
   Date := GetBeginOfWeek(Date);
   Case Side Of
@@ -6200,7 +6207,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.CanSelectionChange(Const Date: TDateTime): WordBool;
+function TPSCCustomCalendar.CanSelectionChange(const Date: TDateTime): WordBool;
 Begin
   Result := true;
   If Assigned(FOnCanSelectDate) Then
@@ -6209,35 +6216,35 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetBeginOfWeek(Const Date: TDateTime): TDateTime;
+function TPSCCustomCalendar.GetBeginOfWeek(const Date: TDateTime): TDateTime;
 Begin
   Result := PSCGetWeekStartEx(Date,FFirstDayOfWeek)
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetEndOfWeek(Const Date: TDateTime): TDateTime;
+function TPSCCustomCalendar.GetEndOfWeek(const Date: TDateTime): TDateTime;
 Begin
   Result := PSCGetWeekEndEx(Date,FFirstDayOfWeek)
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetWeekNumber(Const Date: TDateTime): Integer;
+function TPSCCustomCalendar.GetWeekNumber(const Date: TDateTime): Integer;
 Begin
   Result := PSCGetWeekNumber(Date,FFirstDayOfWeek,FFirstWeekOfYear)
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.KillTimer;
+procedure TPSCCustomCalendar.KillTimer;
 Begin
   PSCKillTimer(FTimer);
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.StartFromNextMonth: Boolean;
+function TPSCCustomCalendar.StartFromNextMonth: Boolean;
 Var
   OldStartDate: TDateTime;
 Begin
@@ -6248,7 +6255,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.StartFromPrevMonth: Boolean;
+function TPSCCustomCalendar.StartFromPrevMonth: Boolean;
 Var
   OldStartDate: TDateTime;
 Begin
@@ -6259,7 +6266,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.StartFromNextYear: Boolean;
+function TPSCCustomCalendar.StartFromNextYear: Boolean;
 Var
   OldStartDate: TDateTime;
 Begin
@@ -6270,7 +6277,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.StartFromPrevYear: Boolean;
+function TPSCCustomCalendar.StartFromPrevYear: Boolean;
 Var
   OldStartDate: TDateTime;
 Begin
@@ -6281,7 +6288,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.TimerEvent(Timer: TObject; EventID: Integer);
+procedure TPSCCustomCalendar.TimerEvent(Timer: TObject; EventID: Integer);
 Var
   Shift: TShiftState;
   Value: Boolean;
@@ -6343,7 +6350,7 @@ Type
 
     Procedure TimerEvent(Timer: TObject; EventID: Integer);
   protected
-    Procedure CNDrawItem(Var Message: TWMDrawItem); message cn_DrawItem;
+    Procedure CNDrawItem(Var Message: TLMDrawItems); message cn_DrawItem;
     Procedure DrawItem(Index: Integer; Rect: TRect;
       State: TOwnerDrawState); override;
     Procedure MouseMove(Shift: TShiftState; X,Y: Integer); override;
@@ -6373,7 +6380,7 @@ Constructor TPSCMonthListBox.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
   ControlStyle := ControlStyle + [csCaptureMouse];
-  Ctl3d := false;
+  //Ctl3d := false;
   BorderStyle := bsNone;
   Style := lbOwnerDrawFixed;
   IntegralHeight := true;
@@ -6528,7 +6535,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthListBox.CNDrawItem(Var Message: TWMDrawItem);
+Procedure TPSCMonthListBox.CNDrawItem(Var Message: TLMDrawItems);
 Begin
   With Message.DrawItemStruct^ Do
     Begin
@@ -6607,7 +6614,7 @@ Begin
     Begin
       OnMouseUp := ListBoxMouseUp;
       BorderStyle := bsSingle;
-      Ctl3d := False;
+      //Ctl3d := False;
       Align := alNone;
       ParentColor := true;
       ParentFont := True;
@@ -6654,7 +6661,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.OpenMonthPopup(Const Date: TDateTime);
+procedure TPSCCustomCalendar.OpenMonthPopup(const Date: TDateTime);
 Var
   R: TRect;
 Begin
@@ -6681,8 +6688,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.MonthPopupClosed(Sender: TObject;
-  Canceled: Boolean);
+procedure TPSCCustomCalendar.MonthPopupClosed(Sender: TObject; Canceled: Boolean
+  );
 Var
   Col,Row: Integer;
   Date: TDateTime;
@@ -6705,8 +6712,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.MouseDown(Button: TMouseButton; Shift: TShiftState;
-  X,Y: Integer);
+procedure TPSCCustomCalendar.MouseDown(Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
 Var
   Date: TDateTime;
   Value: Boolean;
@@ -6852,8 +6859,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.MouseUp(Button: TMouseButton; Shift: TShiftState;
-  X,Y: Integer);
+procedure TPSCCustomCalendar.MouseUp(Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
 Var
   Date: TDateTime;
 Begin
@@ -6873,7 +6880,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.MouseMove(Shift: TShiftState; X,Y: Integer);
+procedure TPSCCustomCalendar.MouseMove(Shift: TShiftState; X, Y: Integer);
 Type
   TSelectKind = (skSelect,skUnselect,slInvert);
 Const
@@ -7185,13 +7192,13 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.MouseHitTest(Var HitTest: TPSCCalendarHitTest);
+procedure TPSCCustomCalendar.MouseHitTest(var HitTest: TPSCCalendarHitTest);
 Begin
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.KeyDown(Var Key: Word; Shift: TShiftState);
+procedure TPSCCustomCalendar.KeyDown(var Key: Word; Shift: TShiftState);
 Var
   Delta: Integer;
   Date: TDateTime;
@@ -7367,7 +7374,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.WMGetDlgCode(Var Message: TMessage);
+procedure TPSCCustomCalendar.WMGetDlgCode(var Message: TLMessage);
 Begin
   Inherited;
   With Message Do
@@ -7376,14 +7383,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.WMEraseBkgnd(Var Message: TWMEraseBkgnd);
+{Procedure TPSCCustomCalendar.WMEraseBkgnd(Var Message: TLMEraseBkgnd);
 Begin
   Message.Result := 1
-End;
+End;}
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DateChanged;
+procedure TPSCCustomCalendar.DateChanged;
 Begin
   If Assigned(FOnDateChanged) Then
     FOnDateChanged(Self)
@@ -7391,7 +7398,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetMaxSelDates(Value: Integer);
+procedure TPSCCustomCalendar.SetMaxSelDates(Value: Integer);
 Begin
   If Value < 0 Then
     Value := 0;
@@ -7413,7 +7420,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.UpdateLimits;
+procedure TPSCCustomCalendar.UpdateLimits;
 Begin
   If FSelCount > 0 Then
     Begin
@@ -7437,7 +7444,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetMinDateLimit(Value: Boolean);
+procedure TPSCCustomCalendar.SetMinDateLimit(Value: Boolean);
 Begin
   If FMinDateLimit <> Value Then
     Begin
@@ -7448,7 +7455,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetMinDate(Const Value: TDateTime);
+procedure TPSCCustomCalendar.SetMinDate(const Value: TDateTime);
 Begin
   If FMinDate <> PSCDateOf(Value) Then
     Begin
@@ -7459,7 +7466,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetMaxDateLimit(Value: Boolean);
+procedure TPSCCustomCalendar.SetMaxDateLimit(Value: Boolean);
 Begin
   If FMaxDateLimit <> Value Then
     Begin
@@ -7470,7 +7477,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetMaxDate(Const Value: TDateTime);
+procedure TPSCCustomCalendar.SetMaxDate(const Value: TDateTime);
 Begin
   If FMaxDate <> PSCDateOf(Value) Then
     Begin
@@ -7481,8 +7488,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.FindMonth(Date: TDateTime;
-  Var Index: Integer): Boolean;
+function TPSCCustomCalendar.FindMonth(Date: TDateTime; var Index: Integer
+  ): Boolean;
 Var
   C: TDateTime;
   L,H: Integer;
@@ -7525,14 +7532,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetNotSelDate(Const Date: TDateTime): Boolean;
+function TPSCCustomCalendar.GetNotSelDate(const Date: TDateTime): Boolean;
 Begin
   Result := Not GetSelDate(Date);
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetSelDate(Const Date: TDateTime): Boolean;
+function TPSCCustomCalendar.GetSelDate(const Date: TDateTime): Boolean;
 Var
   Index: Integer;
 Begin
@@ -7550,14 +7557,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectDate(Const Date: TDateTime; Value: Boolean);
+procedure TPSCCustomCalendar.SelectDate(const Date: TDateTime; Value: Boolean);
 Begin
   SetSelDate(Date,Value)
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.InvalidateDateAndSiblings(const ADate:TDateTime);
+procedure TPSCCustomCalendar.InvalidateDateAndSiblings(const ADate: TDateTime);
 var
   MyRect: TRect;
   MyExpandRect: Boolean;
@@ -7595,8 +7602,8 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.SetSelDate(Const Date: TDateTime;
-  Value: Boolean): Boolean;
+function TPSCCustomCalendar.SetSelDate(const Date: TDateTime; Value: Boolean
+  ): Boolean;
 Var
   Index: Integer;
   MonthSelection: PMonthSelection;
@@ -7750,7 +7757,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetSelStart(Value: TDateTime);
+procedure TPSCCustomCalendar.SetSelStart(Value: TDateTime);
 Var
   OldStart: TDateTime;
 Begin
@@ -7787,7 +7794,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetSelFinish(Value: TDateTime);
+procedure TPSCCustomCalendar.SetSelFinish(Value: TDateTime);
 Var
   OldFinish: TDateTime;
 Begin
@@ -7824,7 +7831,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.WMSize(Var Message: TWMSize);
+Procedure TPSCCustomCalendar.WMSize(Var Message: TLMSize);
 Begin
   Inherited;
   If HandleAllocated Then
@@ -7833,7 +7840,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetWeeksSelected(V: boolean);
+procedure TPSCCustomCalendar.SetWeeksSelected(V: boolean);
 Begin
   If FWeeksSelected <> V Then
     Begin
@@ -7855,7 +7862,7 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.UpdateTopLeftCorner(Const R: TRect): TRect;
+function TPSCCustomCalendar.UpdateTopLeftCorner(const R: TRect): TRect;
 Var
   P:TPoint;
 begin
@@ -7866,16 +7873,16 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.CMCtl3DChanged(Var Message: TMessage);
-Begin
-  Inherited;
-  BorderChanged;
-  Invalidate;
-End;
+//Procedure TPSCCustomCalendar.CMCtl3DChanged(Var Message: TMessage);
+//Begin
+//  Inherited;
+//  BorderChanged;
+//  Invalidate;
+//End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.CMColorChanged(Var Message: TMessage);
+procedure TPSCCustomCalendar.CMColorChanged(var Message: TLMessage);
 Begin
   Inherited;
   With FColors Do
@@ -7888,7 +7895,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.CMParentColorChanged(Var Message: TMessage);
+procedure TPSCCustomCalendar.CMParentColorChanged(var Message: TLMessage);
 Var
   Color: TPSCColor;
 Begin
@@ -7909,7 +7916,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetFlat(Value: Boolean);
+procedure TPSCCustomCalendar.SetFlat(Value: Boolean);
 Begin
   If FFlat<>Value then
   begin
@@ -7942,7 +7949,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetExtendedSelect(Value: Boolean);
+procedure TPSCCustomCalendar.SetExtendedSelect(Value: Boolean);
 Begin
   If FExtendedSelect <> Value Then
     Begin
@@ -7955,7 +7962,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetSelectKind(Value: TPSCCalSelectKind);
+procedure TPSCCustomCalendar.SetSelectKind(Value: TPSCCalSelectKind);
 Begin
   If FSelectKind <> Value Then
     Begin
@@ -7977,21 +7984,21 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetReadOnly(Value: Boolean);
+procedure TPSCCustomCalendar.SetReadOnly(Value: Boolean);
 Begin
   FReadOnly := Value
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetReadOnly: Boolean;
+function TPSCCustomCalendar.GetReadOnly: Boolean;
 Begin
   Result := FReadOnly
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.WMSetCursor(Var Message: TWMSetCursor);
+procedure TPSCCustomCalendar.WMSetCursor(var Message: TLMSetCursor);
 Var
   P: TPoint;
   Date: TDateTime;
@@ -8007,7 +8014,7 @@ Begin
             Case GetHitTest(P,Date) Of
               chtWeekLeft:
                 Begin
-                  Windows.SetCursor(Screen.Cursors[FWeekCursor]);
+                  LCLIntf.SetCursor(Screen.Cursors[FWeekCursor]);
                   Result := 1;
                   Exit
                 End
@@ -8019,7 +8026,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.CreateWnd;
+procedure TPSCCustomCalendar.CreateWnd;
 Begin
   Inherited;
   FontChanged;
@@ -8027,7 +8034,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.Notification(AComponent: TComponent;
+procedure TPSCCustomCalendar.Notification(AComponent: TComponent;
   Operation: TOperation);
 Begin
   Inherited Notification(AComponent,Operation);
@@ -8035,7 +8042,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.MonthColCount: Integer;
+function TPSCCustomCalendar.MonthColCount: Integer;
 Var
   MonthWidth,Width: Integer;
 Begin
@@ -8054,7 +8061,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.MonthRowCount: Integer;
+function TPSCCustomCalendar.MonthRowCount: Integer;
 Var
   MonthHeight,Height: Integer;
 Begin
@@ -8073,14 +8080,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.UpdateWidthHeight(Var AWidth,AHeight: Integer);
+procedure TPSCCustomCalendar.UpdateWidthHeight(var AWidth, AHeight: Integer);
 Var
   Value,Delta: Integer;
 Begin
   Delta := 4;
 
-  If FBorderEdges * [beLeft,beRight] = [] Then
-    Begin
+  {If FBorderEdges * [beLeft,beRight] = [] Then
+    Begin}
       Value := GetMonthWidth;
       If Value > 0  Then
       begin
@@ -8089,10 +8096,10 @@ Begin
         AWidth := (AWidth Div Value) * Value + Delta +
           (Width-ClientWidth);
       end;
-    End;
+    {End;
 
   If FBorderEdges * [beTop,beBottom] = [] Then
-    Begin
+    Begin}
       Value := GetMonthHeight;
       If Value > 0 Then
       begin
@@ -8101,13 +8108,13 @@ Begin
         AHeight := (AHeight Div Value) * Value + Delta +
           (Height-ClientHeight);
       end;
-    End
+    {End }
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.WMWindowPosChanging(
-  Var Message: TWMWindowPosChanging);
+procedure TPSCCustomCalendar.WMWindowPosChanging(
+  var Message: TLMWindowPosChanging);
 Begin
   With Message.WindowPos^ Do
     If flags And SWP_NOSIZE = 0 Then
@@ -8117,13 +8124,13 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.CorrectNCRect(Const R: TRect): TRect;
+function TPSCCustomCalendar.CorrectNCRect(const R: TRect): TRect;
 Var
   delta,delta2: Integer;
 Begin
   Result := R;
   InflateRect(Result,-2,-2);
-  With Result Do
+  {With Result Do
     Begin
       If FBorderEdges * [beLeft,beRight] <> [] Then
         Begin
@@ -8167,12 +8174,12 @@ Begin
           Top := Top + delta2;
           Bottom := Bottom - (delta - delta2);
         End;
-    End;
+    End;}
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.BorderChanged;
+procedure TPSCCustomCalendar.BorderChanged;
 begin
   If HandleAllocated Then
   begin
@@ -8185,7 +8192,7 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.CMBorderChanged(Var Message: TMessage);
+procedure TPSCCustomCalendar.CMBorderChanged(var Message: TLMessage);
 Begin
   Inherited;
   BorderChanged;
@@ -8193,8 +8200,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetHeaderRect(Const Date: TDateTime;
-  Var Rect: TRect): Boolean;
+function TPSCCustomCalendar.GetHeaderRect(const Date: TDateTime; var Rect: TRect
+  ): Boolean;
 Var
   Col,Row: Integer;
 Begin
@@ -8215,16 +8222,15 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetHeaderText(Const Date: TDateTime): String;
+function TPSCCustomCalendar.GetHeaderText(const Date: TDateTime): String;
 Begin
   Result := DateToMonthYear(Date);
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawHeader(Const Date: TDateTime; MonthPos:
-  TPSCMonthPos;
-  Var Rect: TRect);
+procedure TPSCCustomCalendar.DrawHeader(const Date: TDateTime;
+  MonthPos: TPSCMonthPos; var Rect: TRect);
 Const
   LeftEdge: Array[Boolean] Of Cardinal = (0,BF_LEFT);
   TopEdge: Array[Boolean] Of Cardinal = (0,BF_TOP);
@@ -8266,15 +8272,15 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawArrow(Arrow: TPSCCalendarHitTest;
-  Const Rect: TRect);
+procedure TPSCCustomCalendar.DrawArrow(Arrow: TPSCCalendarHitTest;
+  const Rect: TRect);
 Begin
   PSCDrawOutlookArrow(Canvas,Arrow = chtLeftArrow,Rect);
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawWeekLine(Var Rect: TRect);
+procedure TPSCCustomCalendar.DrawWeekLine(var Rect: TRect);
 Const
   EdgeStyle: Array[Boolean] Of Cardinal = (EDGE_ETCHED,BDR_RAISEDOUTER);
 Begin
@@ -8315,8 +8321,8 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawDaysHeader(MonthPos: TPSCMonthPos;
-  Const Rect: TRect);
+procedure TPSCCustomCalendar.DrawDaysHeader(MonthPos: TPSCMonthPos;
+  const Rect: TRect);
 Var
   I,J,H: Integer;
   R: TRect;
@@ -8386,9 +8392,9 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DefaultDrawDay(Const Date: TDateTime;
-  BkgndColor,TextColor: TPSCColor; FontStyle: TFontStyles;
-  DateType: TPSCCalendarDateType; X,Y: Integer; Const Rect: TRect);
+procedure TPSCCustomCalendar.DefaultDrawDay(const Date: TDateTime; BkgndColor,
+  TextColor: TPSCColor; FontStyle: TFontStyles; DateType: TPSCCalendarDateType;
+  X, Y: Integer; const Rect: TRect);
 Var
   R: TRect;
   Size: TSize;
@@ -8407,10 +8413,9 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawDay(Const Date: TDateTime;
-  BkgndColor,TextColor: TPSCColor; FontStyle: TFontStyles;
-  Area: TPSCCalendarHitTest; DateType: TPSCCalendarDateType;
-  X,Y: Integer; Const Rect: TRect);
+procedure TPSCCustomCalendar.DrawDay(const Date: TDateTime; BkgndColor,
+  TextColor: TPSCColor; FontStyle: TFontStyles; Area: TPSCCalendarHitTest;
+  DateType: TPSCCalendarDateType; X, Y: Integer; const Rect: TRect);
 Begin
   With Canvas Do
     Begin
@@ -8426,8 +8431,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawDayOutline(Const Date: TDateTime; X,Y: Integer;
-  Const Rect: TRect);
+procedure TPSCCustomCalendar.DrawDayOutline(const Date: TDateTime; X,
+  Y: Integer; const Rect: TRect);
 
   Procedure DrawLines;
   Begin
@@ -8481,8 +8486,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DoOnDrawDayOutline(Const ADate: TDateTime; X,Y: Integer;
-  Const ARect: TRect; Var AParams: TPSCDrawDayOutlineParams);
+procedure TPSCCustomCalendar.DoOnDrawDayOutline(const ADate: TDateTime; X,
+  Y: Integer; const ARect: TRect; var AParams: TPSCDrawDayOutlineParams);
 begin
   If Assigned(FOnDrawDayOutline) Then
     FOnDrawDayOutline(Self,ADate,X,Y,ARect,AParams);
@@ -8490,8 +8495,8 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawDividers(MonthPos: TPSCMonthPos;
-  Const Rect: TRect);
+procedure TPSCCustomCalendar.DrawDividers(MonthPos: TPSCMonthPos;
+  const Rect: TRect);
 Var
   R: TRect;
 Begin
@@ -8512,8 +8517,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawWeekSide(Const Date: TDateTime;
-  Side: TPSCCalendarHitTest; DateType: TPSCCalendarDateType; Const Rect: TRect);
+procedure TPSCCustomCalendar.DrawWeekSide(const Date: TDateTime;
+  Side: TPSCCalendarHitTest; DateType: TPSCCalendarDateType; const Rect: TRect);
 Const
   FlatBounds: Array[Boolean] Of Integer = (1,0);
 Var
@@ -8547,9 +8552,9 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.DoDrawItem(const ADate: TDateTime;
-  AArea: TPSCCalendarHitTest;ADateType: TPSCCalendarDateType;
-  ARect: TRect):WordBool;
+function TPSCCustomCalendar.DoDrawItem(const ADate: TDateTime;
+  AArea: TPSCCalendarHitTest; ADateType: TPSCCalendarDateType; ARect: TRect
+  ): WordBool;
 begin
   Result := true;
   If Assigned(FOnDrawItem) Then
@@ -8559,8 +8564,8 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DrawDays(const ABounds:TRect;
-  AMonthPos: TPSCMonthPos;const ABegDate,ABegMonth,AEndMonth:TDateTime);
+procedure TPSCCustomCalendar.DrawDays(const ABounds: TRect;
+  AMonthPos: TPSCMonthPos; const ABegDate, ABegMonth, AEndMonth: TDateTime);
 Var
   RTop: Integer;
   RLeft: Integer;
@@ -8740,10 +8745,10 @@ Var
 Begin
   With Canvas,R Do
   Begin
-    FontStyle := Colors .DaysFont.Style;
-    FontColor := Colors.DaysFont.Color;
+    FontStyle := Self.Colors.DaysFont.Style;
+    FontColor := Self.Colors.DaysFont.Color;
 
-    BkGndColor := Colors.Days;
+    BkGndColor := Self.Colors.Days;
     Try
       RTop := ABounds.Top + FDaysOfWeekHeight + 2 + FHeaderHeight;
       For Y := 0 To 5 Do
@@ -8775,8 +8780,8 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.PaintMonth(MonthCol,MonthRow: Integer;
-  Const Bounds: TRect);
+procedure TPSCCustomCalendar.PaintMonth(MonthCol, MonthRow: Integer;
+  const Bounds: TRect);
 Var
   MonthPos: TPSCMonthPos;
   BegDate,BegMonth,EndMonth: TDateTime;
@@ -8830,9 +8835,9 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.DoGetPaintParams(Const Date: TDateTime;
-  Var Color,BkColor: TPSCColor; Var FontStyle: TFontStyles;
-  DateType: TPSCCalendarDateType);
+procedure TPSCCustomCalendar.DoGetPaintParams(const Date: TDateTime; var Color,
+  BkColor: TPSCColor; var FontStyle: TFontStyles; DateType: TPSCCalendarDateType
+  );
 var
   MyIsBold       : WordBool;
   MyIsItalic     : WordBool;
@@ -8867,7 +8872,7 @@ End;
 Const
   EdgeKind: Array[Boolean] Of UINT = (BDR_SUNKENOUTER,EDGE_SUNKEN);
 
-Procedure TPSCCustomCalendar.Paint;
+procedure TPSCCustomCalendar.Paint;
 Var
   Row,Col,ColCount,RowCount: Integer;
   MonthWidth,MonthHeight: Integer;
@@ -8932,21 +8937,21 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetMonthWidth: Integer;
+function TPSCCustomCalendar.GetMonthWidth: Integer;
 Begin
   Result := FSideWidth * 2 + FColWidth * 7;
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetMonthHeight: Integer;
+function TPSCCustomCalendar.GetMonthHeight: Integer;
 Begin
   Result := FHeaderHeight + FDaysOfWeekHeight + FRowHeight * 6 + 2
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.SelectionIsInOneWeek: boolean;
+function TPSCCustomCalendar.SelectionIsInOneWeek: boolean;
 Var
   WeekStartDate,WeekEndDate: TDateTime;
 Begin
@@ -8960,7 +8965,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetEndDate: TDateTime;
+function TPSCCustomCalendar.GetEndDate: TDateTime;
 Begin
   Result := GetMonthStartDate(MonthColCount - 1,MonthRowCount - 1,true) + (7 *
     6);
@@ -8968,7 +8973,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectWorkWeek(Const ADate: TDateTime);
+procedure TPSCCustomCalendar.SelectWorkWeek(const ADate: TDateTime);
 Var
   DateIterator: TDateTime;
 Begin
@@ -8990,7 +8995,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectionToView;
+procedure TPSCCustomCalendar.SelectionToView;
 Begin
   BeginUpdate;
   Try
@@ -9003,7 +9008,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.WorkDaysSelected: boolean;
+function TPSCCustomCalendar.WorkDaysSelected: boolean;
 Var
   DateIterator: TDateTime;
   DateIsSelected: boolean;
@@ -9031,7 +9036,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.RemeasureCalendar;
+procedure TPSCCustomCalendar.RemeasureCalendar;
 Begin
   FontChanged;
 End;
@@ -9039,7 +9044,7 @@ End;
 {------------------------------------------------------------------------------}
 
 procedure TPSCCustomCalendar.DoMeasureItem(AArea: TPSCCalendarHitTest;
-  Var AWidth,AHeight: Integer);
+  var AWidth, AHeight: Integer);
 begin
   If Assigned(FOnMeasureItem) then
     FOnMeasureItem(Self,AArea,AWidth,AHeight);
@@ -9047,7 +9052,7 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.FontChanged;
+procedure TPSCCustomCalendar.FontChanged;
 Var
   Size: TSize;
   Delta: Integer;
@@ -9079,7 +9084,7 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.CMFontChanged(Var Message: TMessage);
+Procedure TPSCCustomCalendar.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   FontChanged;
@@ -9087,7 +9092,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetStartDate(Value: TDateTime);
+procedure TPSCCustomCalendar.SetStartDate(Value: TDateTime);
 Var
   Date: TDateTime;
 Begin
@@ -9121,7 +9126,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetShowNavButtons(Value: Boolean);
+procedure TPSCCustomCalendar.SetShowNavButtons(Value: Boolean);
 Var
   Rect: TRect;
 Begin
@@ -9140,7 +9145,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetShowToday(Value: Boolean);
+procedure TPSCCustomCalendar.SetShowToday(Value: Boolean);
 Var
   Rect: TRect;
 Begin
@@ -9154,7 +9159,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetShowMonthDividers(Value: Boolean);
+procedure TPSCCustomCalendar.SetShowMonthDividers(Value: Boolean);
 Begin
   If FShowMonthDividers <> Value Then
     Begin
@@ -9165,7 +9170,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetShowWeekNumbers(Value: Boolean);
+procedure TPSCCustomCalendar.SetShowWeekNumbers(Value: Boolean);
 Begin
   If FShowWeekNumbers <> Value Then
     Begin
@@ -9176,7 +9181,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetShowHorzLines(Value: Boolean);
+procedure TPSCCustomCalendar.SetShowHorzLines(Value: Boolean);
 Begin
   If FShowHorzLines <> Value Then
     Begin
@@ -9187,7 +9192,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetShowVertLines(Value: Boolean);
+procedure TPSCCustomCalendar.SetShowVertLines(Value: Boolean);
 Begin
   If FShowVertLines <> Value Then
     Begin
@@ -9198,7 +9203,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetWeekDayNames(Value: TPSCWeekDaysLength);
+procedure TPSCCustomCalendar.SetWeekDayNames(Value: TPSCWeekDaysLength);
 Begin
   If FWeekDayNames <> Value Then
     Begin
@@ -9209,7 +9214,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetFirstWeekOfYear(Value: TPSCFirstWeekOfYear);
+procedure TPSCCustomCalendar.SetFirstWeekOfYear(Value: TPSCFirstWeekOfYear);
 Begin
   If FFirstWeekOfYear <> Value Then
     Begin
@@ -9220,7 +9225,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetColors(Value: TPSCCalendarColors);
+procedure TPSCCustomCalendar.SetColors(Value: TPSCCalendarColors);
 Begin
   If FColors <> Value Then
     FColors.Assign(Value);
@@ -9228,7 +9233,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.InvalidateSelection;
+procedure TPSCCustomCalendar.InvalidateSelection;
 Var
   Rect: TRect;
   Date: TDateTime;
@@ -9249,7 +9254,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.InternalSetCursor(Value: TDateTime);
+procedure TPSCCustomCalendar.InternalSetCursor(Value: TDateTime);
 Begin
   If (MinDateLimit And (Value < MinDate)) Or
     (MaxDateLimit And (Value > MaxDate)) Then
@@ -9281,7 +9286,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetCursorDate(Value: TDateTime);
+procedure TPSCCustomCalendar.SetCursorDate(Value: TDateTime);
 Begin
   Value := Int(Value);
   If (FSelCount = 0) Or (FCursorDate <> Value) Then
@@ -9312,7 +9317,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetFirstDayOfWeek(Value: TPSCFirstDayOfWeek);
+procedure TPSCCustomCalendar.SetFirstDayOfWeek(Value: TPSCFirstDayOfWeek);
 Begin
   If FFirstDayOfWeek <> Value Then
     Begin
@@ -9323,7 +9328,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SetWorkDays(Value: TPSCWeekDays);
+procedure TPSCCustomCalendar.SetWorkDays(Value: TPSCWeekDays);
 Begin
   If FWorkDays <> Value Then
     Begin
@@ -9334,7 +9339,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.MoveSelection(Delta: Integer);
+procedure TPSCCustomCalendar.MoveSelection(Delta: Integer);
 Var
   Current: TDateTime;
   Week: Integer;
@@ -9408,7 +9413,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.Select(Delta: Integer; Kind: Boolean);
+procedure TPSCCustomCalendar.Select(Delta: Integer; Kind: Boolean);
 Var
   Date: TDateTime;
   Step: Integer;
@@ -9478,35 +9483,35 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToPrevDay;
+procedure TPSCCustomCalendar.SelectToPrevDay;
 Begin
   MoveSelection(-1)
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToNextDay;
+procedure TPSCCustomCalendar.SelectToNextDay;
 Begin
   MoveSelection(1)
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToPrevWeek;
+procedure TPSCCustomCalendar.SelectToPrevWeek;
 Begin
   MoveSelection(-7)
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToNextWeek;
+procedure TPSCCustomCalendar.SelectToNextWeek;
 Begin
   MoveSelection(7)
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToWeekBeg;
+procedure TPSCCustomCalendar.SelectToWeekBeg;
 Var
   Delta: Integer;
 Begin
@@ -9518,7 +9523,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToWeekEnd;
+procedure TPSCCustomCalendar.SelectToWeekEnd;
 Var
   Delta: Integer;
 Begin
@@ -9530,7 +9535,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToMonthBeg;
+procedure TPSCCustomCalendar.SelectToMonthBeg;
 Var
   Delta: Integer;
 Begin
@@ -9542,7 +9547,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToMonthEnd;
+procedure TPSCCustomCalendar.SelectToMonthEnd;
 Var
   Delta: Integer;
 Begin
@@ -9554,7 +9559,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToCalendBeg;
+procedure TPSCCustomCalendar.SelectToCalendBeg;
 Var
   Delta: Integer;
 Begin
@@ -9568,7 +9573,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendar.SelectToCalendEnd;
+procedure TPSCCustomCalendar.SelectToCalendEnd;
 Var
   Delta: Integer;
 Begin
@@ -9581,7 +9586,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.GetAutoSize: boolean;
+function TPSCCustomCalendar.GetAutoSize: boolean;
 Begin
   Result := [beLeft,beTop,beRight,beBottom] * BorderEdges = [];
 End;
@@ -9600,7 +9605,7 @@ Begin
 End;
 
 {------------------------------------------------------------------------------}
-
+(*
 procedure TPSCCustomCalendar.PrintWithDialog;
 var
   MyDialog:TPrintDialog;
@@ -9850,10 +9855,10 @@ Procedure TPSCCustomCalendar.SetPrintOptions(
 Begin
   FPrintOptions.Assign(Value);
 End;
-
+*)
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.DateInRange(Const ADate: TDateTime): Boolean;
+function TPSCCustomCalendar.DateInRange(const ADate: TDateTime): Boolean;
 Begin
   Result := Not ((MinDateLimit And (ADate < MinDate)) Or
     (MaxDateLimit And (ADate > MaxDate)));
@@ -10118,9 +10123,9 @@ Begin
               BF_BOTTOM Or LeftEdge[mpLeft In MonthPos] Or
               RightEdge[mpRight In MonthPos]);
           S := GetHeaderText(Date);
-          If Brush.Color <> Colors.MonthHeader Then
-            Brush.Color := Colors.MonthHeader;
-          Font := Colors.HeaderFont;
+          If Brush.Color <> Self.Colors.MonthHeader Then
+            Brush.Color := Self.Colors.MonthHeader;
+          Font := Self.Colors.HeaderFont;
           Try
             Size:=Canvas.TextExtent(S);
             With Rect Do
@@ -10165,10 +10170,10 @@ Var
   Begin
     With Canvas,Rect Do
       Begin
-        If Pen.Color <> Colors.ArrowColor Then
-          Pen.Color := Colors.ArrowColor;
-        If Brush.Color <> Colors.ArrowColor Then
-          Brush.Color := Colors.ArrowColor;
+        If Pen.Color <> Self.Colors.ArrowColor Then
+          Pen.Color := Self.Colors.ArrowColor;
+        If Brush.Color <> Self.Colors.ArrowColor Then
+          Brush.Color := Self.Colors.ArrowColor;
         With Rect Do
           PSCDrawMSMoneyArrow(Canvas,Arrow = chtLeftArrow,
             Classes.Rect(Left + Delta,Top + Delta,Right + Delta,Bottom + Delta))
@@ -10338,7 +10343,7 @@ Begin
     GetHolidayNames(Date,HolidayNames) Then
     With Canvas Do
       Begin
-        Font := Colors.HolidaysFont;
+        Font := Self.Colors.HolidaysFont;
         Try
           FontStyle := Font.Style;
           TextColor := Font.Color;
@@ -10631,7 +10636,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendarPro.CMMouseLeave(Var Message: TMessage);
+Procedure TPSCCustomCalendarPro.CMMouseLeave(Var Message: TLMessage);
 Var
   HitTest: TPSCCalendarHitTest;
 Begin
@@ -10641,7 +10646,7 @@ Begin
 End;
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendarPro.WMCaptureChanged(Var Message: TMessage);
+Procedure TPSCCustomCalendarPro.WMCaptureChanged(Var Message: TLMessage);
 Begin
   Inherited;
   Case FSelectedArrow Of
@@ -10978,7 +10983,8 @@ Begin
   Result := False;
   CountryCount := Length(ACountries);
 
-  DefCountry := TPSCCountryID(GetUserDefaultLCID);
+  //DefCountry := TPSCCountryID(GetUserDefaultLCID);
+  DefCountry := 0;
 
   For i := 0 To CountryCount - 1 Do
     Begin
@@ -11023,9 +11029,9 @@ type
     Function GetItemYear: Integer;
     Procedure DoSelect;
     Procedure KillTimer;
-    Procedure WMEraseBkgnd(Var Message: TWmEraseBkgnd); message WM_ERASEBKGND;
+    //Procedure WMEraseBkgnd(Var Message: TLmEraseBkgnd); message LM_ERASEBKGND;
   protected
-    Procedure CNDrawItem(Var Message: TWMDrawItem); message cn_drawitem;
+    Procedure CNDrawItem(Var Message: TLMDrawItems); message cn_drawitem;
     Procedure DrawItem(Index: Integer; Rect: TRect;
       State: TOwnerDrawState); override;
     Procedure KeyDown(Var Key: Word; Shift: TShiftState); override;
@@ -11071,7 +11077,7 @@ Constructor TPSCYearsListBox.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
   ControlStyle := ControlStyle + [csCaptureMouse];
-  Ctl3d := false;
+  //Ctl3d := false;
   BorderStyle := bsNone;
   Style := lbOwnerDrawFixed;
   IntegralHeight := true;
@@ -11265,14 +11271,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCYearsListBox.WMEraseBkgnd(Var Message: TWmEraseBkgnd);
+{Procedure TPSCYearsListBox.WMEraseBkgnd(Var Message: TLmEraseBkgnd);
 Begin
   Message.Result := 1
-End;
+End;}
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCYearsListBox.CNDrawItem(Var Message: TWMDrawItem);
+Procedure TPSCYearsListBox.CNDrawItem(Var Message: TLMDrawItems);
 Begin
   With Message.DrawItemStruct^ Do
     Begin
@@ -11371,7 +11377,7 @@ Begin
   Inherited CreateParams(Params);
   With Params Do
     Begin
-      If Not Ctl3D Then
+      //If Not Ctl3D Then
         Style := Style And Not (WS_DLGFRAME Or WS_THICKFRAME) Or WS_BORDER;
       ExStyle := ExStyle And Not WS_EX_CLIENTEDGE
     End
@@ -11415,8 +11421,8 @@ Begin
   FRightArrow := -1;
   FRightArrowHot := -1;
   ParentColor := false;
-  ParentCtl3D := false;
-  Ctl3D := false;
+  //ParentCtl3D := false;
+  //Ctl3D := false;
   Color := clPSCWindow;
   TabStop := true;
   ControlStyle :=
@@ -11923,7 +11929,7 @@ Begin
           ItemIndex := 3;
           BorderStyle := bsNone;
         End;
-      Ctl3D := YearsPopupCtl3D;
+      //Ctl3D := YearsPopupCtl3D;
       PopupEx(Self,ARect,YearsPopupClosed,pskCentered,
         [poParentColor,poParentFontColor]);
     End
@@ -11946,7 +11952,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.CMFontChanged(Var Message: TMessage);
+Procedure TPSCMonthsBox.CMFontChanged(Var Message: TLMessage);
 Begin
   Inherited;
   If FInheritHeaderFont Then
@@ -11960,7 +11966,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.CMColorChanged(Var Message: TMessage);
+Procedure TPSCMonthsBox.CMColorChanged(Var Message: TLMessage);
 Begin
   Inherited;
   If csReading In ComponentState Then
@@ -11969,15 +11975,15 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.CMCtl3DChanged(Var Message: TMessage);
-Begin
-  Inherited;
-  Invalidate
-End;
+//Procedure TPSCMonthsBox.CMCtl3DChanged(Var Message: TLMessage);
+//Begin
+//  Inherited;
+//  Invalidate
+//End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.CMTextChanged(Var Message: TMessage);
+Procedure TPSCMonthsBox.CMTextChanged(Var Message: TLMessage);
 Begin
   Inherited;
   InvalidateArea(mhtCaption,FMonth)
@@ -11985,7 +11991,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.CMMouseLeave(Var Message: TMessage);
+Procedure TPSCMonthsBox.CMMouseLeave(Var Message: TLMessage);
 Begin
   Inherited;
   If Focused Then
@@ -11994,10 +12000,10 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.WMEraseBkgnd(Var Message: TWmEraseBkgnd);
+{Procedure TPSCMonthsBox.WMEraseBkgnd(Var Message: TLmEraseBkgnd);
 Begin
   Message.Result := 1
-End;
+End;}
 
 {------------------------------------------------------------------------------}
 
@@ -12036,7 +12042,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsBox.WMGetDlgCode(Var Message: TMessage);
+Procedure TPSCMonthsBox.WMGetDlgCode(Var Message: TLMessage);
 Begin
   Inherited;
   Message.Result := Message.Result Or DLGC_WANTARROWS
@@ -12055,9 +12061,9 @@ Begin
       Brush.Color := FHeaderColor;
       FillRect(Rect);
 
-      If Ctl3D Then
-        DrawEdge(Canvas.Handle,Rect,BDR_SUNKENOUTER,BF_ADJUST Or BF_MONO Or
-          BF_RECT);
+      //If Ctl3D Then
+      //  DrawEdge(Canvas.Handle,Rect,BDR_SUNKENOUTER,BF_ADJUST Or BF_MONO Or
+      //    BF_RECT);
       DrawEdge(Canvas.Handle,Rect,BDR_RAISEDINNER,BF_ADJUST Or BF_RECT);
 
     End;
@@ -12564,14 +12570,14 @@ End;
 
 Procedure TPSCMonthsBox.SetFlat(Value: Boolean);
 Begin
-  Ctl3D := Not Value
+  //Ctl3D := Not Value
 End;
 
 {------------------------------------------------------------------------------}
 
 Function TPSCMonthsBox.GetFlat: Boolean;
 Begin
-  Result := Not Ctl3D
+  //Result := Not Ctl3D
 End;
 
 {------------------------------------------------------------------------------}
@@ -12615,16 +12621,16 @@ Begin
   With Params Do
     Begin
       ExStyle := ExStyle And Not WS_EX_CLIENTEDGE;
-      WindowClass.Style := WindowClass.Style And Not CS_SAVEBITS
+      //WindowClass.Style := WindowClass.Style And Not CS_SAVEBITS
     End
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCMonthsPopup.WMEraseBkgnd(Var Message: TWMEraseBkgnd);
+{Procedure TPSCMonthsPopup.WMEraseBkgnd(Var Message: TLMEraseBkgnd);
 Begin
   Message.Result := 1
-End;
+End;}
 
 {-------------------------------------------}
 
@@ -12687,7 +12693,7 @@ Begin
           FMonths.Font := Self.Colors.DaysFont;
             HeaderFont := Self.Colors.HeaderFont;
           HeaderHeight := Self.HeaderHeight;
-          Ctl3D := Self.Ctl3D;
+          //Ctl3D := Self.Ctl3D;
           YearsPopupCtl3D := FCalendarStyle = cstMSMoney;
           If FCalendarStyle = cstMSMoney Then
             CaptionColor := Colors.WeekHeader
@@ -12744,15 +12750,14 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendarPro2.IsDayHeaderHorzAlignStored: boolean;
+function TPSCCustomCalendarPro2.IsDayHeaderHorzAlignStored: boolean;
 Begin
   result := FCalendarState.DayHeaderHorzAlign <> DayHeaderHorzAlign;
 End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendarPro2.SetDayHeaderHorzAlign(
-  AValue: TPSCHorzAlign);
+procedure TPSCCustomCalendarPro2.SetDayHeaderHorzAlign(AValue: TPSCHorzAlign);
 Begin
   If FDayHeaderHorzAlign <> AValue Then
   Begin
@@ -12763,7 +12768,7 @@ End;
 
 {------------------------------------------------------------------------------}
 
-Procedure TPSCCustomCalendarPro2.SetMouseDate(Const Value: TDateTime);
+procedure TPSCCustomCalendarPro2.SetMouseDate(const Value: TDateTime);
 var
   OldMouseDate : TDateTime;
 Begin
@@ -12958,7 +12963,7 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendarPro2.IsOptionsStored:Boolean;
+function TPSCCustomCalendarPro2.IsOptionsStored: Boolean;
 begin
   Result:=Options<>FCalendarState.Options;
 end;
@@ -13325,14 +13330,14 @@ end;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendar.CorrectStartDate(Value: TDateTime) : TDateTime;
+function TPSCCustomCalendar.CorrectStartDate(Value: TDateTime): TDateTime;
 Begin
   result := PSCGetMonthStart(Int(Value));
 End;
 
 {------------------------------------------------------------------------------}
 
-Function TPSCCustomCalendarPro2.DoMouseWheel(Shift: TShiftState;
+function TPSCCustomCalendarPro2.DoMouseWheel(Shift: TShiftState;
   WheelDelta: Integer; MousePos: TPoint): Boolean;
 Begin
   Result := true;
@@ -13363,7 +13368,7 @@ Begin
   With Canvas Do
   Begin
     MyOldPenColor := Pen.Color;
-    Pen.Color := Colors.WeekLineColor;
+    Pen.Color := Self.Colors.WeekLineColor;
     Try
       Inherited;
     Finally
