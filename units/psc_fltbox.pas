@@ -29,15 +29,17 @@ Uses
 
   typinfo,
   sysutils,
-  Windows,
+  LCLIntf,
+  LCLType,
   Forms,
   Controls,
-  Messages,
+  LMessages,
   Classes,
   DB,
-  DBCommon,
+  //DBCommon,
   dialogs,
   graphics,
+  Types,
 
   myla_system,
   myla_interfaces,
@@ -962,11 +964,11 @@ Type
 
   TPSCFltBox = Class(TPSCCustomFltBox)
   published
-    Property BevelInner;
+{    Property BevelInner;
     Property BevelOuter;
     Property BevelKind;
     Property BevelWidth;
-    Property BevelEdges;
+    Property BevelEdges;}
     Property BorderWidth;
 
     Property OnLoaded;
@@ -1000,8 +1002,8 @@ Type
     Property BiDiMode;
     Property DragCursor;
     Property DragKind;
-    Property ImeMode;
-    Property ImeName;
+    //Property ImeMode;
+    //Property ImeName;
     Property ParentBiDiMode;
     Property Color;
     Property Constraints;
@@ -1669,7 +1671,7 @@ Begin
   MySmallDistX:=PSCDialogUnitsToPixelsX(4);
   MySmallDistY:=PSCDialogUnitsToPixelsY(4);
   MyBigDistX:=PSCDialogUnitsToPixelsX(7);
-  MyBigDistY:=PSCDialogUnitsToPixelsX(7);
+  MyBigDistY:=PSCDialogUnitsToPixelsY(7);
 
   ClientHeight := 250;
   ClientWidth := 400;
@@ -8132,7 +8134,7 @@ Begin
         If Assigned(DataSet) Then
           FalseDataSet.AssignDataSet(DataSet);
         FieldsFromColl(FalseDataSet);
-        Result := PSCCreateFilterParserEx(FalseDataSet,Simplified,[poExtSyntax]);
+        Result := PSCCreateFilterParserEx(FalseDataSet,Simplified,0{[poExtSyntax]});
         AItem.Parser := Result;
       Except
         FalseDataSet.Free;
