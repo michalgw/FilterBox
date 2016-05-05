@@ -72,6 +72,7 @@ const
     COLOR_MENUBAR = 30;
     clSystemColor = $FF000000;
   {$ENDIF}
+  clSystemColor = SYS_COLOR_BASE;
 
   SPSCHTML_CompilerFileName = 'hhc.exe';
   SPSCRTF_CompilerFileName = 'hcw.exe';
