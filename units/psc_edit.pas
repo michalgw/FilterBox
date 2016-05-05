@@ -3097,7 +3097,7 @@ procedure TPSCPopupForm.InitializePopup;
 begin
   AutoScroll := false;
   KeyPreview := True;
-  BorderStyle := bsToolWindow;
+  BorderStyle := bsNone;//  bsToolWindow;
   HorzScrollBar.Visible := False;
   VertScrollBar.Visible := False;
   Position := poDesigned;
