@@ -86,7 +86,7 @@ const
   clPSCInactiveBorder = clInactiveBorder;// TPSCColor(clPSCSystemColor or PSC_COLOR_INACTIVEBORDER);
   clPSCAppWorkSpace = clAppWorkspace;// TPSCColor(clPSCSystemColor or PSC_COLOR_APPWORKSPACE);
   clPSCHighlight = clHighlight;// TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHT);
-  clPSCHighlightText = clHighlightedText;// TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHTTEXT);
+  clPSCHighlightText = clHighlightText;// TPSCColor(clPSCSystemColor or PSC_COLOR_HIGHLIGHTTEXT);
   clPSCBtnFace = clBtnFace;// TPSCColor(clPSCSystemColor or PSC_COLOR_BTNFACE);
   clPSCBtnShadow = clBtnShadow;// TPSCColor(clPSCSystemColor or PSC_COLOR_BTNSHADOW);
   clPSCGrayText = clGrayText;// TPSCColor(clPSCSystemColor or PSC_COLOR_GRAYTEXT);
