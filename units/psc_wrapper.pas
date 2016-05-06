@@ -2031,7 +2031,10 @@ Var
     _DrawRect := ARect;
     _DrawRect.Right := _DrawRect.Left + Canvas.TextWidth(M);
     If Not CalcWidth Then
+    begin
+      Canvas.FillRect(_DrawRect);
       Canvas.TextRect(_DrawRect,_DrawRect.Left,_DrawRect.Top+MyInc,M);
+    end;
     ARect.Left := _DrawRect.Right;
   End;
 

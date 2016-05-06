@@ -1259,7 +1259,7 @@ Begin
         With GetInplaceEditRect do
           IntersectClipRect(Canvas.Handle,Left,Top,Right,Bottom);
 
-        Canvas.Brush.Style:=BrushStyle_Clear;// otherwise will be bug in painting when disabled state 
+        Canvas.Brush.Style:=BrushStyle_Solid;// otherwise will be bug in painting when disabled state
         PSCItemHtDrawEx(Canvas,MyRect,Caption,SS,AWidth,false);
       Finally
         PSCSelectClipRgn(Canvas,Rgn);
