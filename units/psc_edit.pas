@@ -3197,7 +3197,7 @@ begin
   With FCancelButton do
   begin
     Glyph.LoadFromResourceName(HInstance, SPSCResName_Btn_CloseWin);
-    Left:=Self.ClientWidth-Width-2;
+    Left:=Result.Width-Width-2;
     Top:=4;
     Flat:=True;
     Parent:=Result;
