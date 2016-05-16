@@ -1473,7 +1473,7 @@ Begin
         SetOrdProp(Dest,destinfo,GetOrdProp(Source,sourceinfo));
       tkFloat:
         SetFloatProp(Dest,destinfo,GetFloatProp(Source,sourceinfo));
-      tkString,tkWChar,tkLString,tkWString:
+      tkString,tkWChar,tkLString,tkWString,tkAString:
         SetStrProp(Dest,destinfo,GetStrProp(Source,sourceinfo));
       tkVariant:
         SetVariantProp(Dest,destinfo,GetVariantProp(Source,sourceinfo));
