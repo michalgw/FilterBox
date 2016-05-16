@@ -663,7 +663,7 @@ type
     Procedure WMKillFocus(Var Message: TLMSetFocus); message LM_KillFocus;
     //Procedure WMEraseBkgnd(Var Msg: TLMEraseBkgnd); message LM_EraseBkgnd;
     Procedure WMGetDlgCode(Var Msg: TLMessage); message LM_GetDlgCode;
-    Procedure WMSetCursor(Var Message: TLMSetCursor); message LM_SetCursor;
+    //Procedure WMSetCursor(Var Message: TLMSetCursor); message LM_SetCursor;
     Procedure WMSize(Var Message: TLMSize); message LM_Size;
     Procedure CMFontChanged(Var Message: TLMessage); message CM_FontChanged;
 
@@ -2223,7 +2223,7 @@ Begin
 End;
 
 {-------------------------------------------}
-
+{
 procedure TPSCCustomListBox.WMSetCursor(Var Message: TLMSetCursor);
 Var
   P: TPoint;
@@ -2239,7 +2239,7 @@ Begin
         Inherited;
     end;
 End;
-
+}
 {-------------------------------------------}
 
 procedure TPSCCustomListBox.ChangeItemIndex(Item: TPSCListItem; NewIndex: Integer);
@@ -3534,8 +3534,15 @@ end;
 {-------------------------------------------}
 
 Procedure TPSCCustomListBox.MouseMove(Shift: TShiftState; X,Y: Integer);
+var
+  P: TPoint;
 begin
   inherited;
+  P := PSCGetClientCursorPos(Self);
+  If {PtInRect(ClientRect,P) And} (IsURLPos(P) Or IsOverCreateObject(P)) Then
+    SetCursor(crHandpoint)
+  else
+    SetCursor(crDefault);
   If (ssLeft in Shift) and Focused then
     EnableTimer;
 end;
