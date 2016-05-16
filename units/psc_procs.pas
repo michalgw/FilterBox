@@ -420,6 +420,7 @@ Type
     FDefaultPopup: TPopupMenu;
     FMergedPopup: TPopupMenu;
     FMergePopupMenus: boolean;
+    FMergingPopup: Boolean;
 
     Procedure SetBorderStyle(Value: TBorderStyle);
   protected
@@ -5186,6 +5187,7 @@ constructor TPSCCustomControl.Create(AOwner: TComponent);
 Begin
   Inherited;
   FBorderStyle := bsSingle;
+  FMergingPopup := False;
 End;
 
 {-------------------------------------------------------------}
@@ -5381,10 +5383,17 @@ End;
 
 function TPSCCustomControl.GetPopup: TPopupMenu;
 Begin
+  if FMergingPopup or (csDestroying in ComponentState) then
+  begin
+    Result := GetOwnPopup;
+    Exit;
+  end;
+
   Result := PSCGetControlPopupMenuEx(Self,Self);
 
   If (FDefaultPopup <> Nil) And (ShowDefaultPopup Or MergePopupMenus) Then
     Begin
+      FMergingPopup := True;
       if Assigned(FMergedPopup) then
         FMergedPopup.Free;
       FMergedPopup:=nil;
@@ -5407,6 +5416,7 @@ Begin
         Result := FMergedPopup
       Else
         Result := Nil;
+      FMergingPopup := False;
     End;
 End;
 
