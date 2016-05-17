@@ -1360,7 +1360,7 @@ type
     Property StartDate;
     Property Flat;
     Property BorderStyle;
-    //Property BorderEdges;
+    Property BorderEdges;
     Property MaxSelDates;
     Property WeekCursor;
     Property SelectKind;
@@ -1568,7 +1568,7 @@ type
     Property StartDate Stored False;
     Property Flat;
     Property BorderStyle;
-    //Property BorderEdges;
+    Property BorderEdges;
     Property MaxSelDates;
     Property WeekCursor;
     Property SelectKind;
@@ -5623,8 +5623,8 @@ Begin
   ParentColor := false;
   FWeekCursor := crDefault;
   Flat := true;
-  //FBorderStyle := cPSCDefCalendarBorderStyle;
-  //FBorderEdges := [beLeft,beTop,beRight,beBottom];
+  FBorderStyle := cPSCDefCalendarBorderStyle;
+  FBorderEdges := [beLeft,beTop,beRight,beBottom];
   FExtendedSelect := true;
   Width := 170;
   Height := 170;
@@ -8086,8 +8086,8 @@ Var
 Begin
   Delta := 4;
 
-  {If FBorderEdges * [beLeft,beRight] = [] Then
-    Begin}
+  If FBorderEdges * [beLeft,beRight] = [] Then
+    Begin
       Value := GetMonthWidth;
       If Value > 0  Then
       begin
@@ -8096,10 +8096,10 @@ Begin
         AWidth := (AWidth Div Value) * Value + Delta +
           (Width-ClientWidth);
       end;
-    {End;
+    End;
 
   If FBorderEdges * [beTop,beBottom] = [] Then
-    Begin}
+    Begin
       Value := GetMonthHeight;
       If Value > 0 Then
       begin
@@ -8108,7 +8108,7 @@ Begin
         AHeight := (AHeight Div Value) * Value + Delta +
           (Height-ClientHeight);
       end;
-    {End }
+    End
 End;
 
 {------------------------------------------------------------------------------}
@@ -8130,7 +8130,7 @@ Var
 Begin
   Result := R;
   InflateRect(Result,-2,-2);
-  {With Result Do
+  With Result Do
     Begin
       If FBorderEdges * [beLeft,beRight] <> [] Then
         Begin
@@ -8174,7 +8174,7 @@ Begin
           Top := Top + delta2;
           Bottom := Bottom - (delta - delta2);
         End;
-    End;}
+    End;
 End;
 
 {------------------------------------------------------------------------------}
