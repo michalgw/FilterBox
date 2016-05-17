@@ -1210,7 +1210,7 @@ End;
 constructor TPSCPopupListBox.CreateNew(AOwner: TComponent; Dummy: Integer=0);
 Begin
   Inherited;
-  BorderStyle := bsSizeToolWin;
+  //BorderStyle := bsSizeToolWin;
 
   FListBox := GetListBoxClass.Create(Self);
   FListBox.Parent := Self;
@@ -5973,7 +5973,7 @@ end;
 constructor TPSCDBGridPopup.CreateNew(AOwner: TComponent; Dummy: Integer=0);
 Begin
   Inherited;
-  BorderStyle := bsSizeToolWin;
+  //BorderStyle := bsSizeToolWin;
   GetFooterPanel;
 
   FSubPanel:=TPSCPanel.Create(Self);
@@ -6000,7 +6000,7 @@ Begin
       Options:=Options-[dgAlwaysShowSelection];
     End;
 
-  BorderStyle := bsSizeToolWin;
+  //BorderStyle := bsSizeToolWin;
   ActiveControl := FGrid;
 End;
 
@@ -6146,7 +6146,7 @@ var
   MyFooter:TPSCPanel;
 begin
   inherited;
-  BorderStyle := bsSizeToolWin;
+  //BorderStyle := bsSizeToolWin;
   FListBox := GetListBoxClass.Create(Self);
   MyFooter := GetFooterPanel;
   FPickList:= PSCCreateStringList;
