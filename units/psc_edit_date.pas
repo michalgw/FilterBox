@@ -1197,7 +1197,7 @@ Begin
     [csCaptureMouse,csClickEvents,csDoubleClicks,csSetCaption];
   FullRepaint := False;
   FShowDateEdit := cPSCDefShowDateEdit;
-  //BevelOuter := cPSCDefBevelOuter;
+  BevelOuter := cPSCDefBevelOuter;
   FIntegralSize := cPSCDefIntegralSize;
   FCalendar := CreateCalendar;
   FDateEdit := TPSCDateTimeUpDown.Create(Self);
@@ -1661,7 +1661,7 @@ Begin
   Inherited;
 
   UpdatePanel;
-  If (Width = 0) And (Height = 0) Then
+  If (Width <= 5) And (Height <= 5) Then
     Begin
       SetBounds(Left,Top,GetMinWidth,GetMinHeight);
       With Calendar Do
@@ -1841,7 +1841,7 @@ end;
 constructor TPSCPopupCalendar.CreateNew(AOwner: TComponent; Dummy: Integer=0);
 Begin
   Inherited;
-  BorderStyle := bsSizeable;
+  //BorderStyle := bsSizeable;
   GetFooterPanel;
   FCalendarPanel := TPSCCustomCalendarPanelEx.CreateWithCalendar(Self,
     CPSCDefaultCalendarClass.Create(Self));
@@ -1851,7 +1851,7 @@ Begin
     Parent := Self;
     OnDaySelected := DaySelected;
     IntegralSize:=True;
-    Align:=alClient;
+    //Align:=alClient;
   End;
 
   FNowButton:=AddButton;
