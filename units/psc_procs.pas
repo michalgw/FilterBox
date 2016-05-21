@@ -210,7 +210,7 @@ Type
   end;
 
 {$IFDEF MYBEVEL}
-  TBevelCut = (bvNone,bvLowered,bvRaised,bvSpace);
+  //TBevelCut = (bvNone,bvLowered,bvRaised,bvSpace);
   TBevelEdge = (beLeft,beTop,beRight,beBottom);
   TBevelEdges = Set Of TBevelEdge;
   TBevelKind = (bkNone,bkTile,bkSoft,bkFlat);
