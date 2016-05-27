@@ -32,6 +32,7 @@ Uses
 
   Classes,
   //DBCommon,
+  janSQLExpression2,
   DB,
   sysutils,
 
@@ -78,11 +79,21 @@ Const
 
 // Fake class for lazarus port
 type
-  TExprParser = class
-    FilterData: Pointer;
-  end;
-  TParserOptions = integer;
 
+  { TExprParser }
+
+  TExprParser = class(TjanSQLExpression2)
+  private
+    FDataSet: TDataSet;
+  protected
+    procedure HandleVariable(Sender: TObject; const VariableName: string;
+      var VariableValue: Variant; var Handled:boolean); virtual;
+  public
+    constructor Create;
+  published
+    property DataSet: TDataSet read FDataSet write FDataSet;
+  end;
+(*
 Type
   TPSCFilterFunc = (fUnknown,fUpper,fLower,fSubStr,fTrim,fTrimLeft,fTrimRight,
     fYear,fMonth,fDay,fHour,fMinute,fSecond,fGetDate,
@@ -284,7 +295,7 @@ Const
     fldUNKNOWN,fldZSTRING{$IFDEF D6},fldTimeStamp,fldBCD{$ENDIF},fldZSTRING,fldBLOB);
     
 {$Z-}
-
+*)
 Type
   TPSCEmulDataSet = Class;
 
@@ -311,7 +322,7 @@ Type
     Procedure UpdCollectEvent(Sender: TObject; Item: TPSCNamedItem);
 
     Function GetEvalResult: Variant;
-    Function GetFilterData: Integer;
+    {Function GetFilterData: Integer;
     Function GetLiteralStart: Integer;
     Function GetNodeStart: Integer;
     Function UnaryNode(ANode: PCANUnary): Variant;
@@ -326,7 +337,7 @@ Type
 
     Property FilterData: Integer read GetFilterData;
     Property LiteralStart: Integer read GetLiteralStart;
-    Property NodeStart: Integer read GetNodeStart;
+    Property NodeStart: Integer read GetNodeStart;}
 
     Function LoopDataSet(Search: TPSCSearchType): Boolean;
     Function FindRecord(Search: TPSCSearchType): Boolean;
@@ -418,8 +429,8 @@ Type
 {-------------------------------------------------------------------------}
 
 Function PSCFieldTypeToDBFieldType(AType: TPSCFieldType): TFieldType;
-Function PSCCreateFilterParserEx(DataSet: TDataSet; Const Expr: String;
-  ParserOptions: TParserOptions): TExprParser;
+Function PSCCreateFilterParserEx(DataSet: TDataSet; Const Expr: String{;
+  ParserOptions: TParserOptions}): TExprParser;
 
 {-------------------------------------------------------------------------}
 
@@ -427,13 +438,13 @@ implementation
 
 {-------------------------------------------------------------------------}
 
-Function PSCPerformCANOp(AOperator: CANOp; AOp1,AOp2: Variant): Variant;forward;
+{Function PSCPerformCANOp(AOperator: CANOp; AOp1,AOp2: Variant): Variant;forward;
 Function PSCPerformInCompare(AOp1,AOp2: Variant): Boolean;forward;
 Function PSCCANConstToVariant(ANode: PCANConst; ValuesStart: Pointer;
   Var FieldType: TPSCFieldType): Variant;forward;
 Function PSCDecodeFuncName(Const AFuncName: String): TPSCFilterFunc;forward;
 Function PSCRunFunction(AFunc: TPSCFilterFunc; Const AParams: Variant): Variant;forward;
-Function PSCVariantToDateTime(Const Value: Variant): TDateTime;forward;
+Function PSCVariantToDateTime(Const Value: Variant): TDateTime;forward;}
 
 {-------------------------------------------------------------------------}
 
@@ -443,13 +454,38 @@ Begin
     Operand := '';
 End;
 
-{-------------------------------------------------------------------------}
+{ TExprParser }
 
+procedure TExprParser.HandleVariable(Sender: TObject;
+  const VariableName: string; var VariableValue: Variant; var Handled: boolean);
+var
+  F: TField;
+begin
+  Handled := False;
+  if Assigned(FDataSet) then
+  begin
+    F := FDataSet.FindField(VariableName);
+    if F <> nil then
+    begin
+      VariableValue := F.Value;
+      Handled :=  True;
+    end;
+  end;
+end;
+
+constructor TExprParser.Create;
+begin
+  inherited;
+  onGetVariable := HandleVariable;
+end;
+
+{-------------------------------------------------------------------------}
+(*
 Const
   sFunctionName: Array[TPSCFilterFunc] Of String[9] = ('', 'upper', 'lower', //don't resource
     'substring', 'trim', 'trimleft', 'trimright', 'year', 'month',//don't resource
     'day', 'hour', 'minute', 'second', 'getdate', 'date', 'time');//don't resource
-
+*)
 {-------------------------------------------------------------------------}
 
 Constructor TPSCCustomExprEval.Create(AOwner: TComponent);
@@ -622,13 +658,15 @@ end;
 
 {-------------------------------------------------------------------------}
 
-Function PSCCreateFilterParserEx(DataSet: TDataSet; Const Expr: String;
-  ParserOptions: TParserOptions): TExprParser;
+Function PSCCreateFilterParserEx(DataSet: TDataSet; Const Expr: String{;
+  ParserOptions: TParserOptions}): TExprParser;
 Begin
   Result:=nil;
   Try
-    Result := TExprParser.Create;//(DataSet,Expr,
+    Result := TExprParser.Create;//(DataSet);//(DataSet,Expr,
 //      [],ParserOptions,'',Nil,FldTypeMap);
+    Result.DataSet := DataSet;
+    Result.Expression := Expr;
   Except
     PSCError(PSCConsts.ErrBadFilter);
   End;
@@ -651,7 +689,7 @@ Begin
       FalseDataSet.AssignDataSet(DataSet);
     FieldsFromColl(FalseDataSet);
 
-    Result := PSCCreateFilterParserEx(FalseDataSet,Simplified, 0{[poExtSyntax]});
+    Result := PSCCreateFilterParserEx(FalseDataSet,Simplified{,[poExtSyntax]});
 
   Finally
     FalseDataSet.Free;
@@ -694,9 +732,12 @@ End;
 {-------------------------------------------------------------------------}
 
 Function TPSCCustomExprEval.GetEvalResult: Variant;
+var
+  res: PChar;
+  td: TDataSet;
 Begin
   If ((FFilter='') and (ExtExprParser=nil)) or
-     ((ExtExprParser<>nil) and (ExtExprParser.FilterData=nil)) then
+     ((ExtExprParser<>nil) and (ExtExprParser.Expression<>'')) then
   begin
     Result:=True;
     exit;
@@ -710,7 +751,11 @@ Begin
   Try
     If Not Assigned(ExtExprParser) Then
       InitParser;
-    Result := CalcExpression(GetNodeByOffset(NodeStart));
+    //Result := CalcExpression(GetNodeByOffset(NodeStart));
+    td := GetExprParser.DataSet;
+    GetExprParser.DataSet := DataSet;
+    Result := GetExprParser.Evaluate;
+    GetExprParser.DataSet := td;
   Except
     Result := False;
     FilterFailed := True;
@@ -720,7 +765,7 @@ Begin
 End;
 
 {-------------------------------------------------------------------------}
-
+(*
 Function TPSCCustomExprEval.GetFilterData: Integer;
 Begin
   Result := Integer(GetExprParser.FilterData);
@@ -739,7 +784,7 @@ Function TPSCCustomExprEval.GetNodeStart: Integer;
 Begin
   Result := PCANExpr(FilterData).iNodeStart;
 End;
-
+*)
 {-------------------------------------------------------------------------}
 
 Procedure TPSCCustomExprEval.SetParams(Value: TPSCFields);
@@ -755,7 +800,7 @@ Begin
 End;
 
 {-------------------------------------------------------------------------}
-
+(*
 Function TPSCCustomExprEval.GetNodeByOffset(AOffSet: Integer): PCANHdr;
 Begin
   Result := PCANHdr(FilterData + AOffSet);
@@ -841,7 +886,7 @@ Begin
         End;
     End;
 End;
-
+*)
 {-------------------------------------------------------------------------}
 
 Procedure TPSCCustomExprEval.DoOnGetFieldValue(Const AFieldName: String; Var
@@ -851,7 +896,7 @@ Begin
 End;
 
 {-------------------------------------------------------------------------}
-
+(*
 Function TPSCCustomExprEval.FieldNode(ANode: pCANField): Variant;
 Var
   FieldName: String;
@@ -971,7 +1016,7 @@ Function TPSCCustomExprEval.GetNodeValue(AOffSet: Integer): Variant;
 Begin
   Result := CalcExpression(GetNodeByOffset(NodeStart + AOffset));
 End;
-
+*)
 {-------------------------------------------------------------------------}
 
 Function PSCPerformInCompare(AOp1,AOp2: Variant): Boolean;
@@ -1008,7 +1053,7 @@ Begin
 End;
 
 {-------------------------------------------------------------------------}
-
+(*
 Function PSCRunFunction(AFunc: TPSCFilterFunc; Const AParams: Variant): Variant;
 Var
   Index,Len,ParamCount: Integer;
@@ -1147,7 +1192,7 @@ Begin
       Inc(I);
     End;
 End;
-
+*)
 {-------------------------------------------------------------------------}
 
 Procedure TPSCCustomExprEval.Assign(ASource: TPersistent);
@@ -1169,19 +1214,37 @@ End;
 {-------------------------------------------------------------------------}
 
 Function TPSCCustomExprEval.LoopDataSet(Search: TPSCSearchType): Boolean;
+
+function CheckRes(AVal: Variant): Boolean;
+begin
+  if VarIsNull(AVal) or VarIsEmpty(AVal) then
+    Result := False
+  else
+    if VarIsBool(AVal) then
+      Result := AVal
+    else
+      if VarIsNumeric(AVal) then
+        Result := AVal <> 0
+      else
+        if VarIsStr(AVal) then
+          Result := AVal <> ''
+        else
+          Result := False;
+end;
+
 Begin
   Result := True;
   If Search >= stPrior Then
     While Not DataSet.BOF Do
       Begin
-        If EvalResult Then
+        If CheckRes(EvalResult) Then
           Exit;
         DataSet.Prior
       End
   Else
     While Not DataSet.EOF Do
       Begin
-        If EvalResult Then
+        If CheckRes(EvalResult) Then
           Exit;
         DataSet.Next;
       End;
@@ -1294,7 +1357,7 @@ Const
   sFieldCloseBracket = ']';
 
 {-------------------------------------------------------------------------}
-
+(*
 Function _PSCCANConstToVariant(ANode: PCANConst; ValuePtr: Pointer;
   Var FieldType: TPSCFieldType): Variant;
 Type
@@ -1429,7 +1492,7 @@ const
   CPSCFieldTypesSupbyExprParser=[ftSmallInt,ftInteger,ftWord,ftAutoInc,ftFloat,
     ftCurrency,ftString,ftWideString,ftFixedChar,ftGuid,ftDate,ftTime,
     ftDateTime,{$IFDEF D6}ftTimeStamp,ftFMTBcd,{$ENDIF}ftBoolean,ftBCD];
-
+*)
 {------------------------------------------------------------------}
 
 Function TPSCEmulDataSet.AddField(Const AName: String; AFieldType: TFieldType):

@@ -124,9 +124,9 @@ const
   SPSCFltUpper_UPPER='UPPER';
   SPSCFltUpper_UCASE='UCASE';
 
-  SPSCFlt_FieldLikeUpper = '%S(:Field) LIKE %S(:Value)';
+  SPSCFlt_FieldLikeUpper = '(%S(:Field)) LIKE (%S(:Value))';
 
-  SPSCFlt_StringFieldEUpper = '%S(:Field) = %S(:Value)';
+  SPSCFlt_StringFieldEUpper = '(%S(:Field)) = (%S(:Value))';
 
   SPSCFlt_FieldLike = ':Field LIKE :Value';
   SPSCFlt_FieldE = ':Field = :Value';
@@ -8134,7 +8134,7 @@ Begin
         If Assigned(DataSet) Then
           FalseDataSet.AssignDataSet(DataSet);
         FieldsFromColl(FalseDataSet);
-        Result := PSCCreateFilterParserEx(FalseDataSet,Simplified,0{[poExtSyntax]});
+        Result := PSCCreateFilterParserEx(FalseDataSet,Simplified{,[poExtSyntax]});
         AItem.Parser := Result;
       Except
         FalseDataSet.Free;
