@@ -205,6 +205,8 @@ type
   TPSCPopupOption = (poParentColor,poParentFontColor);
   TPSCPopupOptions = Set Of TPSCPopupOption;
 
+  { TPSCPopupForm }
+
   TPSCPopupForm = Class(TForm)
   private
     FSizePanel: TCustomPanel;
@@ -218,9 +220,15 @@ type
     FOkButton:TPSCSpeedButton;
     FCancelButton:TPSCSpeedButton;
 
+    function GetBevelInner: TBevelCut;
+    function GetBevelOuter: TBevelCut;
+    function GetBevelWidth: TBevelWidth;
     procedure InitializePopup;
     procedure CancelButtonOnClick(Sender:TObject);
     procedure OkButtonOnClick(Sender:TObject);
+    procedure SetBevelInner(AValue: TBevelCut);
+    procedure SetBevelOuter(AValue: TBevelCut);
+    procedure SetBevelWidth(AValue: TBevelWidth);
   protected
     Procedure CreateParams(Var Params: TCreateParams); override;
     Procedure WMActivate(Var Message: TLMActivate); message LM_ACTIVATE;
@@ -256,11 +264,11 @@ type
   published
     Property WantReturns: Boolean Read FWantReturns Write FWantReturns;
     Property BorderStyle default bsToolWindow;
-    {Property BevelEdges;
-    Property BevelInner;
-    Property BevelOuter;
-    Property BevelKind;
-    Property BevelWidth;}
+    //Property BevelEdges;
+    Property BevelInner: TBevelCut read GetBevelInner write SetBevelInner;
+    Property BevelOuter: TBevelCut read GetBevelOuter write SetBevelOuter;
+    //Property BevelKind;
+    Property BevelWidth: TBevelWidth read GetBevelWidth write SetBevelWidth;
     Property OnPopupClosed: TPSCOnPopupClosed read FOnPopupClosed write
       FOnPopupClosed;
     Property OnBeforePopup: TPSCNotifyEvent Read FOnBeforePopup Write FOnBeforePopup;
@@ -2794,14 +2802,14 @@ End;
 
 Procedure TPSCCustomPopupEdit.UpdatePopupParams(PopupForm: TPSCPopupForm);
 Begin
-  {With PopupForm Do
+  With PopupForm Do
     Begin
-      BevelEdges := PopupParams.BevelEdges;
+      //BevelEdges := PopupParams.BevelEdges;
       BevelInner := PopupParams.BevelInner;
       BevelOuter := PopupParams.BevelOuter;
-      BevelKind := PopupParams.BevelKind;
+      //BevelKind := PopupParams.BevelKind;
       BevelWidth := PopupParams.BevelWidth;
-    End;}
+    End;
   If Assigned(FOnUpdatePopup) Then
     FOnUpdatePopup(Self,PopupForm);
 End;
@@ -3230,7 +3238,7 @@ begin
   inherited;
 end;
 
-Procedure TPSCPopupForm.CMFONTCHANGED(Var M: TLMessage);
+procedure TPSCPopupForm.CMFONTCHANGED(var M: TLMessage);
 Begin
   Inherited;
   ResizeFormControls;
@@ -3238,7 +3246,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.ResizeFormControls;
+procedure TPSCPopupForm.ResizeFormControls;
 Begin
 End;
 
@@ -3257,11 +3265,41 @@ begin
   Color:=clPSCWindow;
 end;
 
+function TPSCPopupForm.GetBevelInner: TBevelCut;
+begin
+  Result := SizePanel.BevelInner;
+end;
+
+function TPSCPopupForm.GetBevelOuter: TBevelCut;
+begin
+  Result := SizePanel.BevelOuter;
+end;
+
+function TPSCPopupForm.GetBevelWidth: TBevelWidth;
+begin
+  Result := SizePanel.BevelWidth;
+end;
+
 {-------------------------------------------}
 
 procedure TPSCPopupForm.OkButtonOnClick(Sender:TObject);
 begin
   ClosePopup(False,True);
+end;
+
+procedure TPSCPopupForm.SetBevelInner(AValue: TBevelCut);
+begin
+  SizePanel.BevelInner := AValue;
+end;
+
+procedure TPSCPopupForm.SetBevelOuter(AValue: TBevelCut);
+begin
+  SizePanel.BevelOuter := AValue;
+end;
+
+procedure TPSCPopupForm.SetBevelWidth(AValue: TBevelWidth);
+begin
+  SizePanel.BevelWidth := AValue;
 end;
 
 {-------------------------------------------}
@@ -3393,7 +3431,7 @@ end;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.ClosePopup(Canceled,AHide: boolean);
+procedure TPSCPopupForm.ClosePopup(Canceled, AHide: boolean);
 Begin
   If FAlreadyClosing then
     exit;
@@ -3410,7 +3448,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.KeyPress(Var Key: Char);
+procedure TPSCPopupForm.KeyPress(var Key: Char);
 Begin
   Inherited;
   If Key In [#13,#27] Then
@@ -3419,7 +3457,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.KeyDown(Var Key: Word; Shift: TShiftState);
+procedure TPSCPopupForm.KeyDown(var Key: Word; Shift: TShiftState);
 Begin
   If ((Key = VK_UP) Or (Key = VK_DOWN)) And (ssAlt In Shift) Then
     Begin
@@ -3566,7 +3604,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.Hide;
+procedure TPSCPopupForm.Hide;
 
   procedure MyFocusWinControl(OwnerControl:TWinControl);
   begin
@@ -3594,7 +3632,7 @@ Type
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.WMNCActivate(Var Message: TLMNCActivate);
+procedure TPSCPopupForm.WMNCActivate(var Message: TLMNCActivate);
 Begin
   Message.result := 1;
 End;
@@ -3605,7 +3643,7 @@ Type
   THackCustomForm = Class(TCustomForm)
   End;
 
-Procedure TPSCPopupForm.PopupEx(Control: TControl; Const PopupRect: TRect;
+procedure TPSCPopupForm.PopupEx(Control: TControl; const PopupRect: TRect;
   PopupEvent: TPSCOnPopupClosed; ShowKind: TPSCPopupShowKind;
   ShowOptions: TPSCPopupOptions);
 Var
@@ -3681,15 +3719,15 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.PopupUnderControl(Control: TControl; PopupEvent:
-  TPSCOnPopupClosed);
+procedure TPSCPopupForm.PopupUnderControl(Control: TControl;
+  PopupEvent: TPSCOnPopupClosed);
 Begin
   PopupEx(Control,Rect(0,0,Control.Width,Control.Height),PopupEvent,pskUnderControl, []);
 End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.Popup(Control: TControl; ParamRect: TRect;
+procedure TPSCPopupForm.Popup(Control: TControl; ParamRect: TRect;
   PopupEvent: TPSCOnPopupClosed);
 Begin
   PopupEx(Control,ParamRect,PopupEvent,pskUnderParam, []);
@@ -3697,7 +3735,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.PopupExact(Control: TControl; X,Y: Integer;
+procedure TPSCPopupForm.PopupExact(Control: TControl; X, Y: Integer;
   PopupEvent: TPSCOnPopupClosed);
 Begin
   PopupEx(Control,Rect(X,Y, -1, -1),PopupEvent,pskExact,
@@ -3706,7 +3744,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.Show;
+procedure TPSCPopupForm.Show;
 Var
   SaveState: TFormState;
 Begin
@@ -3743,7 +3781,7 @@ end;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.WMActivate(Var Message: TLMActivate);
+procedure TPSCPopupForm.WMActivate(var Message: TLMActivate);
 
   function NeedToClose(AControl:TWinControl):Boolean;
   begin
@@ -3773,7 +3811,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.CreateParams(Var Params: TCreateParams);
+procedure TPSCPopupForm.CreateParams(var Params: TCreateParams);
 Begin
   Inherited CreateParams(Params);
   With Params Do
@@ -3785,7 +3823,7 @@ End;
 
 {-------------------------------------------}
 
-Procedure TPSCPopupForm.SetBounds(ALeft,ATop,AWidth,AHeight: Integer);
+procedure TPSCPopupForm.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 Var
   R: TRect;
 Begin

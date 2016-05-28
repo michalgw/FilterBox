@@ -1814,10 +1814,10 @@ begin
   CalendarPanel.TimeEdit.HandleNeeded;
   CalendarPanel.Left := SizePanel.BevelWidth;
   CalendarPanel.Top := SizePanel.BevelWidth;
-  ClientWidth:=CalendarPanel.GetMinWidth+
-    (CalendarPanel.Width-CalendarPanel.ClientWidth) + 3 * SizePanel.BevelWidth;
-  ClientHeight:=CalendarPanel.GetMinHeight+
-    (CalendarPanel.Height-CalendarPanel.ClientHeight)+GetFooterPanel.Height + 2 * SizePanel.BevelWidth;
+  ClientWidth:=CalendarPanel.GetMinWidth+ SizePanel.BevelWidth +
+    (CalendarPanel.Width-CalendarPanel.ClientWidth) + 5 * SizePanel.BevelWidth;
+  ClientHeight:=CalendarPanel.GetMinHeight+ SizePanel.BevelWidth +
+    (CalendarPanel.Height-CalendarPanel.ClientHeight)+GetFooterPanel.Height + 3 * SizePanel.BevelWidth;
   Constraints.MinHeight:=Height;
   Constraints.MinWidth:=Width;
   Constraints.MaxHeight:=Constraints.MinHeight;

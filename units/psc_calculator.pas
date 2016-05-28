@@ -1750,8 +1750,8 @@ Begin
   FCalc.HandleNeeded;
   FCalc.Top := SizePanel.BevelWidth;
   FCalc.Left := SizePanel.BevelWidth;
-  ClientHeight := FCalc.Top + FCalc.Height+GetFooterPanel.Height + 2 * SizePanel.BevelWidth;
-  ClientWidth := FCalc.Left + FCalc.Width + 2 * SizePanel.BevelWidth;
+  ClientHeight := FCalc.Top + FCalc.Height+GetFooterPanel.Height + 3 * SizePanel.BevelWidth;
+  ClientWidth := FCalc.Left + FCalc.Width + 4 * SizePanel.BevelWidth;
 End;
 
 {-------------------------------------------}

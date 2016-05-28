@@ -2934,20 +2934,20 @@ begin
 end;
 
 {------------------------------------------------------------------}
-type
+{type
   THackForm=class(TForm)
-  end;
+  end;}
 
 procedure TPSCCustomListBox.UpdatePopupParams(APopupForm: TForm);
 Begin
-{  With THackForm(APopupForm) Do
+  With TPSCPopupForm(APopupForm) Do
     Begin
-      BevelEdges := PopupParams.BevelEdges;
+      //BevelEdges := PopupParams.BevelEdges;
       BevelInner := PopupParams.BevelInner;
       BevelOuter := PopupParams.BevelOuter;
-      BevelKind := PopupParams.BevelKind;
+      //BevelKind := PopupParams.BevelKind;
       BevelWidth := PopupParams.BevelWidth;
-    End;}
+    End;
   If Assigned(FOnUpdatePopup) Then
     FOnUpdatePopup(Self,APopupForm);
 End;
