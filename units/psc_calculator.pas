@@ -1727,7 +1727,7 @@ Var
 Begin
   Inherited;
   GetFooterPanel;
-  FParent := Self;
+  FParent := SizePanel;
   FCalc := TPSCCalculator.Create(Self);
   FCalc.Parent := FParent;
 
@@ -1748,10 +1748,10 @@ Procedure TPSCCalculatorPopup.ResizeFormControls;
 Begin
   HandleNeeded;
   FCalc.HandleNeeded;
-  FCalc.Top := 0;
-  FCalc.Left := 0;
-  ClientHeight := FCalc.Top + FCalc.Height+GetFooterPanel.Height;
-  ClientWidth := FCalc.Width;
+  FCalc.Top := SizePanel.BevelWidth;
+  FCalc.Left := SizePanel.BevelWidth;
+  ClientHeight := FCalc.Top + FCalc.Height+GetFooterPanel.Height + 2 * SizePanel.BevelWidth;
+  ClientWidth := FCalc.Left + FCalc.Width + 2 * SizePanel.BevelWidth;
 End;
 
 {-------------------------------------------}

@@ -5418,6 +5418,7 @@ Begin
   FHeaderFont.Free;
   FWeekNumbersFont.Free;
   FWeekDaysFont.Free;
+  FDaysFont.Free;
   Inherited Destroy
 End;
 
@@ -11357,7 +11358,7 @@ Begin
       Align := AlNone;
       ParentColor := true;
       ParentFont := True;
-      Parent := Self;
+      Parent := SizePanel;
       ResizeFormControls;
     End;
   ActiveControl := ListBox;
@@ -12595,11 +12596,11 @@ Begin
   FMonths := TPSCMonthsBox.Create(Self);
   With FMonths Do
     Begin
-      Parent := Self;
       OnChangeDate := SelectMonth;
       Self.ClientWidth := Width;
       Self.ClientHeight := Height;
       Align := alClient;
+      Parent := SizePanel;
     End;
   ResizeFormControls;
   ActiveControl := FMonths;
@@ -12661,7 +12662,6 @@ constructor TPSCPopupTListBox.CreateNew(AOwner: TComponent; Dummy: Integer=0);
 Begin
   Inherited;
   FListBox := GetListBoxClass.Create(Self);
-  FListBox.Parent := Self;
   FListBox.BorderStyle := bsNone;
   FListBox.OnMouseUp := ListBoxMouseUp;
   ClientHeight := FListBox.Height;
@@ -12669,6 +12669,7 @@ Begin
   FListBox.Align := AlClient;
   ActiveControl := FListBox;
   BorderWidth:=0;{don't remove this line}
+  FListBox.Parent := SizePanel;
 End;
 
 {------------------------------------------------------------------------------}

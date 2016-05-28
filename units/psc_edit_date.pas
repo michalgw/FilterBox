@@ -1812,10 +1812,12 @@ begin
   CalendarPanel.Calendar.HandleNeeded;
   CalendarPanel.DateEdit.HandleNeeded;
   CalendarPanel.TimeEdit.HandleNeeded;
+  CalendarPanel.Left := SizePanel.BevelWidth;
+  CalendarPanel.Top := SizePanel.BevelWidth;
   ClientWidth:=CalendarPanel.GetMinWidth+
-    (CalendarPanel.Width-CalendarPanel.ClientWidth);
+    (CalendarPanel.Width-CalendarPanel.ClientWidth) + 3 * SizePanel.BevelWidth;
   ClientHeight:=CalendarPanel.GetMinHeight+
-    (CalendarPanel.Height-CalendarPanel.ClientHeight)+GetFooterPanel.Height;
+    (CalendarPanel.Height-CalendarPanel.ClientHeight)+GetFooterPanel.Height + 2 * SizePanel.BevelWidth;
   Constraints.MinHeight:=Height;
   Constraints.MinWidth:=Width;
   Constraints.MaxHeight:=Constraints.MinHeight;
@@ -1848,7 +1850,7 @@ Begin
   With CalendarPanel Do
   Begin
     ParentColor := True;
-    Parent := Self;
+    Parent := SizePanel;
     OnDaySelected := DaySelected;
     IntegralSize:=True;
     //Align:=alClient;

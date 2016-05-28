@@ -36,6 +36,7 @@ Uses
   extctrls,
   GraphType,
   LCLProc,
+  Graphics,
 
   myla_system,
   myla_interfaces,
@@ -206,6 +207,7 @@ type
 
   TPSCPopupForm = Class(TForm)
   private
+    FSizePanel: TCustomPanel;
     FAlreadyClosing:Boolean;
     FButtonsAdded:Integer;
     FFooter:TPSCPanel;
@@ -229,6 +231,7 @@ type
     Procedure KeyDown(Var Key: Word; Shift: TShiftState); override;
     Procedure KeyPress(Var Key: Char); override;
     Procedure ClosePopup(Canceled,AHide:boolean); virtual;
+    property SizePanel: TCustomPanel read FSizePanel;
   public
     function AddButton:TPSCSpeedButton;overload;
     function GetFooterPanel: TPSCPanel; virtual;
@@ -3032,7 +3035,7 @@ Begin
     and (FPopupControl.Parent<>FPopup)
   then
     begin
-      FPopupControl.Parent:=FPopup;
+      FPopupControl.Parent:=FPopup.SizePanel;
       FPopupControl.Align:=alClient;
       FPopupControl.Visible:=True;
     end;
@@ -3078,6 +3081,154 @@ Begin
 End;
 
 {------------------------------------------------------------------------------}
+
+type
+  TResizeSide = (rsNone, rsLeft, rsTopLeft, rsTop, rsTopRight, rsRight,
+    rsBottomRight, rsBottom, rsBottomLeft);
+
+  { TGMSizeFrame }
+
+  TGMSizeFrame = class(TPanel)
+  private
+    FSizeSide: TResizeSide;
+    FBDown: Boolean;
+    FLastPoint: TPoint;
+  protected
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer
+      ); override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+      override;
+    procedure Paint; override;
+  end;
+
+procedure TGMSizeFrame.MouseMove(Shift: TShiftState; X, Y: Integer);
+var
+  R, NR: TRect;
+  NewPos, Dif: TPoint;
+begin
+  inherited MouseMove(Shift, X, Y);
+  R := Rect(0, 0, Width, Height);
+  InflateRect(R, BevelWidth * -1, BevelWidth * -1);
+  if not FBDown then
+    if not PtInRect(R, Point(X, Y)) then
+    begin
+      R := Rect(0, 0, BevelWidth, BevelWidth);
+      if PtInRect(R, Point(X,Y)) then
+      begin
+        Cursor := crSizeNWSE;
+        FSizeSide := rsTopLeft;
+      end
+      else
+      begin
+        R := Rect(Width - BevelWidth, Height - BevelWidth, Width, Height);
+        if PtInRect(R, Point(X, Y)) then
+        begin
+          Cursor := crSizeNWSE;
+          FSizeSide := rsBottomRight;
+        end
+        else
+        begin
+          R := Rect(0, Height - BevelWidth, BevelWidth, Height);
+          if PtInRect(R, Point(X, Y)) then
+          begin
+            Cursor := crSizeNESW;
+            FSizeSide := rsBottomLeft;
+          end
+          else
+          begin
+            R := Rect(Width - BevelWidth, 0, Width, BevelWidth);
+            if PtInRect(R, Point(X, Y)) then
+            begin
+              Cursor := crSizeNESW;
+              FSizeSide := rsTopRight;
+            end
+            else
+            begin
+              R := Rect(0, BevelWidth, BevelWidth, Height - BevelWidth);
+              if PtInRect(R, Point(X, Y)) then
+              begin
+                Cursor := crSizeWE;
+                FSizeSide := rsLeft;
+              end
+              else
+              begin
+                R := Rect(Width - BevelWidth, BevelWidth, Width, Height - BevelWidth);
+                if PtInRect(R, Point(X, Y)) then
+                begin
+                  Cursor := crSizeWE;
+                  FSizeSide := rsRight;
+                end
+                else
+                begin
+                  R := Rect(BevelWidth, 0, Width - BevelWidth, BevelWidth);
+                  if PtInRect(R, Point(X, Y)) then
+                  begin
+                    Cursor := crSizeNS;
+                    FSizeSide := rsTop;
+                  end
+                  else
+                  begin
+                    Cursor := crSizeNS;
+                    FSizeSide := rsBottom;
+                  end;
+                end;
+              end;
+            end;
+          end;
+        end;
+      end;
+    end
+    else
+    begin
+      Cursor := crDefault;
+      FSizeSide := rsNone;
+    end;
+  NewPos := ClientToScreen(Point(X, Y));
+  if FBDown and (FSizeSide <> rsNone) then
+  begin
+    Dif.x := NewPos.x - FLastPoint.x;
+    Dif.y := NewPos.y - FLastPoint.y;
+    NR := Parent.BoundsRect;
+    case FSizeSide of
+      rsLeft, rsTopLeft, rsBottomLeft: begin
+        Inc(NR.Left, Dif.x);
+      end;
+      rsRight, rsTopRight, rsBottomRight: begin
+        Inc(NR.Right, Dif.x);
+      end;
+    end;
+    case FSizeSide of
+      rsTop, rsTopLeft, rsTopRight: begin
+        Inc(NR.Top, Dif.y);
+      end;
+      rsBottom, rsBottomLeft, rsBottomRight:
+        Inc(NR.Bottom, Dif.y);
+    end;
+    Parent.BoundsRect := NR;
+  end;
+  FLastPoint := NewPos;
+end;
+
+procedure TGMSizeFrame.MouseDown(Button: TMouseButton; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  inherited MouseDown(Button, Shift, X, Y);
+  FBDown := True;
+  FLastPoint := ClientToScreen(Point(X, Y));
+end;
+
+procedure TGMSizeFrame.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  inherited MouseUp(Button, Shift, X, Y);
+  FBDown := False;
+end;
+
+procedure TGMSizeFrame.Paint;
+begin
+  inherited;
+end;
 
 Procedure TPSCPopupForm.CMFONTCHANGED(Var M: TLMessage);
 Begin
@@ -3181,7 +3332,7 @@ begin
     Align:=alBottom;
     BevelInner:= GraphType.bvNone{bvLowered};
     BevelOuter:=GraphType.bvNone;
-    Parent:=Self;
+    Parent:=FSizePanel;
     ParentColor:=True;
   end;
 
@@ -3233,6 +3384,10 @@ end;
 constructor TPSCPopupForm.CreateNew(AOwner: TComponent; Dummy: Integer);
 Begin
   inherited CreateNew(AOwner);
+  FSizePanel := TGMSizeFrame.Create(Self);
+  FSizePanel.Align := alClient;
+  FSizePanel.BevelWidth := 3;
+  FSizePanel.Parent := Self;
   InitializePopup;
 end;
 

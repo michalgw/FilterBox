@@ -1135,14 +1135,14 @@ begin
   With FTimeEdit do
   begin
     Kind:=cpkTime;
-    Parent:=Self;
+    Parent:=SizePanel;
     HandleNeeded;
   end;
 
   With FDateEdit do
   begin
     Kind:=cpkDate;
-    Parent:=Self;
+    Parent:=SizePanel;
     HandleNeeded;
   end;
 
@@ -1152,7 +1152,7 @@ begin
       Height:=27;
       PSCLoadBitmapFromResource(Picture.Bitmap,SPSCResName_Img_Date);
       Transparent := True;
-      Parent := Self;
+      Parent := SizePanel;
     End;
 
   With FTimeLabel Do
@@ -1161,7 +1161,7 @@ begin
       Height:=FDateLabel.Height;
       PSCLoadBitmapFromResource(Picture.Bitmap,SPSCResName_Img_Clock);
       Transparent := True;
-      Parent := Self;
+      Parent := SizePanel;
     End;
 
   FNowButton:=AddButton;
@@ -1213,14 +1213,14 @@ Begin
   //BorderStyle := bsSizeToolWin;
 
   FListBox := GetListBoxClass.Create(Self);
-  FListBox.Parent := Self;
   FListBox.OnMouseUp := ListBoxMouseUp;
   FListBox.BorderStyle:=bsNone;
   FListBox.Align:=alClient;
+  FListBox.Parent := SizePanel;
 
   ActiveControl := FListBox;
-  ClientHeight := FListBox.Height+GetFooterPanel.Height;
-  ClientWidth := FListBox.Width;
+  ClientHeight := FListBox.Height+GetFooterPanel.Height + 2 * SizePanel.BevelWidth;
+  ClientWidth := FListBox.Width + 2 * SizePanel.BevelWidth;
 End;
 
 {-------------------------------------------}
@@ -4988,7 +4988,7 @@ Var
   FParent: TWinControl;
 Begin
   Inherited;
-  FParent := Self;
+  FParent := SizePanel;
   FEditor := TPSCEdit.Create(Self);
   With FEditor Do
   Begin
@@ -5980,11 +5980,11 @@ Begin
 
   With FSubPanel do
   begin
-    Parent:=Self;
     BevelInner:=GraphType.bvNone;
     BevelOuter:=GraphType.bvNone;
     Align:=alClient;
     ParentColor:=True;
+    Parent:=SizePanel;
   end;
 
   FGrid := TPSCDBGrid.Create(Self);
@@ -6153,7 +6153,6 @@ begin
 
   With FListBox Do
     Begin
-      Parent := Self;
       Self.ClientWidth := Width;
       Self.ClientHeight := Height+MyFooter.Height;
       Align := alClient;
@@ -6163,6 +6162,7 @@ begin
       ShowAddItem:=True;
       AddItemText:=PSCConsts.ClickHereToAddValue;
       WantReturns:=True;
+      Parent := SizePanel;
     End;
   Color := FListBox.Color;
   ActiveControl := FListBox;
