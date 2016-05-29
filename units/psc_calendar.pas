@@ -38,6 +38,7 @@ Uses
   Sysutils,
   classes,
   types,
+  LazUTF8,
 
   myla_system,
   myla_interfaces,
@@ -4334,7 +4335,7 @@ begin
        + MyMonthWidth * ((AP.X - MyR.Left) div MyMonthWidth + 1), MyR.Top +
        MyMonthHeight * ((AP.Y - MyR.Top) Div MyMonthHeight) + HeaderHeight);
       MyS := GetHeaderText(ADate);
-      MySS := Copy(MyS, 1, Length(MyS) - 4);
+      MySS := UTF8Copy(MyS, 1, Length(MyS) - 4);
       MyWasteSize:=Canvas.TextExtent(MySS);
       MySize:=Canvas.TextExtent(MyS);
       with MyRect do
@@ -8310,7 +8311,7 @@ begin
         L := 3
   End;
 
-  Result:=Copy(Result,1,L);
+  Result:=UTF8Copy(Result,1,L);
 end;
 
 {------------------------------------------------------------------------------}
@@ -12319,7 +12320,7 @@ Begin
         If Size.cx > Rect.Right - Rect.Left - 4 Then
           Begin
             S := PSCShortMonthNames(Month);
-            S := PSCUpperCase(S[1])+Copy(S,2,MaxInt);
+            S := PSCUpperCase(UTF8Copy(S, 1, 1))+UTF8Copy(S,2,MaxInt);
             Size:=Canvas.TextExtent(S);
           End;
           
