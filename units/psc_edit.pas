@@ -156,7 +156,7 @@ type
     Procedure AdjustEdit;virtual;
     procedure ThemeChanged;
     procedure Changed;virtual;
-    Procedure WMEraseBkgnd(Var Msg: TLMEraseBkgnd); message LM_EraseBkgnd;
+    //Procedure WMEraseBkgnd(Var Msg: TLMEraseBkgnd); message LM_EraseBkgnd;
     Procedure CMMouseLeave(Var Message: TLMessage); message CM_MouseLeave;
     Procedure CreateWnd; override;
     Procedure CMFontChanged(Var Message: TLMessage); message CM_FONTCHANGED;
@@ -2775,10 +2775,10 @@ end;
 
 {-----------------------------------------}
 
-procedure TPSCCustomButtonControl.WMEraseBkgnd(var Msg: TLMEraseBkgnd);
-begin
-  Msg.Result:= 1;
-end;
+//procedure TPSCCustomButtonControl.WMEraseBkgnd(var Msg: TLMEraseBkgnd);
+//begin
+//  Msg.Result:= 1;
+//end;
 
 {--------------------------------------}
 
