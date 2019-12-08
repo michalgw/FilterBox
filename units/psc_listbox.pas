@@ -5176,7 +5176,7 @@ Begin
   Inherited CreateParams(Params);
   Params.Style := Params.Style Or WS_HSCROLL Or WS_VSCROLL Or WS_TABSTOP;
   //Params.WindowClass.style := Params.WindowClass.style Or CS_DBLCLKS;
-  PSCUpdateParamsWithBorderStyle(Params,BorderStyle,False);
+  //PSCUpdateParamsWithBorderStyle(Params,BorderStyle,False);
 End;
 
 {------------------------------------------------------------------}

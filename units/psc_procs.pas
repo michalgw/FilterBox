@@ -415,14 +415,12 @@ Type
   TPSCCustomControl = Class(TPSCCustomControlAncestor)
   private
     FScrollBarsLocked: Boolean;
-    FBorderStyle: TBorderStyle;
     FShowDefaultPopup: boolean;
     FDefaultPopup: TPopupMenu;
     FMergedPopup: TPopupMenu;
     FMergePopupMenus: boolean;
     FMergingPopup: Boolean;
 
-    Procedure SetBorderStyle(Value: TBorderStyle);
   protected
     Function GetPopup: TPopupMenu;
     function GetOwnPopup: TPopupMenu;
@@ -455,8 +453,7 @@ Type
 
     Property DefaultPopup: TPopupMenu read FDefaultPopup write FDefaultPopup;
   published
-    Property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle
-      default bsSingle;
+    Property BorderStyle default bsSingle;
   End;
 
   TPSCBorderParams = Class(TPSCIntfPersistent)
@@ -5186,7 +5183,7 @@ End;
 constructor TPSCCustomControl.Create(AOwner: TComponent);
 Begin
   Inherited;
-  FBorderStyle := bsSingle;
+  BorderStyle := bsSingle;
   FMergingPopup := False;
 End;
 
@@ -5473,17 +5470,6 @@ Begin
         exit;
       End;
   FKeyState := 0;
-End;
-
-{------------------------------------------------------------------}
-
-procedure TPSCCustomControl.SetBorderStyle(Value: TBorderStyle);
-Begin
-  If FBorderStyle <> Value Then
-    Begin
-      FBorderStyle := Value;
-      RecreateWnd(Self);
-    End;
 End;
 
 {------------------------------------------------------------------}

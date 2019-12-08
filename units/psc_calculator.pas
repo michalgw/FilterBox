@@ -109,7 +109,6 @@ Type
     FButtonDist: Integer;
     FButtonWidth: Integer;
     FButtonHeight: Integer;
-    FBorderStyle: TBorderStyle;
     FNumbersColor: TPSCColor;
     FActionsColor: TPSCColor;
     FShowDisplay:Boolean;
@@ -137,7 +136,6 @@ Type
     Procedure CMFontChanged(Var Message: TLMessage); message CM_FontChanged;
     Procedure SetValue(V: Extended);
     Procedure SetCalcValue(Const V: String);
-    Procedure SetBorderStyle(V: TBorderStyle);
     Procedure SetCalcMemory(V: Extended);
     Procedure CalcError;
     Procedure CalcClear;
@@ -221,8 +219,7 @@ Type
     Property Value: Extended read GetValue write SetValue Stored IsValueStored;
     Property CalcValue: String read GetCalcValue write SetCalcValue;
     Property CalcMemory: Extended read FCalcMemory write SetCalcMemory;
-    Property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle
-      default cPSCDefCalcBorderStyle;
+    Property BorderStyle default cPSCDefCalcBorderStyle;
     Property OnCalcError: TPSCNotifyEvent read FOnCalcError write FOnCalcError;
     Property Flat:Boolean Read FFlat Write SetFlat Default CPSCDefCalcFlat;
     Property OnUpdateAssociate:TPSCOnCalcUpdateAssociate
@@ -658,7 +655,7 @@ Begin
   FPrecision := PSCDefaultCalcPrecision;
   FCalcValue := '0';
 
-  FBorderStyle := cPSCDefCalcBorderStyle;
+  BorderStyle := cPSCDefCalcBorderStyle;
   FButtonLongDist := cPSCDefCalcBtnLongDist;
   FButtonDist := cPSCDefCalcBtnDist;
   FNumbersColor := CPSCDefCalcNumbersColor;
@@ -690,7 +687,7 @@ Begin
     Begin
       Style := Style Or WS_TABSTOP Or WS_CLIPCHILDREN;
       //WindowClass.Style := WindowClass.Style And Not CS_DBLCLKS;
-      PSCUpdateParamsWithBorderStyle(Params,FBorderStyle,False{Ctl3d});
+      //PSCUpdateParamsWithBorderStyle(Params,FBorderStyle,False{Ctl3d});
     End;
 End;
 
@@ -1660,17 +1657,6 @@ Begin
     Begin
       FCalcValue := V;
       UpdateAssociate;
-    End;
-End;
-
-{--------------------------------------------}
-
-Procedure TPSCCustomCalculator.SetBorderStyle(V: TBorderStyle);
-Begin
-  If FBorderStyle <> V Then
-    Begin
-      FBorderStyle := V;
-      RecreateWnd(Self);
     End;
 End;
 
